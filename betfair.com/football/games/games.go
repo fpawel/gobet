@@ -113,7 +113,7 @@ func (x *listGames) update() {
 				game.Event = &event
 				readedGames = append(readedGames, game)
 			} else {
-				log.Printf("football event %d not found", game.EventID)
+				events.ClearCache(1)
 			}
 		}
 	}

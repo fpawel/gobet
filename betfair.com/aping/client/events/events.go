@@ -73,6 +73,12 @@ func doReadEvents(eventTypeID int) {
 
 }
 
+func ClearCache(eventTypeID int){
+	muCache.Lock()
+	defer muCache.Unlock()
+	delete(cache, eventTypeID)
+}
+
 func Get(eventTypeID int, ch chan<- Result) {
 
 	// если удалось получить список событий из cache, записать список событий в канал
