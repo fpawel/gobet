@@ -78,9 +78,6 @@ func game(node *goquery.Selection) (game football.Game, err error) {
 	game.Result = strf("span.result")
 	game.Odds = odds(node)
 
-	if event, ok := football.Events[game.EventID]; ok {
-		game.Event = event
-	}
 	return
 }
 

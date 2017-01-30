@@ -8,17 +8,18 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/contrib/gzip"
+	//"github.com/gin-gonic/contrib/gzip"
+	"compress/gzip"
 	"github.com/gorilla/websocket"
 
 	"github.com/user/gobet/betfair.com/aping/client/appkey"
-	_ "github.com/user/gobet/betfair.com/aping/client/eventType"
 	_ "github.com/user/gobet/betfair.com/aping/client/eventTypes"
 	"github.com/user/gobet/proxi"
 	"github.com/user/gobet/betfair.com/football/games"
 	"github.com/user/gobet/utils"
-	"github.com/user/gobet/betfair.com/aping/client/eventType"
+
 	"strconv"
+	"github.com/user/gobet/betfair.com/aping/client/events"
 )
 
 const (
@@ -31,10 +32,10 @@ var websocketUpgrader = websocket.Upgrader{} // use default options
 func main() {
 
 	router := gin.Default()
-	router.Use(gzip.Gzip(gzip.DefaultCompression))
+	//router.Use(gzip.Gzip(gzip.DefaultCompression))
 	//router.Use(gin.Logger())
 	router.GET("proxi/*url", proxi.Proxi)
-	router.GET("ws/football", func(c *gin.Context) {
+	router.GET("football", func(c *gin.Context) {
 		conn, err := websocketUpgrader.Upgrade(c.Writer, c.Request, nil)
 		if err != nil {
 			returnInternalServerError(c, err)
@@ -45,16 +46,16 @@ func main() {
 
 	})
 
-	router.GET("football-games", func (c *gin.Context) {
+	router.GET("football/games", func (c *gin.Context) {
 
 		games, err := footbalGames.Get()
 		if err != nil {
 			c.String(http.StatusInternalServerError, err.Error())
 			return
 		}
-		jsonBytes, _ := json.MarshalIndent(games, "", "    ")
-		c.Data(http.StatusOK, "application/json", jsonBytes)
+		setCompressedJSON(c, games)
 	})
+
 	router.GET("events/*id", func(c *gin.Context){
 		url, urlParsed := utils.QueryUnescape(c.Param("id"))
 		eventTypeID, convError := strconv.Atoi(url)
@@ -62,11 +63,10 @@ func main() {
 			c.String(http.StatusBadRequest, "bad request")
 			return
 		}
-		ch := make( chan eventType.ResultGetEvents )
-		eventType.GetEvents(eventTypeID, ch)
+		ch := make( chan events.Result )
+		events.Get(eventTypeID, ch)
 		result := <- ch
-		jsonBytes, _ := json.MarshalIndent(result, "", "    ")
-		c.Data(http.StatusOK, "application/json", jsonBytes)
+		setCompressedJSON(c, &result)
 	})
 
 	//router.LoadHTMLGlob("templates/*.tmpl.html")
@@ -95,6 +95,28 @@ func main() {
 
 	router.Run(":" + getPort())
 
+}
+
+func setCompressedJSON(c *gin.Context, data interface{}){
+	gz, err := gzip.NewWriterLevel(c.Writer, gzip.DefaultCompression)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+	defer gz.Close()
+
+	c.Header("Content-Encoding", "gzip")
+	c.Header("Content-Type", "application/json; charset=utf-8")
+
+	encoder := json.NewEncoder(gz)
+	encoder.SetIndent("", "    ")
+
+	if err = encoder.Encode(data); err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Writer.WriteHeader(http.StatusOK)
 }
 
 func getPort() (port string) {

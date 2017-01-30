@@ -42,7 +42,8 @@ func downloadURL(srcURL string, header http.Header) (*goquery.Document, error) {
 
 	if os.Getenv("LOCALHOST") == "true" {
 		// https://betproxi.herokuapp.com/test/proxi/https%3A%2F%2Fwww.betfair.com%2Fexchange%2Ffootball
-		URL = fmt.Sprintf("http://betproxi.herokuapp.com/test/proxi/%s",
+		//URL = fmt.Sprintf("http://betproxi.herokuapp.com/test/proxi/%s",
+		URL = fmt.Sprintf("http://gobet.herokuapp.com/proxi/%s",
 			utils.QueryEscape(URL))
 	}
 

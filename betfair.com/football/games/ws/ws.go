@@ -118,14 +118,15 @@ func (x *Handler) NotifyError(err error) {
 	if err == nil {
 		return
 	}
-	errStr := fmt.Sprintf("%v", err)
+
+	errorInfo := &struct {error  string} { fmt.Sprintf("%v", err) }
 	for _, session := range x.getOpenedSessions() {
 		go func() {
-			err := session.WriteJSON(errStr)
+			err := session.WriteJSON(errorInfo)
 			if err != nil {
 				log.Printf("write error %v: %v", session.websocketConn.RemoteAddr(), err)
 			}
-			x.closeSession(session.websocketConn, fmt.Sprintf("ws football session games error: %s", errStr))
+			x.closeSession(session.websocketConn, fmt.Sprintf("ws football session games error: %v", err))
 		}()
 
 	}

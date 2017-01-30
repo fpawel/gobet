@@ -11560,10 +11560,7 @@ var _fpawel$gobet_front$Help_Utils$websocketURL = function (_p4) {
 		A2(
 			_elm_lang$core$Basics_ops['++'],
 			A2(_elm_lang$core$String$dropLeft, 4, _p6),
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'//',
-				A2(_elm_lang$core$Basics_ops['++'], _p5.host, '/ws'))));
+			A2(_elm_lang$core$Basics_ops['++'], '//', _p5.host)));
 };
 var _fpawel$gobet_front$Help_Utils$isNothing = function (_p7) {
 	return A2(
@@ -12104,48 +12101,49 @@ var _fpawel$gobet_front$Football$encodeGame = function (x) {
 };
 var _fpawel$gobet_front$Football$decoderMaybeFloat = _elm_lang$core$Json_Decode$maybe(
 	_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$float));
-var _fpawel$gobet_front$Football$websocketURL = function (path) {
+var _fpawel$gobet_front$Football$websocketURL = function (_p8) {
+	var _p9 = _p8;
 	return A2(
 		_elm_lang$core$Basics_ops['++'],
-		_fpawel$gobet_front$Help_Utils$websocketURL(path),
+		_fpawel$gobet_front$Help_Utils$websocketURL(_p9.location),
 		'/football');
 };
 var _fpawel$gobet_front$Football$updateGame = F2(
-	function (x, _p8) {
-		var _p9 = _p8;
-		var _p11 = _p9.time;
-		var _p10 = _p9.result;
+	function (x, _p10) {
+		var _p11 = _p10;
+		var _p13 = _p11.time;
+		var _p12 = _p11.result;
 		return _elm_lang$core$Native_Utils.update(
 			x,
 			{
-				page: A2(_elm_lang$core$Maybe$withDefault, x.page, _p9.page),
-				order: A2(_elm_lang$core$Maybe$withDefault, x.order, _p9.order),
-				time: A2(_elm_lang$core$Maybe$withDefault, x.time, _p11),
-				result: A2(_elm_lang$core$Maybe$withDefault, x.result, _p10),
-				win1: A2(_elm_lang$core$Maybe$withDefault, x.win1, _p9.win1),
-				win2: A2(_elm_lang$core$Maybe$withDefault, x.win2, _p9.win2),
-				draw1: A2(_elm_lang$core$Maybe$withDefault, x.draw1, _p9.draw1),
-				draw2: A2(_elm_lang$core$Maybe$withDefault, x.draw2, _p9.draw2),
-				lose1: A2(_elm_lang$core$Maybe$withDefault, x.lose1, _p9.lose1),
-				lose2: A2(_elm_lang$core$Maybe$withDefault, x.lose2, _p9.lose2),
-				utime: _fpawel$gobet_front$Help_Utils$isJust(_p11),
-				uresult: _fpawel$gobet_front$Help_Utils$isJust(_p10)
+				page: A2(_elm_lang$core$Maybe$withDefault, x.page, _p11.page),
+				order: A2(_elm_lang$core$Maybe$withDefault, x.order, _p11.order),
+				time: A2(_elm_lang$core$Maybe$withDefault, x.time, _p13),
+				result: A2(_elm_lang$core$Maybe$withDefault, x.result, _p12),
+				win1: A2(_elm_lang$core$Maybe$withDefault, x.win1, _p11.win1),
+				win2: A2(_elm_lang$core$Maybe$withDefault, x.win2, _p11.win2),
+				draw1: A2(_elm_lang$core$Maybe$withDefault, x.draw1, _p11.draw1),
+				draw2: A2(_elm_lang$core$Maybe$withDefault, x.draw2, _p11.draw2),
+				lose1: A2(_elm_lang$core$Maybe$withDefault, x.lose1, _p11.lose1),
+				lose2: A2(_elm_lang$core$Maybe$withDefault, x.lose2, _p11.lose2),
+				utime: _fpawel$gobet_front$Help_Utils$isJust(_p13),
+				uresult: _fpawel$gobet_front$Help_Utils$isJust(_p12)
 			});
 	});
 var _fpawel$gobet_front$Football$updateGamesList = F2(
-	function (_p12, games) {
-		var _p13 = _p12;
-		var _p19 = _p13.inplay;
-		var isJust = function (_p14) {
+	function (_p14, games) {
+		var _p15 = _p14;
+		var _p21 = _p15.inplay;
+		var isJust = function (_p16) {
 			return A2(
 				_elm_lang$core$Maybe$withDefault,
 				false,
 				A2(
 					_elm_lang$core$Maybe$map,
-					function (_p15) {
+					function (_p17) {
 						return true;
 					},
-					_p14));
+					_p16));
 		};
 		var changesMap = _elm_lang$core$Dict$fromList(
 			A2(
@@ -12153,15 +12151,15 @@ var _fpawel$gobet_front$Football$updateGamesList = F2(
 				function (x) {
 					return {ctor: '_Tuple2', _0: x.eventID, _1: x};
 				},
-				_p13.changes));
+				_p15.changes));
 		var inplaySet = _elm_lang$core$Set$fromList(
 			A2(
 				_elm_lang$core$List$map,
 				function (x) {
 					return x.eventID;
 				},
-				_p19));
-		var outplaySet = _elm_lang$core$Set$fromList(_p13.outplay);
+				_p21));
+		var outplaySet = _elm_lang$core$Set$fromList(_p15.outplay);
 		var play = A2(
 			_elm_lang$core$List$map,
 			function (x) {
@@ -12175,13 +12173,13 @@ var _fpawel$gobet_front$Football$updateGamesList = F2(
 			},
 			A2(
 				_elm_lang$core$List$filter,
-				function (_p16) {
-					var _p17 = _p16;
-					var _p18 = _p17.eventID;
-					return (!A2(_elm_lang$core$Set$member, _p18, outplaySet)) && (!A2(_elm_lang$core$Set$member, _p18, inplaySet));
+				function (_p18) {
+					var _p19 = _p18;
+					var _p20 = _p19.eventID;
+					return (!A2(_elm_lang$core$Set$member, _p20, outplaySet)) && (!A2(_elm_lang$core$Set$member, _p20, inplaySet));
 				},
 				games));
-		return A2(_elm_lang$core$Basics_ops['++'], _p19, play);
+		return A2(_elm_lang$core$Basics_ops['++'], _p21, play);
 	});
 var _fpawel$gobet_front$Football$Game = function (a) {
 	return function (b) {
@@ -12410,21 +12408,21 @@ var _fpawel$gobet_front$Football$init = function (location) {
 		});
 };
 var _fpawel$gobet_front$Football$update = F2(
-	function (msg, _p20) {
-		var _p21 = _p20;
-		var _p24 = _p21._0;
-		var _p22 = msg;
-		var _p23 = _p22._0;
+	function (msg, _p22) {
+		var _p23 = _p22;
+		var _p26 = _p23._0;
+		var _p24 = msg;
+		var _p25 = _p24._0;
 		var answer = A2(
 			_elm_lang$websocket$WebSocket$send,
-			_fpawel$gobet_front$Football$websocketURL(_p24.location),
-			_p23.hashCode);
-		var games = A2(_fpawel$gobet_front$Football$updateGamesList, _p23, _p24.games);
+			_fpawel$gobet_front$Football$websocketURL(_p26),
+			_p25.hashCode);
+		var games = A2(_fpawel$gobet_front$Football$updateGamesList, _p25, _p26.games);
 		return A2(
 			_elm_lang$core$Platform_Cmd_ops['!'],
 			_fpawel$gobet_front$Football$Model(
 				_elm_lang$core$Native_Utils.update(
-					_p24,
+					_p26,
 					{games: games})),
 			{
 				ctor: '::',
@@ -12436,9 +12434,9 @@ var _fpawel$gobet_front$Football$MsgReplyFromServer = function (a) {
 	return {ctor: 'MsgReplyFromServer', _0: a};
 };
 var _fpawel$gobet_front$Football$decodeReplyFromServer = function (str) {
-	var _p25 = A2(_elm_lang$core$Json_Decode$decodeString, _fpawel$gobet_front$Football$decoderReplyFromServer, str);
-	if (_p25.ctor === 'Ok') {
-		return _fpawel$gobet_front$Football$MsgReplyFromServer(_p25._0);
+	var _p27 = A2(_elm_lang$core$Json_Decode$decodeString, _fpawel$gobet_front$Football$decoderReplyFromServer, str);
+	if (_p27.ctor === 'Ok') {
+		return _fpawel$gobet_front$Football$MsgReplyFromServer(_p27._0);
 	} else {
 		return _elm_lang$core$Native_Utils.crashCase(
 			'Football',
@@ -12446,18 +12444,18 @@ var _fpawel$gobet_front$Football$decodeReplyFromServer = function (str) {
 				start: {line: 239, column: 5},
 				end: {line: 244, column: 74}
 			},
-			_p25)(
-			A2(_elm_lang$core$Basics_ops['++'], 'error decoding `Football` message : ', _p25._0));
+			_p27)(
+			A2(_elm_lang$core$Basics_ops['++'], 'error decoding `Football` message : ', _p27._0));
 	}
 };
-var _fpawel$gobet_front$Football$subscriptions = function (_p27) {
-	var _p28 = _p27;
+var _fpawel$gobet_front$Football$subscriptions = function (_p29) {
+	var _p30 = _p29;
 	return _elm_lang$core$Platform_Sub$batch(
 		{
 			ctor: '::',
 			_0: A2(
 				_elm_lang$websocket$WebSocket$listen,
-				_fpawel$gobet_front$Football$websocketURL(_p28._0.location),
+				_fpawel$gobet_front$Football$websocketURL(_p30._0),
 				_fpawel$gobet_front$Football$decodeReplyFromServer),
 			_1: {ctor: '[]'}
 		});

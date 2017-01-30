@@ -9,6 +9,8 @@ import (
 	"os"
 	"log"
 	"time"
+	"github.com/user/gobet/betfair.com/aping/client"
+	"github.com/user/gobet/betfair.com/aping/client/events"
 )
 
 
@@ -39,7 +41,7 @@ func (x *listGames) setGames(ys []football.Game) {
 	x.mu.Lock()
 	x.xs = ys
 	x.mu.Unlock()
-
+	x.setError(nil)
 	x.wsHandler.NotifyNewGames(ys)
 }
 
@@ -81,20 +83,59 @@ func (x *listGames) OpenWebSocketSession(conn *websocket.Conn) {
 }
 
 func (x *listGames) update() {
+
+	mevents, err := getEvents()
+	if err != nil {
+		x.setError(err)
+		return
+	}
+
 	firstPageURL, err := webclient.ReadFirstPageURL()
-	x.setError(err)
+	if err != nil {
+		x.setError(err)
+		return
+	}
+
 	var readedGames []football.Game
 	ptrNextPage := &firstPageURL
 	for page := 0; ptrNextPage != nil && err == nil; page++ {
+
 		var gamesPage []football.Game
 		gamesPage, ptrNextPage, err = webclient.ReadPage(webclient.BetfairURL + *ptrNextPage)
-		x.setError(err)
+		if err != nil {
+			x.setError(err)
+			return
+		}
+
 		for _, game := range gamesPage {
 			game.Live.Page = page
-			readedGames = append(readedGames, game)
+			if event,ok := mevents[game.EventID] ; ok {
+				game.Event = &event
+				readedGames = append(readedGames, game)
+			} else {
+				log.Printf("football event %d not found", game.EventID)
+			}
 		}
 	}
 	if err == nil {
 		x.setGames(readedGames)
 	}
+}
+
+func getEvents() (mevents map[int]client.Event, err error) {
+
+	ch := make(chan events.Result)
+	events.Get(1, ch)
+	r := <-ch
+	err  = r.Error
+	if r.Error != nil {
+		return
+	}
+
+	mevents = make(map[int]client.Event)
+	for _, event := range r.Events {
+		mevents[event.ID] = event
+	}
+	return
+
 }
