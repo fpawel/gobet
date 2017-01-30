@@ -12622,7 +12622,7 @@ var _fpawel$gobet_front$Sport$eventRow = F2(
 				xs1,
 				_fpawel$gobet_front$Sport$viewEventName(event.name)));
 	});
-var _fpawel$gobet_front$Sport$view = function (_p8) {
+var _fpawel$gobet_front$Sport$view1 = function (_p8) {
 	var _p9 = _p8;
 	var _p10 = _p9._0;
 	var eventType = _p10.eventType;
@@ -12807,32 +12807,123 @@ var _fpawel$gobet_front$Sport$eventType = function (_p16) {
 	var _p17 = _p16;
 	return _p17._0.eventType;
 };
-var _fpawel$gobet_front$Sport$Context = F3(
-	function (a, b, c) {
-		return {eventType: a, events: b, countryFilter: c};
+var _fpawel$gobet_front$Sport$Context = F5(
+	function (a, b, c, d, e) {
+		return {location: a, eventType: b, events: c, countryFilter: d, error: e};
 	});
 var _fpawel$gobet_front$Sport$Model = function (a) {
 	return {ctor: 'Model', _0: a};
 };
-var _fpawel$gobet_front$Sport$init = function (eventType) {
-	return _fpawel$gobet_front$Sport$Model(
-		A3(
-			_fpawel$gobet_front$Sport$Context,
-			eventType,
+var _fpawel$gobet_front$Sport$view = function (_p18) {
+	var _p19 = _p18;
+	var _p21 = _p19._0;
+	var _p20 = _p21.error;
+	if (_p20.ctor === 'Nothing') {
+		return _fpawel$gobet_front$Sport$view1(
+			_fpawel$gobet_front$Sport$Model(_p21));
+	} else {
+		return A2(
+			_elm_lang$html$Html$div,
 			{ctor: '[]'},
-			_elm_lang$core$Maybe$Nothing));
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$p,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(_p20._0),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			});
+	}
 };
-var _fpawel$gobet_front$Sport$update = F2(
-	function (msg, _p18) {
-		var _p19 = _p18;
-		var _p20 = msg;
+var _fpawel$gobet_front$Sport$NewEvents = function (a) {
+	return {ctor: 'NewEvents', _0: a};
+};
+var _fpawel$gobet_front$Sport$httpRequestEvents = F2(
+	function (location, eventType) {
+		var decoder = A2(
+			_elm_lang$core$Json_Decode$field,
+			'result',
+			_elm_lang$core$Json_Decode$list(_fpawel$gobet_front$ApiNgTypes$decoderEvent));
+		var eventsURL = A2(
+			_elm_lang$core$Basics_ops['++'],
+			location.protocol,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'//',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					location.host,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'/events/',
+						_elm_lang$core$Basics$toString(eventType.id)))));
+		return A2(
+			_elm_lang$http$Http$send,
+			_fpawel$gobet_front$Sport$NewEvents,
+			A2(_elm_lang$http$Http$get, eventsURL, decoder));
+	});
+var _fpawel$gobet_front$Sport$init = F2(
+	function (location, eventType) {
+		var context = {
+			location: location,
+			eventType: eventType,
+			events: {ctor: '[]'},
+			countryFilter: _elm_lang$core$Maybe$Nothing,
+			error: _elm_lang$core$Maybe$Nothing
+		};
+		var request = A2(_fpawel$gobet_front$Sport$httpRequestEvents, location, eventType);
 		return A2(
 			_elm_lang$core$Platform_Cmd_ops['!'],
-			_fpawel$gobet_front$Sport$Model(
-				_elm_lang$core$Native_Utils.update(
-					_p19._0,
-					{countryFilter: _p20._0})),
-			{ctor: '[]'});
+			_fpawel$gobet_front$Sport$Model(context),
+			{
+				ctor: '::',
+				_0: request,
+				_1: {ctor: '[]'}
+			});
+	});
+var _fpawel$gobet_front$Sport$update = F2(
+	function (msg, _p22) {
+		var _p23 = _p22;
+		var _p25 = _p23._0;
+		var _p24 = msg;
+		if (_p24.ctor === 'ApplyCountryFilter') {
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				_fpawel$gobet_front$Sport$Model(
+					_elm_lang$core$Native_Utils.update(
+						_p25,
+						{countryFilter: _p24._0})),
+				{ctor: '[]'});
+		} else {
+			if (_p24._0.ctor === 'Ok') {
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_fpawel$gobet_front$Sport$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p25,
+							{events: _p24._0._0})),
+					{ctor: '[]'});
+			} else {
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_fpawel$gobet_front$Sport$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p25,
+							{
+								error: _elm_lang$core$Maybe$Just(
+									_elm_lang$core$Basics$toString(_p24._0._0))
+							})),
+					{
+						ctor: '::',
+						_0: A2(_fpawel$gobet_front$Sport$httpRequestEvents, _p25.location, _p25.eventType),
+						_1: {ctor: '[]'}
+					});
+			}
+		}
 	});
 var _fpawel$gobet_front$Sport$ApplyCountryFilter = function (a) {
 	return {ctor: 'ApplyCountryFilter', _0: a};
@@ -12865,9 +12956,9 @@ var _fpawel$gobet_front$Sport$linkCountryFilter = function (countryFilter) {
 		});
 };
 var _fpawel$gobet_front$Sport$menuItem = F2(
-	function (toMsg, _p21) {
-		var _p22 = _p21;
-		var countries = _fpawel$gobet_front$Sport$getCountries(_p22._0.events);
+	function (toMsg, _p26) {
+		var _p27 = _p26;
+		var countries = _fpawel$gobet_front$Sport$getCountries(_p27._0.events);
 		return (_elm_lang$core$Native_Utils.cmp(
 			_elm_lang$core$List$length(countries),
 			2) < 0) ? A2(
@@ -12875,14 +12966,14 @@ var _fpawel$gobet_front$Sport$menuItem = F2(
 			{ctor: '[]'},
 			{ctor: '[]'}) : A2(
 			_fpawel$gobet_front$Help_Component$mainMenuItem,
-			_fpawel$gobet_front$Sport$countryFilterToString(_p22._0.countryFilter),
+			_fpawel$gobet_front$Sport$countryFilterToString(_p27._0.countryFilter),
 			A2(
 				_elm_lang$core$List$map,
-				function (_p23) {
+				function (_p28) {
 					return A2(
 						_elm_lang$html$Html$map,
 						toMsg,
-						_fpawel$gobet_front$Sport$linkCountryFilter(_p23));
+						_fpawel$gobet_front$Sport$linkCountryFilter(_p28));
 				},
 				A2(
 					F2(
@@ -12966,46 +13057,58 @@ var _fpawel$gobet_front$Content$init = F3(
 	function (location, eventTypes, route) {
 		var _p4 = route;
 		if (_p4.ctor === 'Football') {
-			return _fpawel$gobet_front$Content$Football(
-				_fpawel$gobet_front$Football$init(location));
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				_fpawel$gobet_front$Content$Football(
+					_fpawel$gobet_front$Football$init(location)),
+				{ctor: '[]'});
 		} else {
-			var _p9 = _p4._0;
+			var _p10 = _p4._0;
 			var _p7 = A2(
 				_elm_lang$core$List$filter,
 				function (_p5) {
 					var _p6 = _p5;
-					return _elm_lang$core$Native_Utils.eq(_p6.id, _p9);
+					return _elm_lang$core$Native_Utils.eq(_p6.id, _p10);
 				},
 				eventTypes);
 			if (_p7.ctor === '::') {
-				return _fpawel$gobet_front$Content$Sport(
-					_fpawel$gobet_front$Sport$init(_p7._0));
+				var _p8 = A2(_fpawel$gobet_front$Sport$init, location, _p7._0);
+				var model_sport = _p8._0;
+				var cmd_sport = _p8._1;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_fpawel$gobet_front$Content$Sport(model_sport),
+					{
+						ctor: '::',
+						_0: A2(_elm_lang$core$Platform_Cmd$map, _fpawel$gobet_front$Msg$Sport, cmd_sport),
+						_1: {ctor: '[]'}
+					});
 			} else {
 				return _elm_lang$core$Native_Utils.crashCase(
 					'Content',
 					{
 						start: {line: 25, column: 13},
-						end: {line: 30, column: 85}
+						end: {line: 36, column: 85}
 					},
 					_p7)(
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						'unknown event type id ',
-						_elm_lang$core$Basics$toString(_p9)));
+						_elm_lang$core$Basics$toString(_p10)));
 			}
 		}
 	});
 var _fpawel$gobet_front$Content$update = F2(
 	function (msg, model) {
-		var _p10 = {ctor: '_Tuple2', _0: msg, _1: model};
+		var _p11 = {ctor: '_Tuple2', _0: msg, _1: model};
 		_v6_2:
 		do {
-			if (_p10.ctor === '_Tuple2') {
-				if (_p10._1.ctor === 'Football') {
-					if (_p10._0.ctor === 'Football') {
-						var _p11 = A2(_fpawel$gobet_front$Football$update, _p10._0._0, _p10._1._0);
-						var updated_football = _p11._0;
-						var cmd_football = _p11._1;
+			if (_p11.ctor === '_Tuple2') {
+				if (_p11._1.ctor === 'Football') {
+					if (_p11._0.ctor === 'Football') {
+						var _p12 = A2(_fpawel$gobet_front$Football$update, _p11._0._0, _p11._1._0);
+						var updated_football = _p12._0;
+						var cmd_football = _p12._1;
 						return A2(
 							_elm_lang$core$Platform_Cmd_ops['!'],
 							_fpawel$gobet_front$Content$Football(updated_football),
@@ -13018,10 +13121,10 @@ var _fpawel$gobet_front$Content$update = F2(
 						break _v6_2;
 					}
 				} else {
-					if (_p10._0.ctor === 'Sport') {
-						var _p12 = A2(_fpawel$gobet_front$Sport$update, _p10._0._0, _p10._1._0);
-						var updated_sport = _p12._0;
-						var cmd_sport = _p12._1;
+					if (_p11._0.ctor === 'Sport') {
+						var _p13 = A2(_fpawel$gobet_front$Sport$update, _p11._0._0, _p11._1._0);
+						var updated_sport = _p13._0;
+						var cmd_sport = _p13._1;
 						return A2(
 							_elm_lang$core$Platform_Cmd_ops['!'],
 							_fpawel$gobet_front$Content$Sport(updated_sport),
@@ -13041,14 +13144,14 @@ var _fpawel$gobet_front$Content$update = F2(
 		return _elm_lang$core$Native_Utils.crashCase(
 			'Content',
 			{
-				start: {line: 49, column: 5},
-				end: {line: 65, column: 67}
+				start: {line: 55, column: 5},
+				end: {line: 71, column: 67}
 			},
-			_p10)(
+			_p11)(
 			A2(
 				_elm_lang$core$Basics_ops['++'],
 				'wrong content message: ',
-				_elm_lang$core$Basics$toString(_p10)));
+				_elm_lang$core$Basics$toString(_p11)));
 	});
 
 var _fpawel$gobet_front$Main$navbarHeader = A2(
@@ -13261,38 +13364,41 @@ var _fpawel$gobet_front$Main$subscriptions = function (_p6) {
 	var _p7 = _p6;
 	return _fpawel$gobet_front$Content$subscriptions(_p7.content);
 };
+var _fpawel$gobet_front$Main$updateContent = F2(
+	function (model, _p8) {
+		var _p9 = _p8;
+		return A2(
+			_elm_lang$core$Platform_Cmd_ops['!'],
+			_elm_lang$core$Native_Utils.update(
+				model,
+				{content: _p9._0}),
+			{
+				ctor: '::',
+				_0: _p9._1,
+				_1: {ctor: '[]'}
+			});
+	});
 var _fpawel$gobet_front$Main$update = F2(
 	function (msg, model) {
-		var _p8 = msg;
-		if (_p8.ctor === 'UrlChange') {
+		var _p10 = msg;
+		if (_p10.ctor === 'UrlChange') {
 			var current_route = _fpawel$gobet_front$Content$route(model.content);
 			var new_route = A2(
 				_elm_lang$core$Maybe$withDefault,
 				current_route,
-				A2(_evancz$url_parser$UrlParser$parseHash, _fpawel$gobet_front$Routing$parser, _p8._0));
-			var upd_model = _elm_lang$core$Native_Utils.eq(new_route, current_route) ? model : _elm_lang$core$Native_Utils.update(
+				A2(_evancz$url_parser$UrlParser$parseHash, _fpawel$gobet_front$Routing$parser, _p10._0));
+			return _elm_lang$core$Native_Utils.eq(new_route, current_route) ? A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
 				model,
-				{
-					content: A3(_fpawel$gobet_front$Content$init, model.location, model.eventTypes, new_route)
-				});
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				upd_model,
-				{ctor: '[]'});
+				{ctor: '[]'}) : A2(
+				_fpawel$gobet_front$Main$updateContent,
+				model,
+				A3(_fpawel$gobet_front$Content$init, model.location, model.eventTypes, new_route));
 		} else {
-			var _p9 = A2(_fpawel$gobet_front$Content$update, _p8, model.content);
-			var updated_content = _p9._0;
-			var cmd = _p9._1;
 			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_elm_lang$core$Native_Utils.update(
-					model,
-					{content: updated_content}),
-				{
-					ctor: '::',
-					_0: cmd,
-					_1: {ctor: '[]'}
-				});
+				_fpawel$gobet_front$Main$updateContent,
+				model,
+				A2(_fpawel$gobet_front$Content$update, _p10, model.content));
 		}
 	});
 var _fpawel$gobet_front$Main$Model = F3(
@@ -13301,14 +13407,17 @@ var _fpawel$gobet_front$Main$Model = F3(
 	});
 var _fpawel$gobet_front$Main$init = F2(
 	function (eventTypes, location) {
+		var _p11 = A3(_fpawel$gobet_front$Content$init, location, eventTypes, _fpawel$gobet_front$Routing$Football);
+		var content = _p11._0;
+		var cmd = _p11._1;
 		return A2(
 			_elm_lang$core$Platform_Cmd_ops['!'],
-			A3(
-				_fpawel$gobet_front$Main$Model,
-				A3(_fpawel$gobet_front$Content$init, location, eventTypes, _fpawel$gobet_front$Routing$Football),
-				eventTypes,
-				location),
-			{ctor: '[]'});
+			A3(_fpawel$gobet_front$Main$Model, content, eventTypes, location),
+			{
+				ctor: '::',
+				_0: cmd,
+				_1: {ctor: '[]'}
+			});
 	});
 var _fpawel$gobet_front$Main$main = A2(
 	_elm_lang$navigation$Navigation$programWithFlags,
