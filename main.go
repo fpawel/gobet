@@ -1,0 +1,165 @@
+package main
+
+import (
+	"encoding/json"
+	"log"
+	"net/http"
+	"os"
+	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/contrib/gzip"
+	"github.com/gorilla/websocket"
+
+	"github.com/user/gobet/betfair.com/aping/client/appkey"
+	_ "github.com/user/gobet/betfair.com/aping/client/eventType"
+	_ "github.com/user/gobet/betfair.com/aping/client/eventTypes"
+	"github.com/user/gobet/proxi"
+	"github.com/user/gobet/betfair.com/football/games"
+	"github.com/user/gobet/utils"
+	"github.com/user/gobet/betfair.com/aping/client/eventType"
+	"strconv"
+)
+
+const (
+	LOCALHOST_KEY = "LOCALHOST"
+)
+
+var footbalGames = games.New()
+var websocketUpgrader = websocket.Upgrader{} // use default options
+
+func main() {
+
+	router := gin.Default()
+	router.Use(gzip.Gzip(gzip.DefaultCompression))
+	//router.Use(gin.Logger())
+	router.GET("proxi/*url", proxi.Proxi)
+	router.GET("ws/football", func(c *gin.Context) {
+		conn, err := websocketUpgrader.Upgrade(c.Writer, c.Request, nil)
+		if err != nil {
+			returnInternalServerError(c, err)
+			return
+		}
+		conn.EnableWriteCompression(true)
+		footbalGames.OpenWebSocketSession(conn)
+
+	})
+
+	router.GET("football-games", func (c *gin.Context) {
+
+		games, err := footbalGames.Get()
+		if err != nil {
+			c.String(http.StatusInternalServerError, err.Error())
+			return
+		}
+		jsonBytes, _ := json.MarshalIndent(games, "", "    ")
+		c.Data(http.StatusOK, "application/json", jsonBytes)
+	})
+	router.GET("events/*id", func(c *gin.Context){
+		url, urlParsed := utils.QueryUnescape(c.Param("id"))
+		eventTypeID, convError := strconv.Atoi(url)
+		if !urlParsed || convError!=nil {
+			c.String(http.StatusBadRequest, "bad request")
+			return
+		}
+		ch := make( chan eventType.ResultGetEvents )
+		eventType.GetEvents(eventTypeID, ch)
+		result := <- ch
+		jsonBytes, _ := json.MarshalIndent(result, "", "    ")
+		c.Data(http.StatusOK, "application/json", jsonBytes)
+	})
+
+	//router.LoadHTMLGlob("templates/*.tmpl.html")
+
+	router.StaticFile("/", "static/index.html")
+	router.StaticFile("/index.html", "static/index.html")
+	router.Static("/css", "static/css")
+	router.Static("/scripts", "static/scripts")
+
+	// тестовые маршруты
+	router.StaticFile("test/proxi", "static/proxitest.html")
+	router.StaticFile("test/ws", "static/wstest.html")
+
+	router.GET("/wsecho", func(c *gin.Context) {
+		doWebSocket(c, handleWSEcho)
+	})
+
+	router.GET("test/appkey", func(c *gin.Context) {
+		var x struct {
+			AppKey string `json:"app_key"`
+		}
+		x.AppKey = appkey.Get()
+		jsonBytes, _ := json.Marshal(&x)
+		c.Data(http.StatusOK, "application/json", jsonBytes)
+	})
+
+	router.Run(":" + getPort())
+
+}
+
+func getPort() (port string) {
+	port = os.Getenv("PORT")
+	if len(os.Args) == 2 {
+		switch strings.ToLower(os.Args[1]) {
+		case "localhost":
+			port = "8081"
+			os.Setenv(LOCALHOST_KEY, "true")
+		case "mobileinet":
+			port = "8081"
+			os.Setenv(LOCALHOST_KEY, "true")
+			os.Setenv("MYMOBILEINET", "true")
+		default:
+			log.Fatalf("wrong argument: %v", os.Args[1])
+		}
+
+	}
+	log.Printf("port: %s, localhost: %s, mymobileinet: %s",
+		port, os.Getenv(LOCALHOST_KEY), os.Getenv("MYMOBILEINET"))
+	if port == "" {
+		log.Fatal("$PORT must be set")
+	}
+	return
+}
+
+
+
+func returnInternalServerError(c *gin.Context, err error) {
+	c.String(http.StatusInternalServerError, err.Error())
+}
+
+func doWebSocket(c *gin.Context, f func(*websocket.Conn) error) {
+	conn, err := websocketUpgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		returnInternalServerError(c, err)
+		return
+	}
+	conn.EnableWriteCompression(true)
+	defer conn.Close()
+
+	err = f(conn)
+	if err != nil {
+		returnInternalServerError(c, err)
+	}
+}
+
+func handleWSEcho(conn *websocket.Conn) error {
+	for {
+		mt, message, err := conn.ReadMessage()
+		if err != nil {
+			log.Println("read:", err)
+			break
+		}
+		log.Printf("recv: %s", message)
+
+		answer := []byte("I tell you: " + string(message[:]))
+
+		err = conn.WriteMessage(mt, answer)
+		if err != nil {
+			log.Println("write:", err)
+			break
+		}
+	}
+	return nil
+}
+
+

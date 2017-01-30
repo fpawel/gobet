@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="UTF-8" />
+      <title>{{ .title }}</title>      
+  </head>  
+<body>
+  <h1>
+      {{ .header }}
+  </h1>
+  <div>
+    <input id="input-url" type="text" placeholder="target url" size="100%" >
+    <button onclick="openurl()" >
+      Go!
+    </button>    
+  </div>
+  <div>
+    {{ .message }}
+  </div>
+
+  <!-- Main -->
+  <script>
+    function openurl(){
+        var url = document.getElementById('input-url').value;
+        url = encodeURIComponent(url); 
+        url.replace(/_/g, "_1").replace(/\%/g, "_2");
+        var win = window.open("proxi/" + url , '_blank');
+        win.focus();
+    }
+  
+  </script>
+
+</body>
+</html>
