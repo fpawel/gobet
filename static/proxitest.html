@@ -6,7 +6,7 @@
   </head>  
 <body>
   <h1>
-      {{ .header }}
+      Test proxi
   </h1>
   <div>
     <input id="input-url" type="text" placeholder="target url" size="100%" >
@@ -15,7 +15,7 @@
     </button>    
   </div>
   <div>
-    {{ .message }}
+    Type an URL
   </div>
 
   <!-- Main -->
@@ -24,7 +24,9 @@
         var url = document.getElementById('input-url').value;
         url = encodeURIComponent(url); 
         url.replace(/_/g, "_1").replace(/\%/g, "_2");
-        var win = window.open("proxi/" + url , '_blank');
+
+        var win = window.open( location.protocol + "//" + location.host
+          + "/proxi/" + url , '_blank');
         win.focus();
     }
   
