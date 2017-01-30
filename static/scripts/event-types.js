@@ -2,12 +2,12 @@ eventTypes = [
     {
         "id": 1,
         "name": "Футбол ",
-        "market_count": 8953
+        "market_count": 8933
     },
     {
         "id": 2,
         "name": "Теннис ",
-        "market_count": 3242
+        "market_count": 3177
     },
     {
         "id": 3,
@@ -22,7 +22,7 @@ eventTypes = [
     {
         "id": 5,
         "name": "Регби",
-        "market_count": 44
+        "market_count": 68
     },
     {
         "id": 1477,
@@ -37,7 +37,7 @@ eventTypes = [
     {
         "id": 7,
         "name": "Скачки",
-        "market_count": 501
+        "market_count": 522
     },
     {
         "id": 8,
@@ -102,7 +102,7 @@ eventTypes = [
     {
         "id": 7522,
         "name": "Баскетбол ",
-        "market_count": 138
+        "market_count": 158
     },
     {
         "id": 7524,
@@ -132,7 +132,7 @@ eventTypes = [
     {
         "id": 4339,
         "name": "Собачьи бега",
-        "market_count": 312
+        "market_count": 282
     },
     {
         "id": 2378961,
