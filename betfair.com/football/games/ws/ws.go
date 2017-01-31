@@ -7,6 +7,7 @@ import (
 	"github.com/user/gobet/betfair.com/football/games/update"
 	"log"
 	"sync"
+	"time"
 )
 
 type Handler struct {
@@ -70,6 +71,7 @@ func (x *Handler) updateSession(session *session, games []football.Game, changes
 		x.closeSession(websocketConn, fmt.Sprintf("write error: %v", err))
 		return
 	}
+	time.Sleep(time.Second )
 	messageType, recivedBytes, err := websocketConn.ReadMessage()
 	if err != nil {
 		log.Printf("read error %v: %v", websocketConn.RemoteAddr(), err)
