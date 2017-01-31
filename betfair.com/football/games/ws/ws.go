@@ -75,7 +75,8 @@ func (x *session) update(changes *update.Games) (err error) {
 
 	switch messageType {
 	case websocket.CloseMessage:
-		return fmt.Errorf("%s", "client drope COLSE message")
+		err =  fmt.Errorf("%s", "client drope COLSE message")
+		return
 	default:
 		recivedStr := string(recivedBytes)
 		if recivedStr == changes.HashCode {
@@ -83,18 +84,19 @@ func (x *session) update(changes *update.Games) (err error) {
 		} else {
 			time.Sleep(time.Second)
 
-			fmt.Errorf("unexpected answer %v, expected %v",
+			err = fmt.Errorf("unexpected answer %v, expected %v",
 				recivedStr, changes.HashCode)
 			return
 		}
 	}
 }
 
-func (x *Handler) getConnIndex(websocketConn *websocket.Conn) (n int) {
+func (x *Handler) getSessionByConn(websocketConn *websocket.Conn) (n int, session *session) {
 	n = -1
-	for i, item := range x.openedSessions {
-		if item.websocketConn == websocketConn {
+	for i, p := range x.openedSessions {
+		if p.websocketConn == websocketConn {
 			n = i
+			session = p
 			break
 		}
 	}
@@ -128,13 +130,22 @@ func (x *Handler) NewSession(conn *websocket.Conn, games []football.Game) {
 func (x *Handler) closeSession(conn *websocket.Conn, reason error) {
 
 	x.mu.Lock()
-	sessionIndex := x.getConnIndex(conn)
+	sessionIndex, session := x.getSessionByConn(conn)
+	if session == nil{
+		conn.Close()
+		x.mu.Unlock()
+		log.Printf("session not found: %v\n", conn.RemoteAddr())
+
+		return
+	}
+
 	openedSessionsCount := len(x.openedSessions)
 	if sessionIndex > -1 && sessionIndex < openedSessionsCount {
 		x.openedSessions = append(x.openedSessions[:sessionIndex], x.openedSessions[sessionIndex+1:]...)
 	}
-	x.mu.Unlock()
 	conn.Close()
+	x.mu.Unlock()
+
 	log.Printf("end websocket session %d of %d conn=[%v]: %s\n",
 		sessionIndex, openedSessionsCount, conn.RemoteAddr(), reason)
 	log.Printf("%d opened sessions left\n", openedSessionsCount-1)
@@ -171,7 +182,6 @@ func (x *Handler) updateSessionGames(session *session, games []football.Game) {
 }
 
 func (x *Handler) NotifyNewGames(games []football.Game) {
-
 	for _, session := range x.getOpenedSessions() {
 		go x.updateSessionGames(session, games)
 	}
