@@ -47,7 +47,9 @@ func (x *Handler) OpenSession(conn *websocket.Conn, games []football.Game) {
 
 	x.mu.Lock()
 	x.openedSessions = append(x.openedSessions,session )
+	openedSessionsCount := len (x.openedSessions)
 	x.mu.Unlock()
+	log.Printf("%d opened sessions\n", openedSessionsCount)
 
 }
 
