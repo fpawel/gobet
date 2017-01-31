@@ -134,8 +134,8 @@ func (x *Handler) closeSession(conn *websocket.Conn, reason error) {
 	if session == nil{
 		conn.Close()
 		x.mu.Unlock()
-		log.Printf("session not found when closing %v: %v\n", reason, conn.RemoteAddr())
-
+		log.Printf("closing  session not found conn=[%v], closing reason: %v\n",
+			 conn.RemoteAddr(), reason)
 		return
 	}
 
