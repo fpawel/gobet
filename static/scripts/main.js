@@ -11412,18 +11412,18 @@ var _fpawel$gobet_front$ApiNgTypes$decoderDate = A2(
 	A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Date$fromString, _elm_lang$core$Json_Decode$string));
 var _fpawel$gobet_front$ApiNgTypes$decoderCountryName = A2(
 	_elm_lang$core$Json_Decode$map,
-	function (_p1) {
+	function (x) {
 		return A2(
 			_elm_lang$core$Maybe$withDefault,
-			'',
-			_fpawel$gobet_front$CountryCode$countryName(_p1));
+			x,
+			_fpawel$gobet_front$CountryCode$countryName(x));
 	},
 	_elm_lang$core$Json_Decode$string);
-var _fpawel$gobet_front$ApiNgTypes$getCountryNameByCode = function (_p2) {
+var _fpawel$gobet_front$ApiNgTypes$getCountryNameByCode = function (_p1) {
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
 		'',
-		_fpawel$gobet_front$CountryCode$countryName(_p2));
+		_fpawel$gobet_front$CountryCode$countryName(_p1));
 };
 var _fpawel$gobet_front$ApiNgTypes$EventType = F3(
 	function (a, b, c) {

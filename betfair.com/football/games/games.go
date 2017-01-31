@@ -74,7 +74,7 @@ func (x *listGames) Get() (r []football.Game, err error) {
 
 func (x *listGames) OpenWebSocketSession(conn *websocket.Conn) {
 
-	x.wsHandler.NewSession(conn, []football.Game{})
+	x.wsHandler.NewSession(conn)
 	games,err := x.Get()
 	if err == nil {
 		x.wsHandler.NotifyNewGames(games)

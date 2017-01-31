@@ -2,12 +2,12 @@ eventTypes = [
     {
         "id": 1,
         "name": "Футбол ",
-        "market_count": 10189
+        "market_count": 10639
     },
     {
         "id": 2,
         "name": "Теннис ",
-        "market_count": 2283
+        "market_count": 2291
     },
     {
         "id": 3,
@@ -37,7 +37,7 @@ eventTypes = [
     {
         "id": 7,
         "name": "Скачки",
-        "market_count": 639
+        "market_count": 699
     },
     {
         "id": 8,
@@ -137,7 +137,7 @@ eventTypes = [
     {
         "id": 4339,
         "name": "Собачьи бега",
-        "market_count": 357
+        "market_count": 354
     },
     {
         "id": 2378961,

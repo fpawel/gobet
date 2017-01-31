@@ -32,7 +32,7 @@ func (x *Handler) getSession(hsession session.Handle) (n int, ok bool) {
 	return
 }
 
-func (x *Handler) NewSession(conn *websocket.Conn, games []football.Game) {
+func (x *Handler) NewSession(conn *websocket.Conn) {
 
 	session := session.Open(conn, func(hsession session.Handle, reason error) {
 		x.mu.Lock()
@@ -51,15 +51,6 @@ func (x *Handler) NewSession(conn *websocket.Conn, games []football.Game) {
 			n, openedSessionsCount, hsession.What(), reason)
 		log.Printf("%d opened sessions left\n", openedSessionsCount-1)
 	})
-
-	session.Update(games)
-
-	if session.GetIsClosed() {
-		log.Printf("error starting websocket session %v\n",
-			session.What() )
-		conn.Close()
-		return
-	}
 
 	x.mu.Lock()
 	x.openedSessions = append(x.openedSessions, session)
