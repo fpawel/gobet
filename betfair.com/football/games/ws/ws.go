@@ -24,13 +24,20 @@ type session struct {
 
 }
 
-func (x *session) WriteJSONSafely (i interface{}) error{
+func NewHandler() (x *Handler){
+	x = new (Handler)
+	x.mu = new (sync.RWMutex)
+	x.openedSessions = []session{}
+	return
+}
+
+func (x *session) writeJSONSafely(i interface{}) error{
 	x.muConn.Lock()
 	defer x.muConn.Unlock()
 	return  x.websocketConn.WriteJSON(i)
 }
 
-func (x *session) ReadSafely() (messageType int, recivedBytes []byte, err error) {
+func (x *session) readSafely() (messageType int, recivedBytes []byte, err error) {
 	x.muConn.Lock()
 	defer x.muConn.Unlock()
 	messageType, recivedBytes, err = x.websocketConn.ReadMessage()
@@ -48,7 +55,7 @@ func (x *Handler) getConnIndex(websocketConn *websocket.Conn) (n int) {
 	return
 }
 
-func (x *Handler) OpenSession(conn *websocket.Conn, games []football.Game) {
+func (x *Handler) NewSession(conn *websocket.Conn, games []football.Game) {
 	log.Printf("begin ws football session conn=[%v]\n", conn.RemoteAddr())
 	session := session{}
 	session.websocketConn = conn
@@ -82,14 +89,14 @@ func (x *Handler) closeSession(conn *websocket.Conn, reason error) {
 func (x *Handler) updateSession(session *session, changes *update.Games) (err error) {
 
 
-	err = session.WriteJSONSafely(changes)
+	err = session.writeJSONSafely(changes)
 
 	if err != nil {
 		return
 	}
 	time.Sleep(500 * time.Millisecond )
 
-	messageType, recivedBytes, err := session.ReadSafely()
+	messageType, recivedBytes, err := session.readSafely()
 
 	if err != nil {
 		time.Sleep(time.Second)
@@ -113,12 +120,10 @@ func (x *Handler) updateSession(session *session, changes *update.Games) (err er
 	}
 }
 
-func (x *Handler) getOpenedSessions()(openedSessions []*session) {
+func (x *Handler) getOpenedSessions()(openedSessions []session) {
 
 	x.mu.RLock()
-	for _,session := range x.openedSessions {
-		openedSessions = append(openedSessions, &session)
-	}
+	copy(openedSessions, x.openedSessions)
 	x.mu.RUnlock()
 	return
 }
@@ -157,7 +162,7 @@ func (x *Handler) NotifyError(err error) {
 	errorInfo := &struct {error  string} { fmt.Sprintf("%v", err) }
 	for _, session := range x.getOpenedSessions() {
 		go func() {
-			err := session.WriteJSONSafely(errorInfo)
+			err := session.writeJSONSafely(errorInfo)
 			if err != nil {
 				log.Printf("write error conn=%v: %v", session.websocketConn.RemoteAddr(), err)
 			}

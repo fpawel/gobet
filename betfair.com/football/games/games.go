@@ -19,12 +19,13 @@ type listGames struct {
 	xs    []football.Game
 	muErr sync.RWMutex
 	err   error
-	wsHandler 	  ws.Handler
+	wsHandler 	  *ws.Handler
 }
 
 func New () (x *listGames){
 
 	x = new(listGames)
+	x.wsHandler = ws.NewHandler()
 	go func() {
 		for {
 			x.update()
@@ -73,7 +74,7 @@ func (x *listGames) Get() (r []football.Game, err error) {
 
 func (x *listGames) OpenWebSocketSession(conn *websocket.Conn) {
 
-	x.wsHandler.OpenSession(conn, []football.Game{})
+	x.wsHandler.NewSession(conn, []football.Game{})
 	games,err := x.Get()
 	if err == nil {
 		x.wsHandler.NotifyNewGames(games)
