@@ -54,13 +54,16 @@ func (x *Handler) OpenSession(conn *websocket.Conn, games []football.Game) {
 func (x *Handler) closeSession(conn *websocket.Conn, reason string) {
 
 	x.mu.Lock()
-	n := x.getConnIndex(conn)
-	if n > -1 && n < len(x.openedSessions) {
-		x.openedSessions = append(x.openedSessions[:n], x.openedSessions[n+1:]...)
+	sessionIndex := x.getConnIndex(conn)
+	openedSessionsCount := len(x.openedSessions)
+	if sessionIndex > -1 && sessionIndex < openedSessionsCount {
+		x.openedSessions = append(x.openedSessions[:sessionIndex], x.openedSessions[sessionIndex+1:]...)
 	}
 	x.mu.Unlock()
 	conn.Close()
-	log.Printf("end ws football session %v: %s\n", conn.RemoteAddr(), reason)
+	log.Printf("end websocket session %d of %d %v: %s\n",
+		sessionIndex, openedSessionsCount, conn.RemoteAddr(), reason)
+	log.Printf("%d opened sessions left\n", openedSessionsCount - 1)
 }
 
 func (x *Handler) updateSession(session *session, games []football.Game, changes *update.Games) {
