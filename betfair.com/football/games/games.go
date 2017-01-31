@@ -121,7 +121,6 @@ func (x *listGames) update() {
 	}
 	if err == nil {
 		x.setGames(readedGames)
-		time.Sleep(3* time.Second)
 	}
 }
 

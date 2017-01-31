@@ -21,10 +21,17 @@ type session struct {
 	mu	*sync.Mutex
 }
 
-func (x *session) WriteJSON (i interface{}) error{
+func (x *session) WriteJSONSafely (i interface{}) error{
 	x.mu.Lock()
 	defer x.mu.Unlock()
 	return  x.websocketConn.WriteJSON(i)
+}
+
+func (x *session) ReadSafely() (messageType int, recivedBytes []byte, err error) {
+	x.mu.Lock()
+	defer x.mu.Unlock()
+	messageType, recivedBytes, err = x.websocketConn.ReadMessage()
+	return
 }
 
 func (x *Handler) getConnIndex(websocketConn *websocket.Conn) (n int) {
@@ -70,20 +77,19 @@ func (x *Handler) closeSession(conn *websocket.Conn, reason string) {
 
 func (x *Handler) updateSession(session *session, games []football.Game, changes *update.Games) {
 
-	errWrite := session.WriteJSON(changes)
+	err := session.WriteJSONSafely(changes)
 	websocketConn := session.websocketConn
-	if errWrite != nil {
-		x.closeSession(websocketConn, fmt.Sprintf("write websocket error: %v", errWrite))
+	if err != nil {
+		x.closeSession(websocketConn, fmt.Sprintf("write websocket error: %v", err))
 		return
 	}
 	time.Sleep(500 * time.Millisecond )
 
+	messageType, recivedBytes, err := session.ReadSafely()
 
-	messageType, recivedBytes, errRead := websocketConn.ReadMessage()
-
-	if errRead != nil {
+	if err != nil {
 		time.Sleep(time.Second)
-		x.closeSession(websocketConn, fmt.Sprintf("read websocket error: %v", errRead ))
+		x.closeSession(websocketConn, fmt.Sprintf("read websocket error: %v", err ))
 		return
 	}
 
@@ -93,20 +99,14 @@ func (x *Handler) updateSession(session *session, games []football.Game, changes
 	default:
 		recivedStr := string(recivedBytes)
 		if recivedStr == changes.HashCode {
-			x.mu.RLock()
-			n := x.getConnIndex(websocketConn)
-			x.mu.RUnlock()
-			if n > -1 && n< len(x.openedSessions) {
-				x.mu.Lock()
-				x.openedSessions[n].games = games
-				x.mu.Unlock()
-			}
-		} else {
-			if errRead != nil {
-				log.Printf("read websocket error message_type=%d message=%v conn=[%v]: %v",
-					messageType, recivedStr, websocketConn.RemoteAddr(), errRead)
-				return
-			}
+			x.mu.Lock()
+			session.games = games
+			x.mu.Unlock()
+		} else{
+			time.Sleep(time.Second)
+			x.closeSession(websocketConn,
+				fmt.Sprintf("unexpected answer %v, expected %v",
+					recivedStr, changes.HashCode  ))
 		}
 	}
 	return
@@ -140,7 +140,7 @@ func (x *Handler) NotifyError(err error) {
 	errorInfo := &struct {error  string} { fmt.Sprintf("%v", err) }
 	for _, session := range x.getOpenedSessions() {
 		go func() {
-			err := session.WriteJSON(errorInfo)
+			err := session.WriteJSONSafely(errorInfo)
 			if err != nil {
 				log.Printf("write error conn=%v: %v", session.websocketConn.RemoteAddr(), err)
 			}
