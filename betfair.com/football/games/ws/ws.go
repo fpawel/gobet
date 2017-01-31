@@ -71,7 +71,7 @@ func (x *Handler) updateSession(session *session, games []football.Game, changes
 		x.closeSession(websocketConn, fmt.Sprintf("write error: %v", err))
 		return
 	}
-	time.Sleep(time.Second )
+	time.Sleep(100 * time.Millisecond )
 	messageType, recivedBytes, err := websocketConn.ReadMessage()
 	if err != nil {
 		log.Printf("read error %v: %v", websocketConn.RemoteAddr(), err)
