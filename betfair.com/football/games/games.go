@@ -113,6 +113,8 @@ func (x *listGames) update() {
 				game.Event = &event
 				readedGames = append(readedGames, game)
 			} else {
+				// нет события Event с game.EventID.
+				// Возможно, кеш событий "не свежий" и его следует обновить
 				events.ClearCache(1)
 			}
 		}

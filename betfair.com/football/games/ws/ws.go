@@ -39,7 +39,7 @@ func (x *Handler) getConnIndex(websocketConn *websocket.Conn) (n int) {
 }
 
 func (x *Handler) OpenSession(conn *websocket.Conn, games []football.Game) {
-	log.Printf("begin ws football session: %v\n", conn.RemoteAddr())
+	log.Printf("begin ws football session conn=[%v]\n", conn.RemoteAddr())
 	session := session{}
 	session.websocketConn = conn
 	session.games = games
@@ -61,7 +61,7 @@ func (x *Handler) closeSession(conn *websocket.Conn, reason string) {
 	}
 	x.mu.Unlock()
 	conn.Close()
-	log.Printf("end websocket session %d of %d %v: %s\n",
+	log.Printf("end websocket session %d of %d conn=[%v]: %s\n",
 		sessionIndex, openedSessionsCount, conn.RemoteAddr(), reason)
 	log.Printf("%d opened sessions left\n", openedSessionsCount - 1)
 }
@@ -94,7 +94,7 @@ func (x *Handler) updateSession(session *session, games []football.Game, changes
 			}
 		} else {
 			if errRead != nil {
-				log.Printf("read websocket error %v: %d, %v, %v",
+				log.Printf("read websocket error message_type=%d message=%v conn=[%v]: %v",
 					messageType, recivedStr, websocketConn.RemoteAddr(), errRead)
 				return
 			}
@@ -133,7 +133,7 @@ func (x *Handler) NotifyError(err error) {
 		go func() {
 			err := session.WriteJSON(errorInfo)
 			if err != nil {
-				log.Printf("write error %v: %v", session.websocketConn.RemoteAddr(), err)
+				log.Printf("write error conn=%v: %v", session.websocketConn.RemoteAddr(), err)
 			}
 			x.closeSession(session.websocketConn, fmt.Sprintf("ws football session games error: %v", err))
 		}()
