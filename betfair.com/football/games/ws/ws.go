@@ -65,24 +65,22 @@ func (x *Handler) closeSession(conn *websocket.Conn, reason string) {
 
 func (x *Handler) updateSession(session *session, games []football.Game, changes *update.Games) {
 
-	err := session.WriteJSON(changes)
+	errWrite := session.WriteJSON(changes)
 	websocketConn := session.websocketConn
-	if err != nil {
-		x.closeSession(websocketConn, fmt.Sprintf("write error: %v", err))
+	if errWrite != nil {
+		x.closeSession(websocketConn, fmt.Sprintf("write websocket error: %v", errWrite))
 		return
 	}
-	time.Sleep(100 * time.Millisecond )
-	messageType, recivedBytes, err := websocketConn.ReadMessage()
-	if err != nil {
-		log.Printf("read error %v: %v", websocketConn.RemoteAddr(), err)
-		return
-	}
+	time.Sleep(500 * time.Millisecond )
 
+
+	messageType, recivedBytes, errRead := websocketConn.ReadMessage()
 	switch messageType {
 	case websocket.CloseMessage:
 		x.closeSession(websocketConn, "COLSE message recived from client")
 	default:
-		if string(recivedBytes) == changes.HashCode {
+		recivedStr := string(recivedBytes)
+		if recivedStr == changes.HashCode {
 			x.mu.RLock()
 			n := x.getConnIndex(websocketConn)
 			x.mu.RUnlock()
@@ -90,6 +88,12 @@ func (x *Handler) updateSession(session *session, games []football.Game, changes
 				x.mu.Lock()
 				x.openedSessions[n].games = games
 				x.mu.Unlock()
+			}
+		} else {
+			if errRead != nil {
+				log.Printf("read websocket error %v: %d, %v, %v",
+					messageType, recivedStr, websocketConn.RemoteAddr(), errRead)
+				return
 			}
 		}
 	}
