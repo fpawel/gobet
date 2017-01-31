@@ -2,22 +2,22 @@ eventTypes = [
     {
         "id": 1,
         "name": "Футбол ",
-        "market_count": 9953
+        "market_count": 10189
     },
     {
         "id": 2,
         "name": "Теннис ",
-        "market_count": 2390
+        "market_count": 2283
     },
     {
         "id": 3,
         "name": "Гольф ",
-        "market_count": 25
+        "market_count": 28
     },
     {
         "id": 4,
         "name": "Крикет",
-        "market_count": 185
+        "market_count": 176
     },
     {
         "id": 5,
@@ -37,7 +37,7 @@ eventTypes = [
     {
         "id": 7,
         "name": "Скачки",
-        "market_count": 609
+        "market_count": 639
     },
     {
         "id": 8,
@@ -52,17 +52,17 @@ eventTypes = [
     {
         "id": 10,
         "name": "Специальные ставки",
-        "market_count": 48
+        "market_count": 49
     },
     {
         "id": 998917,
         "name": "Волейбол",
-        "market_count": 22
+        "market_count": 21
     },
     {
         "id": 11,
         "name": "Велоспорт ",
-        "market_count": 15
+        "market_count": 11
     },
     {
         "id": 136332,
@@ -107,12 +107,12 @@ eventTypes = [
     {
         "id": 7522,
         "name": "Баскетбол ",
-        "market_count": 149
+        "market_count": 166
     },
     {
         "id": 7524,
         "name": "Хоккей ",
-        "market_count": 115
+        "market_count": 145
     },
     {
         "id": 61420,
@@ -137,11 +137,11 @@ eventTypes = [
     {
         "id": 4339,
         "name": "Собачьи бега",
-        "market_count": 416
+        "market_count": 357
     },
     {
         "id": 2378961,
         "name": "Политика",
-        "market_count": 54
+        "market_count": 55
     }
 ]
