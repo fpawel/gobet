@@ -56,12 +56,12 @@ func (x *handle) read() (messageType int, recivedBytes []byte, err error) {
 	return
 }
 
-func (x *handle) NotifyInternalError(err error) {
-	if err == nil {
+func (x *handle) NotifyInternalError(errorToSend error) {
+	if errorToSend == nil {
 		return
 	}
-	errorInfo := &struct{ error error } {err}
-	err = x.write(errorInfo)
+	errorInfo := &struct{ error error } {errorToSend}
+	err := x.write(errorInfo)
 	if err != nil {
 		log.Printf("write error conn=%v: %v", x.What(), err)
 	}

@@ -2,27 +2,27 @@ eventTypes = [
     {
         "id": 1,
         "name": "Футбол ",
-        "market_count": 10639
+        "market_count": 10186
     },
     {
         "id": 2,
         "name": "Теннис ",
-        "market_count": 2291
+        "market_count": 2149
     },
     {
         "id": 3,
         "name": "Гольф ",
-        "market_count": 28
+        "market_count": 29
     },
     {
         "id": 4,
         "name": "Крикет",
-        "market_count": 176
+        "market_count": 188
     },
     {
         "id": 5,
         "name": "Регби",
-        "market_count": 62
+        "market_count": 115
     },
     {
         "id": 1477,
@@ -37,7 +37,7 @@ eventTypes = [
     {
         "id": 7,
         "name": "Скачки",
-        "market_count": 699
+        "market_count": 625
     },
     {
         "id": 8,
@@ -52,12 +52,12 @@ eventTypes = [
     {
         "id": 10,
         "name": "Специальные ставки",
-        "market_count": 49
+        "market_count": 53
     },
     {
         "id": 998917,
         "name": "Волейбол",
-        "market_count": 21
+        "market_count": 40
     },
     {
         "id": 11,
@@ -92,7 +92,7 @@ eventTypes = [
     {
         "id": 6423,
         "name": "Американский футбол",
-        "market_count": 29
+        "market_count": 30
     },
     {
         "id": 7511,
@@ -107,12 +107,12 @@ eventTypes = [
     {
         "id": 7522,
         "name": "Баскетбол ",
-        "market_count": 166
+        "market_count": 191
     },
     {
         "id": 7524,
         "name": "Хоккей ",
-        "market_count": 145
+        "market_count": 130
     },
     {
         "id": 61420,
@@ -122,22 +122,22 @@ eventTypes = [
     {
         "id": 468328,
         "name": "Гандбол ",
-        "market_count": 3
+        "market_count": 17
     },
     {
         "id": 3503,
         "name": "Дартс",
-        "market_count": 70
+        "market_count": 86
     },
     {
         "id": 26420387,
         "name": "ММА",
-        "market_count": 4
+        "market_count": 16
     },
     {
         "id": 4339,
         "name": "Собачьи бега",
-        "market_count": 354
+        "market_count": 249
     },
     {
         "id": 2378961,
