@@ -80,6 +80,13 @@ func (x *Handler) updateSession(session *session, games []football.Game, changes
 
 
 	messageType, recivedBytes, errRead := websocketConn.ReadMessage()
+
+	if errRead != nil {
+		time.Sleep(time.Second)
+		x.closeSession(websocketConn, fmt.Sprintf("read websocket error: %v", errRead ))
+		return
+	}
+
 	switch messageType {
 	case websocket.CloseMessage:
 		x.closeSession(websocketConn, "COLSE message recived from client")
