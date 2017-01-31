@@ -134,7 +134,7 @@ func (x *Handler) closeSession(conn *websocket.Conn, reason error) {
 	if session == nil{
 		conn.Close()
 		x.mu.Unlock()
-		log.Printf("session not found: %v\n", conn.RemoteAddr())
+		log.Printf("session not found when closing %v: %v\n", reason, conn.RemoteAddr())
 
 		return
 	}
@@ -164,10 +164,8 @@ func (x *Handler) getOpenedSessions() (openedSessions []*session) {
 
 func (x *Handler) updateSessionGames(session *session, games []football.Game) {
 	session.muGames.RLock()
-	sessionGames := session.games
+	changes := update.New(session.games, games)
 	session.muGames.RUnlock()
-
-	changes := update.New(sessionGames, games)
 
 	if changes != nil {
 		err := session.update(changes)
