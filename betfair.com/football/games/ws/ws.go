@@ -140,7 +140,7 @@ func (x *Handler) NotifyNewGames(games []football.Game) {
 
 			if changes != nil {
 
-				err := x.updateSession(session, changes)
+				err := x.updateSession(&session, changes)
 				if err == nil {
 					session.muGames.Lock()
 					session.games = games
