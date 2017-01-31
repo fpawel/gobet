@@ -56,16 +56,16 @@ func (x *handle) read() (messageType int, recivedBytes []byte, err error) {
 	return
 }
 
-func (x *handle) NotifyInternalError(errorToSend error) {
-	if errorToSend == nil {
+func (x *handle) NotifyInternalError(gamesError error) {
+	if gamesError == nil {
 		return
 	}
-	errorInfo := &struct{ error error } {errorToSend}
+	errorInfo := &struct{ error error } {error : gamesError}
 	err := x.write(errorInfo)
 	if err != nil {
 		log.Printf("write error conn=%v: %v", x.What(), err)
 	}
-	x.Close( err )
+	x.Close( gamesError )
 }
 
 func (x *handle) Update(games []football.Game) {
