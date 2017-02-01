@@ -6,9 +6,7 @@ import (
 	"github.com/user/gobet/betfair.com/football/games/ws"
 	"sync"
 	"github.com/user/gobet/betfair.com/football/webclient"
-	"os"
-	"log"
-	"time"
+
 	"github.com/user/gobet/betfair.com/aping/client"
 	"github.com/user/gobet/betfair.com/aping/client/events"
 )
@@ -26,6 +24,7 @@ func New () (x *listGames){
 
 	x = new(listGames)
 	x.wsHandler = ws.NewHandler()
+	/*
 	go func() {
 		for {
 			x.update()
@@ -35,6 +34,7 @@ func New () (x *listGames){
 			}
 		}
 	}()
+	*/
 	return
 }
 

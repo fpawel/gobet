@@ -10039,541 +10039,6 @@ var _elm_lang$navigation$Navigation$onEffects = F4(
 	});
 _elm_lang$core$Native_Platform.effectManagers['Navigation'] = {pkg: 'elm-lang/navigation', init: _elm_lang$navigation$Navigation$init, onEffects: _elm_lang$navigation$Navigation$onEffects, onSelfMsg: _elm_lang$navigation$Navigation$onSelfMsg, tag: 'fx', cmdMap: _elm_lang$navigation$Navigation$cmdMap, subMap: _elm_lang$navigation$Navigation$subMap};
 
-var _elm_lang$websocket$Native_WebSocket = function() {
-
-function open(url, settings)
-{
-	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
-	{
-		try
-		{
-			var socket = new WebSocket(url);
-			socket.elm_web_socket = true;
-		}
-		catch(err)
-		{
-			return callback(_elm_lang$core$Native_Scheduler.fail({
-				ctor: err.name === 'SecurityError' ? 'BadSecurity' : 'BadArgs',
-				_0: err.message
-			}));
-		}
-
-		socket.addEventListener("open", function(event) {
-			callback(_elm_lang$core$Native_Scheduler.succeed(socket));
-		});
-
-		socket.addEventListener("message", function(event) {
-			_elm_lang$core$Native_Scheduler.rawSpawn(A2(settings.onMessage, socket, event.data));
-		});
-
-		socket.addEventListener("close", function(event) {
-			_elm_lang$core$Native_Scheduler.rawSpawn(settings.onClose({
-				code: event.code,
-				reason: event.reason,
-				wasClean: event.wasClean
-			}));
-		});
-
-		return function()
-		{
-			if (socket && socket.close)
-			{
-				socket.close();
-			}
-		};
-	});
-}
-
-function send(socket, string)
-{
-	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
-	{
-		var result =
-			socket.readyState === WebSocket.OPEN
-				? _elm_lang$core$Maybe$Nothing
-				: _elm_lang$core$Maybe$Just({ ctor: 'NotOpen' });
-
-		try
-		{
-			socket.send(string);
-		}
-		catch(err)
-		{
-			result = _elm_lang$core$Maybe$Just({ ctor: 'BadString' });
-		}
-
-		callback(_elm_lang$core$Native_Scheduler.succeed(result));
-	});
-}
-
-function close(code, reason, socket)
-{
-	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback) {
-		try
-		{
-			socket.close(code, reason);
-		}
-		catch(err)
-		{
-			return callback(_elm_lang$core$Native_Scheduler.fail(_elm_lang$core$Maybe$Just({
-				ctor: err.name === 'SyntaxError' ? 'BadReason' : 'BadCode'
-			})));
-		}
-		callback(_elm_lang$core$Native_Scheduler.succeed(_elm_lang$core$Maybe$Nothing));
-	});
-}
-
-function bytesQueued(socket)
-{
-	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback) {
-		callback(_elm_lang$core$Native_Scheduler.succeed(socket.bufferedAmount));
-	});
-}
-
-return {
-	open: F2(open),
-	send: F2(send),
-	close: F3(close),
-	bytesQueued: bytesQueued
-};
-
-}();
-
-var _elm_lang$websocket$WebSocket_LowLevel$bytesQueued = _elm_lang$websocket$Native_WebSocket.bytesQueued;
-var _elm_lang$websocket$WebSocket_LowLevel$send = _elm_lang$websocket$Native_WebSocket.send;
-var _elm_lang$websocket$WebSocket_LowLevel$closeWith = _elm_lang$websocket$Native_WebSocket.close;
-var _elm_lang$websocket$WebSocket_LowLevel$close = function (socket) {
-	return A2(
-		_elm_lang$core$Task$map,
-		_elm_lang$core$Basics$always(
-			{ctor: '_Tuple0'}),
-		A3(_elm_lang$websocket$WebSocket_LowLevel$closeWith, 1000, '', socket));
-};
-var _elm_lang$websocket$WebSocket_LowLevel$open = _elm_lang$websocket$Native_WebSocket.open;
-var _elm_lang$websocket$WebSocket_LowLevel$Settings = F2(
-	function (a, b) {
-		return {onMessage: a, onClose: b};
-	});
-var _elm_lang$websocket$WebSocket_LowLevel$WebSocket = {ctor: 'WebSocket'};
-var _elm_lang$websocket$WebSocket_LowLevel$BadArgs = {ctor: 'BadArgs'};
-var _elm_lang$websocket$WebSocket_LowLevel$BadSecurity = {ctor: 'BadSecurity'};
-var _elm_lang$websocket$WebSocket_LowLevel$BadReason = {ctor: 'BadReason'};
-var _elm_lang$websocket$WebSocket_LowLevel$BadCode = {ctor: 'BadCode'};
-var _elm_lang$websocket$WebSocket_LowLevel$BadString = {ctor: 'BadString'};
-var _elm_lang$websocket$WebSocket_LowLevel$NotOpen = {ctor: 'NotOpen'};
-
-var _elm_lang$websocket$WebSocket$closeConnection = function (connection) {
-	var _p0 = connection;
-	if (_p0.ctor === 'Opening') {
-		return _elm_lang$core$Process$kill(_p0._1);
-	} else {
-		return _elm_lang$websocket$WebSocket_LowLevel$close(_p0._0);
-	}
-};
-var _elm_lang$websocket$WebSocket$after = function (backoff) {
-	return (_elm_lang$core$Native_Utils.cmp(backoff, 1) < 0) ? _elm_lang$core$Task$succeed(
-		{ctor: '_Tuple0'}) : _elm_lang$core$Process$sleep(
-		_elm_lang$core$Basics$toFloat(
-			10 * Math.pow(2, backoff)));
-};
-var _elm_lang$websocket$WebSocket$removeQueue = F2(
-	function (name, state) {
-		return _elm_lang$core$Native_Utils.update(
-			state,
-			{
-				queues: A2(_elm_lang$core$Dict$remove, name, state.queues)
-			});
-	});
-var _elm_lang$websocket$WebSocket$updateSocket = F3(
-	function (name, connection, state) {
-		return _elm_lang$core$Native_Utils.update(
-			state,
-			{
-				sockets: A3(_elm_lang$core$Dict$insert, name, connection, state.sockets)
-			});
-	});
-var _elm_lang$websocket$WebSocket$add = F2(
-	function (value, maybeList) {
-		var _p1 = maybeList;
-		if (_p1.ctor === 'Nothing') {
-			return _elm_lang$core$Maybe$Just(
-				{
-					ctor: '::',
-					_0: value,
-					_1: {ctor: '[]'}
-				});
-		} else {
-			return _elm_lang$core$Maybe$Just(
-				{ctor: '::', _0: value, _1: _p1._0});
-		}
-	});
-var _elm_lang$websocket$WebSocket$buildSubDict = F2(
-	function (subs, dict) {
-		buildSubDict:
-		while (true) {
-			var _p2 = subs;
-			if (_p2.ctor === '[]') {
-				return dict;
-			} else {
-				if (_p2._0.ctor === 'Listen') {
-					var _v3 = _p2._1,
-						_v4 = A3(
-						_elm_lang$core$Dict$update,
-						_p2._0._0,
-						_elm_lang$websocket$WebSocket$add(_p2._0._1),
-						dict);
-					subs = _v3;
-					dict = _v4;
-					continue buildSubDict;
-				} else {
-					var _v5 = _p2._1,
-						_v6 = A3(
-						_elm_lang$core$Dict$update,
-						_p2._0._0,
-						function (_p3) {
-							return _elm_lang$core$Maybe$Just(
-								A2(
-									_elm_lang$core$Maybe$withDefault,
-									{ctor: '[]'},
-									_p3));
-						},
-						dict);
-					subs = _v5;
-					dict = _v6;
-					continue buildSubDict;
-				}
-			}
-		}
-	});
-var _elm_lang$websocket$WebSocket_ops = _elm_lang$websocket$WebSocket_ops || {};
-_elm_lang$websocket$WebSocket_ops['&>'] = F2(
-	function (t1, t2) {
-		return A2(
-			_elm_lang$core$Task$andThen,
-			function (_p4) {
-				return t2;
-			},
-			t1);
-	});
-var _elm_lang$websocket$WebSocket$sendMessagesHelp = F3(
-	function (cmds, socketsDict, queuesDict) {
-		sendMessagesHelp:
-		while (true) {
-			var _p5 = cmds;
-			if (_p5.ctor === '[]') {
-				return _elm_lang$core$Task$succeed(queuesDict);
-			} else {
-				var _p9 = _p5._1;
-				var _p8 = _p5._0._0;
-				var _p7 = _p5._0._1;
-				var _p6 = A2(_elm_lang$core$Dict$get, _p8, socketsDict);
-				if ((_p6.ctor === 'Just') && (_p6._0.ctor === 'Connected')) {
-					return A2(
-						_elm_lang$websocket$WebSocket_ops['&>'],
-						A2(_elm_lang$websocket$WebSocket_LowLevel$send, _p6._0._0, _p7),
-						A3(_elm_lang$websocket$WebSocket$sendMessagesHelp, _p9, socketsDict, queuesDict));
-				} else {
-					var _v9 = _p9,
-						_v10 = socketsDict,
-						_v11 = A3(
-						_elm_lang$core$Dict$update,
-						_p8,
-						_elm_lang$websocket$WebSocket$add(_p7),
-						queuesDict);
-					cmds = _v9;
-					socketsDict = _v10;
-					queuesDict = _v11;
-					continue sendMessagesHelp;
-				}
-			}
-		}
-	});
-var _elm_lang$websocket$WebSocket$subscription = _elm_lang$core$Native_Platform.leaf('WebSocket');
-var _elm_lang$websocket$WebSocket$command = _elm_lang$core$Native_Platform.leaf('WebSocket');
-var _elm_lang$websocket$WebSocket$State = F3(
-	function (a, b, c) {
-		return {sockets: a, queues: b, subs: c};
-	});
-var _elm_lang$websocket$WebSocket$init = _elm_lang$core$Task$succeed(
-	A3(_elm_lang$websocket$WebSocket$State, _elm_lang$core$Dict$empty, _elm_lang$core$Dict$empty, _elm_lang$core$Dict$empty));
-var _elm_lang$websocket$WebSocket$Send = F2(
-	function (a, b) {
-		return {ctor: 'Send', _0: a, _1: b};
-	});
-var _elm_lang$websocket$WebSocket$send = F2(
-	function (url, message) {
-		return _elm_lang$websocket$WebSocket$command(
-			A2(_elm_lang$websocket$WebSocket$Send, url, message));
-	});
-var _elm_lang$websocket$WebSocket$cmdMap = F2(
-	function (_p11, _p10) {
-		var _p12 = _p10;
-		return A2(_elm_lang$websocket$WebSocket$Send, _p12._0, _p12._1);
-	});
-var _elm_lang$websocket$WebSocket$KeepAlive = function (a) {
-	return {ctor: 'KeepAlive', _0: a};
-};
-var _elm_lang$websocket$WebSocket$keepAlive = function (url) {
-	return _elm_lang$websocket$WebSocket$subscription(
-		_elm_lang$websocket$WebSocket$KeepAlive(url));
-};
-var _elm_lang$websocket$WebSocket$Listen = F2(
-	function (a, b) {
-		return {ctor: 'Listen', _0: a, _1: b};
-	});
-var _elm_lang$websocket$WebSocket$listen = F2(
-	function (url, tagger) {
-		return _elm_lang$websocket$WebSocket$subscription(
-			A2(_elm_lang$websocket$WebSocket$Listen, url, tagger));
-	});
-var _elm_lang$websocket$WebSocket$subMap = F2(
-	function (func, sub) {
-		var _p13 = sub;
-		if (_p13.ctor === 'Listen') {
-			return A2(
-				_elm_lang$websocket$WebSocket$Listen,
-				_p13._0,
-				function (_p14) {
-					return func(
-						_p13._1(_p14));
-				});
-		} else {
-			return _elm_lang$websocket$WebSocket$KeepAlive(_p13._0);
-		}
-	});
-var _elm_lang$websocket$WebSocket$Connected = function (a) {
-	return {ctor: 'Connected', _0: a};
-};
-var _elm_lang$websocket$WebSocket$Opening = F2(
-	function (a, b) {
-		return {ctor: 'Opening', _0: a, _1: b};
-	});
-var _elm_lang$websocket$WebSocket$BadOpen = function (a) {
-	return {ctor: 'BadOpen', _0: a};
-};
-var _elm_lang$websocket$WebSocket$GoodOpen = F2(
-	function (a, b) {
-		return {ctor: 'GoodOpen', _0: a, _1: b};
-	});
-var _elm_lang$websocket$WebSocket$Die = function (a) {
-	return {ctor: 'Die', _0: a};
-};
-var _elm_lang$websocket$WebSocket$Receive = F2(
-	function (a, b) {
-		return {ctor: 'Receive', _0: a, _1: b};
-	});
-var _elm_lang$websocket$WebSocket$open = F2(
-	function (name, router) {
-		return A2(
-			_elm_lang$websocket$WebSocket_LowLevel$open,
-			name,
-			{
-				onMessage: F2(
-					function (_p15, msg) {
-						return A2(
-							_elm_lang$core$Platform$sendToSelf,
-							router,
-							A2(_elm_lang$websocket$WebSocket$Receive, name, msg));
-					}),
-				onClose: function (details) {
-					return A2(
-						_elm_lang$core$Platform$sendToSelf,
-						router,
-						_elm_lang$websocket$WebSocket$Die(name));
-				}
-			});
-	});
-var _elm_lang$websocket$WebSocket$attemptOpen = F3(
-	function (router, backoff, name) {
-		var badOpen = function (_p16) {
-			return A2(
-				_elm_lang$core$Platform$sendToSelf,
-				router,
-				_elm_lang$websocket$WebSocket$BadOpen(name));
-		};
-		var goodOpen = function (ws) {
-			return A2(
-				_elm_lang$core$Platform$sendToSelf,
-				router,
-				A2(_elm_lang$websocket$WebSocket$GoodOpen, name, ws));
-		};
-		var actuallyAttemptOpen = A2(
-			_elm_lang$core$Task$onError,
-			badOpen,
-			A2(
-				_elm_lang$core$Task$andThen,
-				goodOpen,
-				A2(_elm_lang$websocket$WebSocket$open, name, router)));
-		return _elm_lang$core$Process$spawn(
-			A2(
-				_elm_lang$websocket$WebSocket_ops['&>'],
-				_elm_lang$websocket$WebSocket$after(backoff),
-				actuallyAttemptOpen));
-	});
-var _elm_lang$websocket$WebSocket$onEffects = F4(
-	function (router, cmds, subs, state) {
-		var newSubs = A2(_elm_lang$websocket$WebSocket$buildSubDict, subs, _elm_lang$core$Dict$empty);
-		var cleanup = function (newQueues) {
-			var rightStep = F3(
-				function (name, connection, getNewSockets) {
-					return A2(
-						_elm_lang$websocket$WebSocket_ops['&>'],
-						_elm_lang$websocket$WebSocket$closeConnection(connection),
-						getNewSockets);
-				});
-			var bothStep = F4(
-				function (name, _p17, connection, getNewSockets) {
-					return A2(
-						_elm_lang$core$Task$map,
-						A2(_elm_lang$core$Dict$insert, name, connection),
-						getNewSockets);
-				});
-			var leftStep = F3(
-				function (name, _p18, getNewSockets) {
-					return A2(
-						_elm_lang$core$Task$andThen,
-						function (newSockets) {
-							return A2(
-								_elm_lang$core$Task$andThen,
-								function (pid) {
-									return _elm_lang$core$Task$succeed(
-										A3(
-											_elm_lang$core$Dict$insert,
-											name,
-											A2(_elm_lang$websocket$WebSocket$Opening, 0, pid),
-											newSockets));
-								},
-								A3(_elm_lang$websocket$WebSocket$attemptOpen, router, 0, name));
-						},
-						getNewSockets);
-				});
-			var newEntries = A2(
-				_elm_lang$core$Dict$union,
-				newQueues,
-				A2(
-					_elm_lang$core$Dict$map,
-					F2(
-						function (k, v) {
-							return {ctor: '[]'};
-						}),
-					newSubs));
-			var collectNewSockets = A6(
-				_elm_lang$core$Dict$merge,
-				leftStep,
-				bothStep,
-				rightStep,
-				newEntries,
-				state.sockets,
-				_elm_lang$core$Task$succeed(_elm_lang$core$Dict$empty));
-			return A2(
-				_elm_lang$core$Task$andThen,
-				function (newSockets) {
-					return _elm_lang$core$Task$succeed(
-						A3(_elm_lang$websocket$WebSocket$State, newSockets, newQueues, newSubs));
-				},
-				collectNewSockets);
-		};
-		var sendMessagesGetNewQueues = A3(_elm_lang$websocket$WebSocket$sendMessagesHelp, cmds, state.sockets, state.queues);
-		return A2(_elm_lang$core$Task$andThen, cleanup, sendMessagesGetNewQueues);
-	});
-var _elm_lang$websocket$WebSocket$onSelfMsg = F3(
-	function (router, selfMsg, state) {
-		var _p19 = selfMsg;
-		switch (_p19.ctor) {
-			case 'Receive':
-				var sends = A2(
-					_elm_lang$core$List$map,
-					function (tagger) {
-						return A2(
-							_elm_lang$core$Platform$sendToApp,
-							router,
-							tagger(_p19._1));
-					},
-					A2(
-						_elm_lang$core$Maybe$withDefault,
-						{ctor: '[]'},
-						A2(_elm_lang$core$Dict$get, _p19._0, state.subs)));
-				return A2(
-					_elm_lang$websocket$WebSocket_ops['&>'],
-					_elm_lang$core$Task$sequence(sends),
-					_elm_lang$core$Task$succeed(state));
-			case 'Die':
-				var _p21 = _p19._0;
-				var _p20 = A2(_elm_lang$core$Dict$get, _p21, state.sockets);
-				if (_p20.ctor === 'Nothing') {
-					return _elm_lang$core$Task$succeed(state);
-				} else {
-					return A2(
-						_elm_lang$core$Task$andThen,
-						function (pid) {
-							return _elm_lang$core$Task$succeed(
-								A3(
-									_elm_lang$websocket$WebSocket$updateSocket,
-									_p21,
-									A2(_elm_lang$websocket$WebSocket$Opening, 0, pid),
-									state));
-						},
-						A3(_elm_lang$websocket$WebSocket$attemptOpen, router, 0, _p21));
-				}
-			case 'GoodOpen':
-				var _p24 = _p19._1;
-				var _p23 = _p19._0;
-				var _p22 = A2(_elm_lang$core$Dict$get, _p23, state.queues);
-				if (_p22.ctor === 'Nothing') {
-					return _elm_lang$core$Task$succeed(
-						A3(
-							_elm_lang$websocket$WebSocket$updateSocket,
-							_p23,
-							_elm_lang$websocket$WebSocket$Connected(_p24),
-							state));
-				} else {
-					return A3(
-						_elm_lang$core$List$foldl,
-						F2(
-							function (msg, task) {
-								return A2(
-									_elm_lang$websocket$WebSocket_ops['&>'],
-									A2(_elm_lang$websocket$WebSocket_LowLevel$send, _p24, msg),
-									task);
-							}),
-						_elm_lang$core$Task$succeed(
-							A2(
-								_elm_lang$websocket$WebSocket$removeQueue,
-								_p23,
-								A3(
-									_elm_lang$websocket$WebSocket$updateSocket,
-									_p23,
-									_elm_lang$websocket$WebSocket$Connected(_p24),
-									state))),
-						_p22._0);
-				}
-			default:
-				var _p27 = _p19._0;
-				var _p25 = A2(_elm_lang$core$Dict$get, _p27, state.sockets);
-				if (_p25.ctor === 'Nothing') {
-					return _elm_lang$core$Task$succeed(state);
-				} else {
-					if (_p25._0.ctor === 'Opening') {
-						var _p26 = _p25._0._0;
-						return A2(
-							_elm_lang$core$Task$andThen,
-							function (pid) {
-								return _elm_lang$core$Task$succeed(
-									A3(
-										_elm_lang$websocket$WebSocket$updateSocket,
-										_p27,
-										A2(_elm_lang$websocket$WebSocket$Opening, _p26 + 1, pid),
-										state));
-							},
-							A3(_elm_lang$websocket$WebSocket$attemptOpen, router, _p26 + 1, _p27));
-					} else {
-						return _elm_lang$core$Task$succeed(state);
-					}
-				}
-		}
-	});
-_elm_lang$core$Native_Platform.effectManagers['WebSocket'] = {pkg: 'elm-lang/websocket', init: _elm_lang$websocket$WebSocket$init, onEffects: _elm_lang$websocket$WebSocket$onEffects, onSelfMsg: _elm_lang$websocket$WebSocket$onSelfMsg, tag: 'fx', cmdMap: _elm_lang$websocket$WebSocket$cmdMap, subMap: _elm_lang$websocket$WebSocket$subMap};
-
 var _evancz$url_parser$UrlParser$toKeyValuePair = function (segment) {
 	var _p0 = A2(_elm_lang$core$String$split, '=', segment);
 	if (((_p0.ctor === '::') && (_p0._1.ctor === '::')) && (_p0._1._1.ctor === '[]')) {
@@ -10825,7 +10290,16 @@ var _evancz$url_parser$UrlParser$intParam = function (name) {
 	return A2(_evancz$url_parser$UrlParser$customParam, name, _evancz$url_parser$UrlParser$intParamHelp);
 };
 
-var _fpawel$gobet_front$CountryCode$codes = _elm_lang$core$Dict$fromList(
+var _fpawel$gobet_front$Aping$Sport = F3(
+	function (a, b, c) {
+		return {id: a, name: b, market_count: c};
+	});
+var _fpawel$gobet_front$Aping$Event = F6(
+	function (a, b, c, d, e, f) {
+		return {id: a, name: b, country: c, openDate: d, timezone: e, venue: f};
+	});
+
+var _fpawel$gobet_front$Help_CountryCode$codes = _elm_lang$core$Dict$fromList(
 	{
 		ctor: '::',
 		_0: {ctor: '_Tuple2', _0: 'AE', _1: 'ОАЭ'},
@@ -11395,11 +10869,11 @@ var _fpawel$gobet_front$CountryCode$codes = _elm_lang$core$Dict$fromList(
 			}
 		}
 	});
-var _fpawel$gobet_front$CountryCode$countryName = function (k) {
-	return A2(_elm_lang$core$Dict$get, k, _fpawel$gobet_front$CountryCode$codes);
+var _fpawel$gobet_front$Help_CountryCode$countryName = function (k) {
+	return A2(_elm_lang$core$Dict$get, k, _fpawel$gobet_front$Help_CountryCode$codes);
 };
 
-var _fpawel$gobet_front$ApiNgTypes$decoderDate = A2(
+var _fpawel$gobet_front$Aping_Decoder$date = A2(
 	_elm_lang$core$Json_Decode$andThen,
 	function (x) {
 		var _p0 = x;
@@ -11410,30 +10884,16 @@ var _fpawel$gobet_front$ApiNgTypes$decoderDate = A2(
 		}
 	},
 	A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Date$fromString, _elm_lang$core$Json_Decode$string));
-var _fpawel$gobet_front$ApiNgTypes$decoderCountryName = A2(
+var _fpawel$gobet_front$Aping_Decoder$countryName = A2(
 	_elm_lang$core$Json_Decode$map,
 	function (x) {
 		return A2(
 			_elm_lang$core$Maybe$withDefault,
 			x,
-			_fpawel$gobet_front$CountryCode$countryName(x));
+			_fpawel$gobet_front$Help_CountryCode$countryName(x));
 	},
 	_elm_lang$core$Json_Decode$string);
-var _fpawel$gobet_front$ApiNgTypes$getCountryNameByCode = function (_p1) {
-	return A2(
-		_elm_lang$core$Maybe$withDefault,
-		'',
-		_fpawel$gobet_front$CountryCode$countryName(_p1));
-};
-var _fpawel$gobet_front$ApiNgTypes$EventType = F3(
-	function (a, b, c) {
-		return {id: a, name: b, market_count: c};
-	});
-var _fpawel$gobet_front$ApiNgTypes$Event = F6(
-	function (a, b, c, d, e, f) {
-		return {id: a, name: b, country: c, openDate: d, timezone: e, venue: f};
-	});
-var _fpawel$gobet_front$ApiNgTypes$decoderEvent = A4(
+var _fpawel$gobet_front$Aping_Decoder$event = A4(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
 	'venue',
 	_elm_lang$core$Json_Decode$string,
@@ -11446,11 +10906,11 @@ var _fpawel$gobet_front$ApiNgTypes$decoderEvent = A4(
 		A3(
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 			'open_date',
-			_fpawel$gobet_front$ApiNgTypes$decoderDate,
+			_fpawel$gobet_front$Aping_Decoder$date,
 			A4(
 				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
 				'country_code',
-				_fpawel$gobet_front$ApiNgTypes$decoderCountryName,
+				_fpawel$gobet_front$Aping_Decoder$countryName,
 				'',
 				A3(
 					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
@@ -11460,46 +10920,220 @@ var _fpawel$gobet_front$ApiNgTypes$decoderEvent = A4(
 						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 						'id',
 						_elm_lang$core$Json_Decode$int,
-						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$ApiNgTypes$Event)))))));
+						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Aping$Event)))))));
 
-var _fpawel$gobet_front$Help_Utils$monthNumber = function (x) {
-	var _p0 = x;
-	switch (_p0.ctor) {
-		case 'Jan':
-			return 1;
-		case 'Feb':
-			return 2;
-		case 'Mar':
-			return 3;
-		case 'Apr':
-			return 4;
-		case 'May':
-			return 5;
-		case 'Jun':
-			return 6;
-		case 'Jul':
-			return 7;
-		case 'Aug':
-			return 8;
-		case 'Sep':
-			return 9;
-		case 'Oct':
-			return 10;
-		case 'Nov':
-			return 11;
-		default:
-			return 12;
+var _fpawel$gobet_front$Month$getMaybe = F2(
+	function (s, x) {
+		var _p0 = x;
+		if (_p0.ctor === 'Just') {
+			return _p0._0;
+		} else {
+			return _elm_lang$core$Native_Utils.crashCase(
+				'Month',
+				{
+					start: {line: 86, column: 5},
+					end: {line: 91, column: 26}
+				},
+				_p0)(s);
+		}
+	});
+var _fpawel$gobet_front$Month$values = {
+	ctor: '::',
+	_0: _elm_lang$core$Date$Jan,
+	_1: {
+		ctor: '::',
+		_0: _elm_lang$core$Date$Feb,
+		_1: {
+			ctor: '::',
+			_0: _elm_lang$core$Date$Mar,
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$core$Date$Apr,
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$core$Date$May,
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$core$Date$Jun,
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$core$Date$Jul,
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$core$Date$Aug,
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$core$Date$Sep,
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$core$Date$Oct,
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$core$Date$Nov,
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$core$Date$Dec,
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
+};
+var _fpawel$gobet_front$Month$nvalues = A2(
+	_elm_lang$core$List$map,
+	function (_p2) {
+		var _p3 = _p2;
+		return {
+			ctor: '_Tuple2',
+			_0: _p3._0,
+			_1: {ctor: '_Tuple2', _0: _p3._1, _1: _p3._2}
+		};
+	},
+	A4(
+		_elm_lang$core$List$map3,
+		F3(
+			function (v0, v1, v2) {
+				return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
+			}),
+		A2(_elm_lang$core$List$range, 1, 12),
+		{
+			ctor: '::',
+			_0: 'января',
+			_1: {
+				ctor: '::',
+				_0: 'февраля',
+				_1: {
+					ctor: '::',
+					_0: 'марта',
+					_1: {
+						ctor: '::',
+						_0: 'апреля',
+						_1: {
+							ctor: '::',
+							_0: 'мая',
+							_1: {
+								ctor: '::',
+								_0: 'июня',
+								_1: {
+									ctor: '::',
+									_0: 'июля',
+									_1: {
+										ctor: '::',
+										_0: 'августа',
+										_1: {
+											ctor: '::',
+											_0: 'сентября',
+											_1: {
+												ctor: '::',
+												_0: 'октября',
+												_1: {
+													ctor: '::',
+													_0: 'ноября',
+													_1: {
+														ctor: '::',
+														_0: 'декабря',
+														_1: {ctor: '[]'}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		_fpawel$gobet_front$Month$values));
+var _fpawel$gobet_front$Month$mvalues = _elm_lang$core$Dict$fromList(_fpawel$gobet_front$Month$nvalues);
+var _fpawel$gobet_front$Month$fromNumber = function (n) {
+	return _elm_lang$core$Tuple$second(
+		A2(
+			_fpawel$gobet_front$Month$getMaybe,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'Month.fromNumber ',
+				_elm_lang$core$Basics$toString(n)),
+			A2(_elm_lang$core$Dict$get, n, _fpawel$gobet_front$Month$mvalues)));
+};
+var _fpawel$gobet_front$Month$format1 = function (n) {
+	return A2(
+		_fpawel$gobet_front$Month$getMaybe,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'Month.format1 ',
+			_elm_lang$core$Basics$toString(n)),
+		A2(
+			_elm_lang$core$Maybe$map,
+			function (_p4) {
+				var _p5 = _p4;
+				return _p5._0;
+			},
+			A2(_elm_lang$core$Dict$get, n, _fpawel$gobet_front$Month$mvalues)));
+};
+var _fpawel$gobet_front$Month$toNumber = function (m) {
+	return A2(
+		_fpawel$gobet_front$Month$getMaybe,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'Month.toNumber ',
+			_elm_lang$core$Basics$toString(m)),
+		_elm_lang$core$List$head(
+			A2(
+				_elm_lang$core$List$filterMap,
+				function (_p6) {
+					var _p7 = _p6;
+					return _elm_lang$core$Native_Utils.eq(m, _p7._1._1) ? _elm_lang$core$Maybe$Just(_p7._0) : _elm_lang$core$Maybe$Nothing;
+				},
+				_fpawel$gobet_front$Month$nvalues)));
+};
+
+var _fpawel$gobet_front$Help_Utils$listGoupBy = F2(
+	function (fk, lst) {
+		return A3(
+			_elm_lang$core$List$foldr,
+			F2(
+				function (x, acc) {
+					var k = fk(x);
+					var xs = A2(
+						F2(
+							function (x, y) {
+								return {ctor: '::', _0: x, _1: y};
+							}),
+						x,
+						A2(
+							_elm_lang$core$Maybe$withDefault,
+							{ctor: '[]'},
+							A2(_elm_lang$core$Dict$get, k, acc)));
+					return A3(_elm_lang$core$Dict$insert, k, xs, acc);
+				}),
+			_elm_lang$core$Dict$empty,
+			lst);
+	});
+var _fpawel$gobet_front$Help_Utils$day_month_year = function (date) {
+	var year = _elm_lang$core$Date$year(date);
+	var month = _fpawel$gobet_front$Month$toNumber(
+		_elm_lang$core$Date$month(date));
+	var day = _elm_lang$core$Date$day(date);
+	return {ctor: '_Tuple3', _0: day, _1: month, _2: year};
 };
 var _fpawel$gobet_front$Help_Utils$list_window1 = F3(
 	function (acc, m, xs) {
 		list_window1:
 		while (true) {
-			var _p1 = A2(
+			var _p0 = A2(
 				_elm_lang$core$List$partition,
-				function (_p2) {
-					var _p3 = _p2;
-					return _elm_lang$core$Native_Utils.cmp(_p3._0, m) < 0;
+				function (_p1) {
+					var _p2 = _p1;
+					return _elm_lang$core$Native_Utils.cmp(_p2._0, m) < 0;
 				},
 				A2(
 					_elm_lang$core$List$indexedMap,
@@ -11508,19 +11142,19 @@ var _fpawel$gobet_front$Help_Utils$list_window1 = F3(
 							return {ctor: '_Tuple2', _0: n, _1: x};
 						}),
 					xs));
-			var xs1_ = _p1._0;
-			var xs2_ = _p1._1;
+			var xs1_ = _p0._0;
+			var xs2_ = _p0._1;
 			var xs1 = A2(_elm_lang$core$List$map, _elm_lang$core$Tuple$second, xs1_);
 			var xs2 = A2(_elm_lang$core$List$map, _elm_lang$core$Tuple$second, xs2_);
 			if (_elm_lang$core$List$isEmpty(xs1)) {
 				return acc;
 			} else {
-				var _v2 = {ctor: '::', _0: xs1, _1: acc},
-					_v3 = m,
-					_v4 = xs2;
-				acc = _v2;
-				m = _v3;
-				xs = _v4;
+				var _v1 = {ctor: '::', _0: xs1, _1: acc},
+					_v2 = m,
+					_v3 = xs2;
+				acc = _v1;
+				m = _v2;
+				xs = _v3;
 				continue list_window1;
 			}
 		}
@@ -11542,52 +11176,52 @@ var _fpawel$gobet_front$Help_Utils$list_parts_n = F2(
 		var c = _elm_lang$core$Native_Utils.eq(b, 0) ? a : (a + 1);
 		return A2(_fpawel$gobet_front$Help_Utils$list_window, c, xs);
 	});
-var _fpawel$gobet_front$Help_Utils$websocketURL = function (_p4) {
-	var _p5 = _p4;
-	var _p6 = _p5.protocol;
-	return (!A2(_elm_lang$core$String$startsWith, 'http', _p6)) ? _elm_lang$core$Native_Utils.crash(
+var _fpawel$gobet_front$Help_Utils$websocketURL = function (_p3) {
+	var _p4 = _p3;
+	var _p5 = _p4.protocol;
+	return (!A2(_elm_lang$core$String$startsWith, 'http', _p5)) ? _elm_lang$core$Native_Utils.crash(
 		'Help.Utils',
 		{
-			start: {line: 37, column: 16},
-			end: {line: 37, column: 27}
+			start: {line: 39, column: 16},
+			end: {line: 39, column: 27}
 		})(
 		A2(
 			_elm_lang$core$Basics_ops['++'],
 			'wrong protocol `',
-			A2(_elm_lang$core$Basics_ops['++'], _p6, 'wrong name of the protocol - expected a string that starts with `http`'))) : A2(
+			A2(_elm_lang$core$Basics_ops['++'], _p5, 'wrong name of the protocol - expected a string that starts with `http`'))) : A2(
 		_elm_lang$core$Basics_ops['++'],
 		'ws',
 		A2(
 			_elm_lang$core$Basics_ops['++'],
-			A2(_elm_lang$core$String$dropLeft, 4, _p6),
-			A2(_elm_lang$core$Basics_ops['++'], '//', _p5.host)));
+			A2(_elm_lang$core$String$dropLeft, 4, _p5),
+			A2(_elm_lang$core$Basics_ops['++'], '//', _p4.host)));
 };
-var _fpawel$gobet_front$Help_Utils$isNothing = function (_p7) {
+var _fpawel$gobet_front$Help_Utils$isNothing = function (_p6) {
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
 		true,
 		A2(
 			_elm_lang$core$Maybe$map,
-			function (_p8) {
+			function (_p7) {
 				return false;
 			},
-			_p7));
+			_p6));
 };
-var _fpawel$gobet_front$Help_Utils$isJust = function (_p9) {
+var _fpawel$gobet_front$Help_Utils$isJust = function (_p8) {
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
 		false,
 		A2(
 			_elm_lang$core$Maybe$map,
-			function (_p10) {
+			function (_p9) {
 				return true;
 			},
-			_p9));
+			_p8));
 };
 var _fpawel$gobet_front$Help_Utils$compareInvert = F2(
 	function (n1, n2) {
-		var _p11 = A2(_elm_lang$core$Basics$compare, n1, n2);
-		switch (_p11.ctor) {
+		var _p10 = A2(_elm_lang$core$Basics$compare, n1, n2);
+		switch (_p10.ctor) {
 			case 'LT':
 				return _elm_lang$core$Basics$GT;
 			case 'EQ':
@@ -11596,6 +11230,148 @@ var _fpawel$gobet_front$Help_Utils$compareInvert = F2(
 				return _elm_lang$core$Basics$LT;
 		}
 	});
+
+var _fpawel$gobet_front$Aping_Events$groupByDays = _fpawel$gobet_front$Help_Utils$listGoupBy(
+	function (event) {
+		var year = _elm_lang$core$Date$year(event.openDate);
+		var month = _fpawel$gobet_front$Month$toNumber(
+			_elm_lang$core$Date$month(event.openDate));
+		var day = _elm_lang$core$Date$day(event.openDate);
+		return {ctor: '_Tuple3', _0: day, _1: month, _2: year};
+	});
+var _fpawel$gobet_front$Aping_Events$dateTree = function (events) {
+	var mdays = _fpawel$gobet_front$Aping_Events$groupByDays(events);
+	var ndays = A2(
+		_elm_lang$core$List$map,
+		_elm_lang$core$Tuple$first,
+		_elm_lang$core$Dict$toList(mdays));
+	var nyears = _elm_lang$core$Set$fromList(
+		A2(
+			_elm_lang$core$List$map,
+			function (_p0) {
+				var _p1 = _p0;
+				return _p1._2;
+			},
+			ndays));
+	return A2(
+		_elm_lang$core$List$map,
+		function (y) {
+			return A2(
+				F2(
+					function (v0, v1) {
+						return {ctor: '_Tuple2', _0: v0, _1: v1};
+					}),
+				y,
+				A2(
+					_elm_lang$core$List$map,
+					function (m) {
+						return A2(
+							F2(
+								function (v0, v1) {
+									return {ctor: '_Tuple2', _0: v0, _1: v1};
+								}),
+							m,
+							A2(
+								_elm_lang$core$List$map,
+								function (d) {
+									return A2(
+										F2(
+											function (v0, v1) {
+												return {ctor: '_Tuple2', _0: v0, _1: v1};
+											}),
+										d,
+										A2(
+											_elm_lang$core$Maybe$withDefault,
+											{ctor: '[]'},
+											A2(
+												_elm_lang$core$Dict$get,
+												{ctor: '_Tuple3', _0: d, _1: m, _2: y},
+												mdays)));
+								},
+								_elm_lang$core$Set$toList(
+									_elm_lang$core$Set$fromList(
+										A2(
+											_elm_lang$core$List$map,
+											function (_p2) {
+												var _p3 = _p2;
+												return _p3._0;
+											},
+											A2(
+												_elm_lang$core$List$filter,
+												function (_p4) {
+													var _p5 = _p4;
+													return _elm_lang$core$Native_Utils.eq(_p5._2, y) && _elm_lang$core$Native_Utils.eq(_p5._1, m);
+												},
+												ndays))))));
+					},
+					_elm_lang$core$Set$toList(
+						_elm_lang$core$Set$fromList(
+							A2(
+								_elm_lang$core$List$map,
+								function (_p6) {
+									var _p7 = _p6;
+									return _p7._1;
+								},
+								A2(
+									_elm_lang$core$List$filter,
+									function (_p8) {
+										var _p9 = _p8;
+										return _elm_lang$core$Native_Utils.eq(_p9._2, y);
+									},
+									ndays))))));
+		},
+		_elm_lang$core$Set$toList(nyears));
+};
+var _fpawel$gobet_front$Aping_Events$defaultDay = F2(
+	function (today, events) {
+		var days = A2(
+			_elm_lang$core$List$map,
+			_elm_lang$core$Tuple$first,
+			_elm_lang$core$Dict$toList(
+				_fpawel$gobet_front$Aping_Events$groupByDays(events)));
+		return A2(
+			_elm_lang$core$Set$member,
+			today,
+			_elm_lang$core$Set$fromList(days)) ? today : A2(
+			_elm_lang$core$Maybe$withDefault,
+			A2(
+				_elm_lang$core$Maybe$withDefault,
+				{ctor: '_Tuple3', _0: 0, _1: 0, _2: 0},
+				_elm_lang$core$List$head(days)),
+			_elm_lang$core$List$head(
+				A2(
+					_elm_lang$core$List$filter,
+					function (x) {
+						return _elm_lang$core$Native_Utils.cmp(x, today) > 0;
+					},
+					days)));
+	});
+var _fpawel$gobet_front$Aping_Events$countries = function (_p10) {
+	return A2(
+		_elm_lang$core$List$map,
+		_elm_lang$core$Tuple$first,
+		A2(
+			_elm_lang$core$List$sortWith,
+			F2(
+				function (_p12, _p11) {
+					var _p13 = _p12;
+					var _p14 = _p11;
+					return A2(_fpawel$gobet_front$Help_Utils$compareInvert, _p13._1, _p14._1);
+				}),
+			_elm_lang$core$Dict$toList(
+				A3(
+					_elm_lang$core$List$foldr,
+					F2(
+						function (event, acc) {
+							var n = A2(
+								_elm_lang$core$Maybe$withDefault,
+								0,
+								A2(_elm_lang$core$Dict$get, event.country, acc));
+							return A3(_elm_lang$core$Dict$insert, event.country, n + 1, acc);
+						}),
+					_elm_lang$core$Dict$empty,
+					_p10))));
+};
 
 var _fpawel$gobet_front$Help_Component$mainMenuItem = F2(
 	function (title, items) {
@@ -11712,1455 +11488,87 @@ var _fpawel$gobet_front$Help_Component$spinner_text = function (text) {
 		});
 };
 
-var _fpawel$gobet_front$Styles$bounceInUp = 'bounceInUp';
-var _fpawel$gobet_front$Styles$pulse = 'pulse';
-var _fpawel$gobet_front$Styles$flash = 'flash';
-var _fpawel$gobet_front$Styles$jello = 'jello';
-var _fpawel$gobet_front$Styles$animated = 'animated';
-var _fpawel$gobet_front$Styles$animated_jello_2s = {
-	ctor: '::',
-	_0: _elm_lang$html$Html_Attributes$class(
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			_fpawel$gobet_front$Styles$animated,
-			A2(_elm_lang$core$Basics_ops['++'], ' ', _fpawel$gobet_front$Styles$jello))),
-	_1: {
-		ctor: '::',
-		_0: _elm_lang$html$Html_Attributes$style(
-			{
-				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: '-webkit-animation-duration', _1: '2s'},
-				_1: {ctor: '[]'}
-			}),
-		_1: {ctor: '[]'}
-	}
-};
-var _fpawel$gobet_front$Styles$animated_flash_2s = {
-	ctor: '::',
-	_0: _elm_lang$html$Html_Attributes$class(
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			_fpawel$gobet_front$Styles$animated,
-			A2(_elm_lang$core$Basics_ops['++'], ' ', _fpawel$gobet_front$Styles$flash))),
-	_1: {
-		ctor: '::',
-		_0: _elm_lang$html$Html_Attributes$style(
-			{
-				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: '-webkit-animation-duration', _1: '2s'},
-				_1: {ctor: '[]'}
-			}),
-		_1: {ctor: '[]'}
-	}
-};
-var _fpawel$gobet_front$Styles$animated_bounceInUp_2s = {
-	ctor: '::',
-	_0: _elm_lang$html$Html_Attributes$class(
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			_fpawel$gobet_front$Styles$animated,
-			A2(_elm_lang$core$Basics_ops['++'], ' ', _fpawel$gobet_front$Styles$bounceInUp))),
-	_1: {
-		ctor: '::',
-		_0: _elm_lang$html$Html_Attributes$style(
-			{
-				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: '-webkit-animation-duration', _1: '2s'},
-				_1: {ctor: '[]'}
-			}),
-		_1: {ctor: '[]'}
-	}
-};
-
-var _fpawel$gobet_front$Football$viewGame = function (x) {
-	var odd = function (y) {
-		return A2(
-			_elm_lang$html$Html$td,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(
-					A2(
-						_elm_lang$core$Maybe$withDefault,
-						'',
-						A2(_elm_lang$core$Maybe$map, _elm_lang$core$Basics$toString, y))),
-				_1: {ctor: '[]'}
-			});
-	};
-	var bounceInUp_2s_attrs = function (f) {
-		return f ? _fpawel$gobet_front$Styles$animated_bounceInUp_2s : {ctor: '[]'};
-	};
-	var jello_2s_attrs = function (f) {
-		return f ? _fpawel$gobet_front$Styles$animated_jello_2s : {ctor: '[]'};
-	};
-	var td_ = F2(
-		function (anim, s) {
-			return A2(
-				_elm_lang$html$Html$td,
-				jello_2s_attrs(anim),
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(s),
-					_1: {ctor: '[]'}
-				});
-		});
-	return A2(
-		_elm_lang$html$Html$tr,
-		bounceInUp_2s_attrs(x.inplay),
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$td,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(x.page + 1),
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								'.',
-								_elm_lang$core$Basics$toString(x.order + 1)))),
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$td,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(x.event.country),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$td,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('home-team'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(x.home),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(td_, x.uresult, x.result),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$td,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('away-team'),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text(x.away),
-									_1: {ctor: '[]'}
-								}),
-							_1: {
-								ctor: '::',
-								_0: A2(td_, x.utime, x.time),
-								_1: {
-									ctor: '::',
-									_0: odd(x.win1),
-									_1: {
-										ctor: '::',
-										_0: odd(x.win2),
-										_1: {
-											ctor: '::',
-											_0: odd(x.draw1),
-											_1: {
-												ctor: '::',
-												_0: odd(x.draw2),
-												_1: {
-													ctor: '::',
-													_0: odd(x.lose1),
-													_1: {
-														ctor: '::',
-														_0: odd(x.lose2),
-														_1: {ctor: '[]'}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		});
-};
-var _fpawel$gobet_front$Football$viewGamesList = function (games) {
-	var thead = A2(
-		_elm_lang$html$Html$tr,
-		{ctor: '[]'},
-		A2(
-			_elm_lang$core$List$map,
-			function (x) {
-				return A2(
-					_elm_lang$html$Html$th,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(x),
-						_1: {ctor: '[]'}
-					});
-			},
-			{
-				ctor: '::',
-				_0: 'п/п',
-				_1: {
-					ctor: '::',
-					_0: 'Страна',
-					_1: {
-						ctor: '::',
-						_0: 'Дома',
-						_1: {
-							ctor: '::',
-							_0: 'Счёт',
-							_1: {
-								ctor: '::',
-								_0: 'В гостях',
-								_1: {
-									ctor: '::',
-									_0: 'Время',
-									_1: {
-										ctor: '::',
-										_0: 'П1+',
-										_1: {
-											ctor: '::',
-											_0: 'П1-',
-											_1: {
-												ctor: '::',
-												_0: 'Н+',
-												_1: {
-													ctor: '::',
-													_0: 'Н-',
-													_1: {
-														ctor: '::',
-														_0: 'П2+',
-														_1: {
-															ctor: '::',
-															_0: 'П2-',
-															_1: {ctor: '[]'}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}));
-	var trs = A2(
-		_elm_lang$core$List$map,
-		_fpawel$gobet_front$Football$viewGame,
-		A2(
-			_elm_lang$core$List$sortBy,
-			function (_p0) {
-				var _p1 = _p0;
-				return {ctor: '_Tuple2', _0: _p1.page, _1: _p1.order};
-			},
-			games));
-	return A2(
-		_elm_lang$html$Html$table,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('table table-condensed'),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$thead,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: thead,
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$tbody,
-					{ctor: '[]'},
-					trs),
-				_1: {ctor: '[]'}
-			}
-		});
-};
-var _fpawel$gobet_front$Football$view = function (_p2) {
-	var _p3 = _p2;
-	var _p5 = _p3._0.games;
-	var _p4 = _p5;
-	if (_p4.ctor === '[]') {
-		return _fpawel$gobet_front$Help_Component$spinner_text('Подготовка данных...');
-	} else {
-		return _fpawel$gobet_front$Football$viewGamesList(_p5);
-	}
-};
-var _fpawel$gobet_front$Football$encodeGame = function (x) {
-	var encodedOdds = A2(
-		_elm_lang$core$List$filterMap,
-		function (_p6) {
-			var _p7 = _p6;
-			return A2(
-				_elm_lang$core$Maybe$map,
-				function (v) {
-					return {
-						ctor: '_Tuple2',
-						_0: _p7._0,
-						_1: _elm_lang$core$Json_Encode$float(v)
-					};
-				},
-				_p7._1);
-		},
-		{
-			ctor: '::',
-			_0: {ctor: '_Tuple2', _0: 'win1', _1: x.win1},
-			_1: {
-				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: 'win2', _1: x.win2},
-				_1: {
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'draw1', _1: x.draw1},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'draw2', _1: x.draw2},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'lose1', _1: x.lose1},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'lose2', _1: x.lose2},
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}
-			}
-		});
-	return _elm_lang$core$Json_Encode$object(
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			{
-				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'event_id',
-					_1: _elm_lang$core$Json_Encode$int(x.eventID)
-				},
-				_1: {
-					ctor: '::',
-					_0: {
-						ctor: '_Tuple2',
-						_0: 'page',
-						_1: _elm_lang$core$Json_Encode$int(x.page)
-					},
-					_1: {
-						ctor: '::',
-						_0: {
-							ctor: '_Tuple2',
-							_0: 'order',
-							_1: _elm_lang$core$Json_Encode$int(x.order)
-						},
-						_1: {
-							ctor: '::',
-							_0: {
-								ctor: '_Tuple2',
-								_0: 'time',
-								_1: _elm_lang$core$Json_Encode$string(x.time)
-							},
-							_1: {
-								ctor: '::',
-								_0: {
-									ctor: '_Tuple2',
-									_0: 'result',
-									_1: _elm_lang$core$Json_Encode$string(x.result)
-								},
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}
-			},
-			encodedOdds));
-};
-var _fpawel$gobet_front$Football$decoderMaybeFloat = _elm_lang$core$Json_Decode$maybe(
-	_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$float));
-var _fpawel$gobet_front$Football$websocketURL = function (_p8) {
-	var _p9 = _p8;
-	return A2(
-		_elm_lang$core$Basics_ops['++'],
-		_fpawel$gobet_front$Help_Utils$websocketURL(_p9.location),
-		'/football');
-};
-var _fpawel$gobet_front$Football$updateGame = F2(
-	function (x, _p10) {
-		var _p11 = _p10;
-		var _p13 = _p11.time;
-		var _p12 = _p11.result;
-		return _elm_lang$core$Native_Utils.update(
-			x,
-			{
-				page: A2(_elm_lang$core$Maybe$withDefault, x.page, _p11.page),
-				order: A2(_elm_lang$core$Maybe$withDefault, x.order, _p11.order),
-				time: A2(_elm_lang$core$Maybe$withDefault, x.time, _p13),
-				result: A2(_elm_lang$core$Maybe$withDefault, x.result, _p12),
-				win1: A2(_elm_lang$core$Maybe$withDefault, x.win1, _p11.win1),
-				win2: A2(_elm_lang$core$Maybe$withDefault, x.win2, _p11.win2),
-				draw1: A2(_elm_lang$core$Maybe$withDefault, x.draw1, _p11.draw1),
-				draw2: A2(_elm_lang$core$Maybe$withDefault, x.draw2, _p11.draw2),
-				lose1: A2(_elm_lang$core$Maybe$withDefault, x.lose1, _p11.lose1),
-				lose2: A2(_elm_lang$core$Maybe$withDefault, x.lose2, _p11.lose2),
-				utime: _fpawel$gobet_front$Help_Utils$isJust(_p13),
-				uresult: _fpawel$gobet_front$Help_Utils$isJust(_p12)
-			});
-	});
-var _fpawel$gobet_front$Football$updateGamesList = F2(
-	function (_p14, games) {
-		var _p15 = _p14;
-		var _p21 = _p15.inplay;
-		var isJust = function (_p16) {
-			return A2(
-				_elm_lang$core$Maybe$withDefault,
-				false,
-				A2(
-					_elm_lang$core$Maybe$map,
-					function (_p17) {
-						return true;
-					},
-					_p16));
-		};
-		var changesMap = _elm_lang$core$Dict$fromList(
-			A2(
-				_elm_lang$core$List$map,
-				function (x) {
-					return {ctor: '_Tuple2', _0: x.eventID, _1: x};
-				},
-				_p15.changes));
-		var inplaySet = _elm_lang$core$Set$fromList(
-			A2(
-				_elm_lang$core$List$map,
-				function (x) {
-					return x.eventID;
-				},
-				_p21));
-		var outplaySet = _elm_lang$core$Set$fromList(_p15.outplay);
-		var play = A2(
-			_elm_lang$core$List$map,
-			function (x) {
-				return A2(
-					_elm_lang$core$Maybe$withDefault,
-					x,
-					A2(
-						_elm_lang$core$Maybe$map,
-						_fpawel$gobet_front$Football$updateGame(x),
-						A2(_elm_lang$core$Dict$get, x.eventID, changesMap)));
-			},
-			A2(
-				_elm_lang$core$List$filter,
-				function (_p18) {
-					var _p19 = _p18;
-					var _p20 = _p19.eventID;
-					return (!A2(_elm_lang$core$Set$member, _p20, outplaySet)) && (!A2(_elm_lang$core$Set$member, _p20, inplaySet));
-				},
-				games));
-		return A2(_elm_lang$core$Basics_ops['++'], _p21, play);
-	});
-var _fpawel$gobet_front$Football$Game = function (a) {
-	return function (b) {
-		return function (c) {
-			return function (d) {
-				return function (e) {
-					return function (f) {
-						return function (g) {
-							return function (h) {
-								return function (i) {
-									return function (j) {
-										return function (k) {
-											return function (l) {
-												return function (m) {
-													return function (n) {
-														return function (o) {
-															return function (p) {
-																return function (q) {
-																	return function (r) {
-																		return {eventID: a, marketID: b, home: c, away: d, event: e, page: f, order: g, result: h, time: i, win1: j, win2: k, draw1: l, draw2: m, lose1: n, lose2: o, inplay: p, utime: q, uresult: r};
-																	};
-																};
-															};
-														};
-													};
-												};
-											};
-										};
-									};
-								};
-							};
-						};
-					};
-				};
-			};
-		};
-	};
-};
-var _fpawel$gobet_front$Football$decoderGame = A2(
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$hardcoded,
-	false,
-	A2(
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$hardcoded,
-		false,
-		A2(
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$hardcoded,
-			true,
-			A4(
-				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-				'lose2',
-				_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$float),
-				_elm_lang$core$Maybe$Nothing,
-				A4(
-					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-					'lose1',
-					_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$float),
-					_elm_lang$core$Maybe$Nothing,
-					A4(
-						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-						'draw2',
-						_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$float),
-						_elm_lang$core$Maybe$Nothing,
-						A4(
-							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-							'draw1',
-							_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$float),
-							_elm_lang$core$Maybe$Nothing,
-							A4(
-								_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-								'win2',
-								_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$float),
-								_elm_lang$core$Maybe$Nothing,
-								A4(
-									_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-									'win1',
-									_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$float),
-									_elm_lang$core$Maybe$Nothing,
-									A3(
-										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-										'time',
-										_elm_lang$core$Json_Decode$string,
-										A4(
-											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-											'result',
-											_elm_lang$core$Json_Decode$string,
-											'',
-											A3(
-												_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-												'order',
-												_elm_lang$core$Json_Decode$int,
-												A3(
-													_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-													'page',
-													_elm_lang$core$Json_Decode$int,
-													A3(
-														_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-														'event',
-														_fpawel$gobet_front$ApiNgTypes$decoderEvent,
-														A3(
-															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-															'away',
-															_elm_lang$core$Json_Decode$string,
-															A3(
-																_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-																'home',
-																_elm_lang$core$Json_Decode$string,
-																A3(
-																	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-																	'market_id',
-																	_elm_lang$core$Json_Decode$int,
-																	A3(
-																		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-																		'event_id',
-																		_elm_lang$core$Json_Decode$int,
-																		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Football$Game)))))))))))))))))));
-var _fpawel$gobet_front$Football$GameCahnges = function (a) {
-	return function (b) {
-		return function (c) {
-			return function (d) {
-				return function (e) {
-					return function (f) {
-						return function (g) {
-							return function (h) {
-								return function (i) {
-									return function (j) {
-										return function (k) {
-											return {eventID: a, page: b, order: c, time: d, result: e, win1: f, win2: g, draw1: h, draw2: i, lose1: j, lose2: k};
-										};
-									};
-								};
-							};
-						};
-					};
-				};
-			};
-		};
-	};
-};
-var _fpawel$gobet_front$Football$decoderGameCahnges = A4(
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-	'lose2',
-	_fpawel$gobet_front$Football$decoderMaybeFloat,
-	_elm_lang$core$Maybe$Nothing,
-	A4(
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-		'lose1',
-		_fpawel$gobet_front$Football$decoderMaybeFloat,
-		_elm_lang$core$Maybe$Nothing,
-		A4(
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-			'draw2',
-			_fpawel$gobet_front$Football$decoderMaybeFloat,
-			_elm_lang$core$Maybe$Nothing,
-			A4(
-				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-				'draw1',
-				_fpawel$gobet_front$Football$decoderMaybeFloat,
-				_elm_lang$core$Maybe$Nothing,
-				A4(
-					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-					'win2',
-					_fpawel$gobet_front$Football$decoderMaybeFloat,
-					_elm_lang$core$Maybe$Nothing,
-					A4(
-						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-						'win1',
-						_fpawel$gobet_front$Football$decoderMaybeFloat,
-						_elm_lang$core$Maybe$Nothing,
-						A4(
-							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-							'result',
-							_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$string),
-							_elm_lang$core$Maybe$Nothing,
-							A4(
-								_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-								'time',
-								_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$string),
-								_elm_lang$core$Maybe$Nothing,
-								A4(
-									_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-									'order',
-									_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$int),
-									_elm_lang$core$Maybe$Nothing,
-									A4(
-										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-										'page',
-										_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$int),
-										_elm_lang$core$Maybe$Nothing,
-										A3(
-											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-											'event_id',
-											_elm_lang$core$Json_Decode$int,
-											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Football$GameCahnges))))))))))));
-var _fpawel$gobet_front$Football$ReplyFromServer = F4(
-	function (a, b, c, d) {
-		return {inplay: a, outplay: b, changes: c, hashCode: d};
-	});
-var _fpawel$gobet_front$Football$decoderReplyFromServer = A3(
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'hash_code',
-	_elm_lang$core$Json_Decode$string,
-	A4(
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-		'game_changes',
-		_elm_lang$core$Json_Decode$list(_fpawel$gobet_front$Football$decoderGameCahnges),
-		{ctor: '[]'},
-		A4(
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-			'outplay',
-			_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$int),
-			{ctor: '[]'},
-			A4(
-				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-				'inplay',
-				_elm_lang$core$Json_Decode$list(_fpawel$gobet_front$Football$decoderGame),
-				{ctor: '[]'},
-				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Football$ReplyFromServer)))));
-var _fpawel$gobet_front$Football$Model = function (a) {
-	return {ctor: 'Model', _0: a};
-};
-var _fpawel$gobet_front$Football$init = function (location) {
-	return _fpawel$gobet_front$Football$Model(
-		{
-			games: {ctor: '[]'},
-			location: location
-		});
-};
-var _fpawel$gobet_front$Football$update = F2(
-	function (msg, _p22) {
-		var _p23 = _p22;
-		var _p26 = _p23._0;
-		var _p24 = msg;
-		var _p25 = _p24._0;
-		var answer = A2(
-			_elm_lang$websocket$WebSocket$send,
-			_fpawel$gobet_front$Football$websocketURL(_p26),
-			_p25.hashCode);
-		var games = A2(_fpawel$gobet_front$Football$updateGamesList, _p25, _p26.games);
-		return A2(
-			_elm_lang$core$Platform_Cmd_ops['!'],
-			_fpawel$gobet_front$Football$Model(
-				_elm_lang$core$Native_Utils.update(
-					_p26,
-					{games: games})),
-			{
-				ctor: '::',
-				_0: answer,
-				_1: {ctor: '[]'}
-			});
-	});
-var _fpawel$gobet_front$Football$MsgReplyFromServer = function (a) {
-	return {ctor: 'MsgReplyFromServer', _0: a};
-};
-var _fpawel$gobet_front$Football$decodeReplyFromServer = function (str) {
-	var _p27 = A2(_elm_lang$core$Json_Decode$decodeString, _fpawel$gobet_front$Football$decoderReplyFromServer, str);
-	if (_p27.ctor === 'Ok') {
-		return _fpawel$gobet_front$Football$MsgReplyFromServer(_p27._0);
-	} else {
-		return _elm_lang$core$Native_Utils.crashCase(
-			'Football',
-			{
-				start: {line: 239, column: 5},
-				end: {line: 244, column: 74}
-			},
-			_p27)(
-			A2(_elm_lang$core$Basics_ops['++'], 'error decoding `Football` message : ', _p27._0));
-	}
-};
-var _fpawel$gobet_front$Football$subscriptions = function (_p29) {
-	var _p30 = _p29;
-	return _elm_lang$core$Platform_Sub$batch(
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$websocket$WebSocket$listen,
-				_fpawel$gobet_front$Football$websocketURL(_p30._0),
-				_fpawel$gobet_front$Football$decodeReplyFromServer),
-			_1: {ctor: '[]'}
-		});
-};
-
-var _fpawel$gobet_front$Sport$getCountries = function (_p0) {
-	return A2(
-		_elm_lang$core$List$map,
-		_elm_lang$core$Tuple$first,
-		A2(
-			_elm_lang$core$List$sortWith,
-			F2(
-				function (_p2, _p1) {
-					var _p3 = _p2;
-					var _p4 = _p1;
-					return A2(_fpawel$gobet_front$Help_Utils$compareInvert, _p3._1, _p4._1);
-				}),
-			_elm_lang$core$Dict$toList(
-				A3(
-					_elm_lang$core$List$foldr,
-					F2(
-						function (event, acc) {
-							var n = A2(
-								_elm_lang$core$Maybe$withDefault,
-								0,
-								A2(_elm_lang$core$Dict$get, event.country, acc));
-							return A3(_elm_lang$core$Dict$insert, event.country, n + 1, acc);
-						}),
-					_elm_lang$core$Dict$empty,
-					_p0))));
-};
-var _fpawel$gobet_front$Sport$countryFilterToString = function (countryFilter) {
-	var _p5 = countryFilter;
-	if (_p5.ctor === 'Just') {
-		if (_p5._0 === '') {
-			return 'Международные события';
-		} else {
-			return _p5._0;
-		}
-	} else {
-		return 'Все страны';
-	}
-};
-var _fpawel$gobet_front$Sport$viewEventName = function (s) {
-	var _p6 = A3(
-		_elm_lang$core$Regex$split,
-		_elm_lang$core$Regex$AtMost(1),
-		_elm_lang$core$Regex$regex(' [v@\\-] '),
-		s);
-	if (((_p6.ctor === '::') && (_p6._1.ctor === '::')) && (_p6._1._1.ctor === '[]')) {
-		return {
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$td,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(_p6._0),
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$td,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(_p6._1._0),
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			}
-		};
-	} else {
-		return {
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$td,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$colspan(2),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(s),
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
-		};
-	}
-};
-var _fpawel$gobet_front$Sport$eventRow = F2(
-	function (countryFilter, event) {
-		var cellCountry = function () {
-			var _p7 = countryFilter;
-			if (_p7.ctor === 'Just') {
-				return A2(
-					_elm_lang$html$Html$td,
-					{ctor: '[]'},
-					{ctor: '[]'});
-			} else {
-				return A2(
-					_elm_lang$html$Html$td,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(event.country),
-						_1: {ctor: '[]'}
-					});
-			}
-		}();
-		var year = _elm_lang$core$Date$year(event.openDate);
-		var month = _elm_lang$core$Date$month(event.openDate);
-		var day = _elm_lang$core$Date$day(event.openDate);
-		var xs1 = {
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$td,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(
-						_elm_lang$core$Basics$toString(day)),
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$td,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(
-							_elm_lang$core$Basics$toString(month)),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$td,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(
-								_elm_lang$core$Basics$toString(year)),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: cellCountry,
-						_1: {ctor: '[]'}
-					}
-				}
-			}
-		};
-		return A2(
-			_elm_lang$html$Html$tr,
-			{ctor: '[]'},
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				xs1,
-				_fpawel$gobet_front$Sport$viewEventName(event.name)));
-	});
-var _fpawel$gobet_front$Sport$view1 = function (_p8) {
-	var _p9 = _p8;
-	var _p10 = _p9._0;
-	var eventType = _p10.eventType;
-	var events = _p10.events;
-	var countryFilter = _p10.countryFilter;
-	var hcountry = function () {
-		var _p11 = countryFilter;
-		if (_p11.ctor === 'Just') {
-			return A2(
-				_elm_lang$html$Html$th,
-				{ctor: '[]'},
-				{ctor: '[]'});
-		} else {
-			return A2(
-				_elm_lang$html$Html$th,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('Страна'),
-					_1: {ctor: '[]'}
-				});
-		}
-	}();
-	var hr = A2(
-		_elm_lang$html$Html$tr,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$th,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('День'),
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$th,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('Месяц'),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$th,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('Год'),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: hcountry,
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$th,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$colspan(2),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('Событие'),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			}
-		});
-	var filteredEvents = A2(
-		_elm_lang$core$List$sortBy,
-		function (_p12) {
-			var _p13 = _p12;
-			var _p14 = _p13.openDate;
-			return {
-				ctor: '_Tuple3',
-				_0: _elm_lang$core$Date$year(_p14),
-				_1: _fpawel$gobet_front$Help_Utils$monthNumber(
-					_elm_lang$core$Date$month(_p14)),
-				_2: _elm_lang$core$Date$day(_p14)
-			};
-		},
-		A2(
-			_elm_lang$core$List$filter,
-			function (event) {
-				var _p15 = countryFilter;
-				if (_p15.ctor === 'Nothing') {
-					return true;
-				} else {
-					return _elm_lang$core$Native_Utils.eq(event.country, _p15._0);
-				}
-			},
-			events));
-	return _elm_lang$core$List$isEmpty(filteredEvents) ? _fpawel$gobet_front$Help_Component$spinner_text('Подготовка данных...') : A2(
-		_elm_lang$html$Html$div,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$table,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('table table-condensed'),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$thead,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: hr,
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$tbody,
-							{ctor: '[]'},
-							A2(
-								_elm_lang$core$List$map,
-								_fpawel$gobet_front$Sport$eventRow(countryFilter),
-								filteredEvents)),
-						_1: {ctor: '[]'}
-					}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$p,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$h3,
-							{ctor: '[]'},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text(
-									_elm_lang$core$Basics$toString(eventType.market_count)),
-								_1: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('рынков'),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$h3,
-									{ctor: '[]'},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text(
-											_elm_lang$core$Basics$toString(
-												_elm_lang$core$List$length(filteredEvents))),
-										_1: {ctor: '[]'}
-									}),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('событий'),
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}),
-				_1: {ctor: '[]'}
-			}
-		});
-};
-var _fpawel$gobet_front$Sport$eventType = function (_p16) {
-	var _p17 = _p16;
-	return _p17._0.eventType;
-};
-var _fpawel$gobet_front$Sport$Context = F5(
-	function (a, b, c, d, e) {
-		return {location: a, eventType: b, events: c, countryFilter: d, error: e};
-	});
-var _fpawel$gobet_front$Sport$Model = function (a) {
-	return {ctor: 'Model', _0: a};
-};
-var _fpawel$gobet_front$Sport$view = function (_p18) {
-	var _p19 = _p18;
-	var _p21 = _p19._0;
-	var _p20 = _p21.error;
-	if (_p20.ctor === 'Nothing') {
-		return _fpawel$gobet_front$Sport$view1(
-			_fpawel$gobet_front$Sport$Model(_p21));
-	} else {
-		return A2(
-			_elm_lang$html$Html$div,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$p,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(_p20._0),
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			});
-	}
-};
-var _fpawel$gobet_front$Sport$NewEvents = function (a) {
-	return {ctor: 'NewEvents', _0: a};
-};
-var _fpawel$gobet_front$Sport$httpRequestEvents = F2(
-	function (location, eventType) {
-		var decoder = A2(
-			_elm_lang$core$Json_Decode$field,
-			'result',
-			_elm_lang$core$Json_Decode$list(_fpawel$gobet_front$ApiNgTypes$decoderEvent));
-		var eventsURL = A2(
-			_elm_lang$core$Basics_ops['++'],
-			location.protocol,
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'//',
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					location.host,
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						'/events/',
-						_elm_lang$core$Basics$toString(eventType.id)))));
-		return A2(
-			_elm_lang$http$Http$send,
-			_fpawel$gobet_front$Sport$NewEvents,
-			A2(_elm_lang$http$Http$get, eventsURL, decoder));
-	});
-var _fpawel$gobet_front$Sport$init = F2(
-	function (location, eventType) {
-		var context = {
-			location: location,
-			eventType: eventType,
-			events: {ctor: '[]'},
-			countryFilter: _elm_lang$core$Maybe$Nothing,
-			error: _elm_lang$core$Maybe$Nothing
-		};
-		var request = A2(_fpawel$gobet_front$Sport$httpRequestEvents, location, eventType);
-		return A2(
-			_elm_lang$core$Platform_Cmd_ops['!'],
-			_fpawel$gobet_front$Sport$Model(context),
-			{
-				ctor: '::',
-				_0: request,
-				_1: {ctor: '[]'}
-			});
-	});
-var _fpawel$gobet_front$Sport$update = F2(
-	function (msg, _p22) {
-		var _p23 = _p22;
-		var _p25 = _p23._0;
-		var _p24 = msg;
-		if (_p24.ctor === 'ApplyCountryFilter') {
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_fpawel$gobet_front$Sport$Model(
-					_elm_lang$core$Native_Utils.update(
-						_p25,
-						{countryFilter: _p24._0})),
-				{ctor: '[]'});
-		} else {
-			if (_p24._0.ctor === 'Ok') {
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_fpawel$gobet_front$Sport$Model(
-						_elm_lang$core$Native_Utils.update(
-							_p25,
-							{events: _p24._0._0})),
-					{ctor: '[]'});
-			} else {
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_fpawel$gobet_front$Sport$Model(
-						_elm_lang$core$Native_Utils.update(
-							_p25,
-							{
-								error: _elm_lang$core$Maybe$Just(
-									_elm_lang$core$Basics$toString(_p24._0._0))
-							})),
-					{
-						ctor: '::',
-						_0: A2(_fpawel$gobet_front$Sport$httpRequestEvents, _p25.location, _p25.eventType),
-						_1: {ctor: '[]'}
-					});
-			}
-		}
-	});
-var _fpawel$gobet_front$Sport$ApplyCountryFilter = function (a) {
-	return {ctor: 'ApplyCountryFilter', _0: a};
-};
-var _fpawel$gobet_front$Sport$linkCountryFilter = function (countryFilter) {
+var _fpawel$gobet_front$Navbar$dropDown = function (_p0) {
+	var _p1 = _p0;
 	return A2(
 		_elm_lang$html$Html$li,
-		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('dropdown'),
+			_1: {ctor: '[]'}
+		},
 		{
 			ctor: '::',
 			_0: A2(
 				_elm_lang$html$Html$a,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$href('#'),
+					_0: _elm_lang$html$Html_Attributes$class('dropdown-toggle'),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$html$Html_Events$onClick(
-							_fpawel$gobet_front$Sport$ApplyCountryFilter(countryFilter)),
-						_1: {ctor: '[]'}
+						_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-toggle', 'dropdown'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$href('#'),
+							_1: {ctor: '[]'}
+						}
 					}
 				},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text(
-						_fpawel$gobet_front$Sport$countryFilterToString(countryFilter)),
-					_1: {ctor: '[]'}
+					_0: _elm_lang$html$Html$text(_p1.name),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$span,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('caret'),
+								_1: {ctor: '[]'}
+							},
+							{ctor: '[]'}),
+						_1: {ctor: '[]'}
+					}
 				}),
-			_1: {ctor: '[]'}
-		});
-};
-var _fpawel$gobet_front$Sport$viewMenuCountries = F2(
-	function (toMsg, _p26) {
-		var _p27 = _p26;
-		var countries = _fpawel$gobet_front$Sport$getCountries(_p27._0.events);
-		return (_elm_lang$core$Native_Utils.cmp(
-			_elm_lang$core$List$length(countries),
-			2) < 0) ? A2(
-			_elm_lang$html$Html$li,
-			{ctor: '[]'},
-			{ctor: '[]'}) : A2(
-			_fpawel$gobet_front$Help_Component$mainMenuItem,
-			_fpawel$gobet_front$Sport$countryFilterToString(_p27._0.countryFilter),
-			A2(
-				_elm_lang$core$List$map,
-				function (_p28) {
-					return A2(
-						_elm_lang$html$Html$map,
-						toMsg,
-						_fpawel$gobet_front$Sport$linkCountryFilter(_p28));
-				},
-				A2(
-					F2(
-						function (x, y) {
-							return {ctor: '::', _0: x, _1: y};
-						}),
-					_elm_lang$core$Maybe$Nothing,
-					A2(_elm_lang$core$List$map, _elm_lang$core$Maybe$Just, countries))));
-	});
-
-var _fpawel$gobet_front$Msg$UrlChange = function (a) {
-	return {ctor: 'UrlChange', _0: a};
-};
-var _fpawel$gobet_front$Msg$Sport = function (a) {
-	return {ctor: 'Sport', _0: a};
-};
-var _fpawel$gobet_front$Msg$Football = function (a) {
-	return {ctor: 'Football', _0: a};
-};
-
-var _fpawel$gobet_front$Routing$Sport = function (a) {
-	return {ctor: 'Sport', _0: a};
-};
-var _fpawel$gobet_front$Routing$Football = {ctor: 'Football'};
-var _fpawel$gobet_front$Routing$parser = _evancz$url_parser$UrlParser$oneOf(
-	{
-		ctor: '::',
-		_0: A2(
-			_evancz$url_parser$UrlParser$map,
-			_fpawel$gobet_front$Routing$Football,
-			_evancz$url_parser$UrlParser$s('football')),
-		_1: {
-			ctor: '::',
-			_0: A2(
-				_evancz$url_parser$UrlParser$map,
-				_fpawel$gobet_front$Routing$Sport,
-				A2(
-					_evancz$url_parser$UrlParser_ops['</>'],
-					_evancz$url_parser$UrlParser$s('sport'),
-					_evancz$url_parser$UrlParser$int)),
-			_1: {ctor: '[]'}
-		}
-	});
-
-var _fpawel$gobet_front$Content$what = function (x) {
-	var _p0 = x;
-	if (_p0.ctor === 'Football') {
-		return 'Футбол сегодня';
-	} else {
-		return _fpawel$gobet_front$Sport$eventType(_p0._0).name;
-	}
-};
-var _fpawel$gobet_front$Content$subscriptions = function (model) {
-	var _p1 = model;
-	if (_p1.ctor === 'Football') {
-		return A2(
-			_elm_lang$core$Platform_Sub$map,
-			_fpawel$gobet_front$Msg$Football,
-			_fpawel$gobet_front$Football$subscriptions(_p1._0));
-	} else {
-		return _elm_lang$core$Platform_Sub$none;
-	}
-};
-var _fpawel$gobet_front$Content$view = function (model) {
-	var _p2 = model;
-	if (_p2.ctor === 'Football') {
-		return _fpawel$gobet_front$Football$view(_p2._0);
-	} else {
-		return _fpawel$gobet_front$Sport$view(_p2._0);
-	}
-};
-var _fpawel$gobet_front$Content$route = function (model) {
-	var _p3 = model;
-	if (_p3.ctor === 'Football') {
-		return _fpawel$gobet_front$Routing$Football;
-	} else {
-		var _p4 = _fpawel$gobet_front$Sport$eventType(_p3._0);
-		var id = _p4.id;
-		return _fpawel$gobet_front$Routing$Sport(id);
-	}
-};
-var _fpawel$gobet_front$Content$Sport = function (a) {
-	return {ctor: 'Sport', _0: a};
-};
-var _fpawel$gobet_front$Content$Football = function (a) {
-	return {ctor: 'Football', _0: a};
-};
-var _fpawel$gobet_front$Content$init = F3(
-	function (location, eventTypes, route) {
-		var _p5 = route;
-		if (_p5.ctor === 'Football') {
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_fpawel$gobet_front$Content$Football(
-					_fpawel$gobet_front$Football$init(location)),
-				{ctor: '[]'});
-		} else {
-			var _p11 = _p5._0;
-			var _p8 = A2(
-				_elm_lang$core$List$filter,
-				function (_p6) {
-					var _p7 = _p6;
-					return _elm_lang$core$Native_Utils.eq(_p7.id, _p11);
-				},
-				eventTypes);
-			if (_p8.ctor === '::') {
-				var _p9 = A2(_fpawel$gobet_front$Sport$init, location, _p8._0);
-				var model_sport = _p9._0;
-				var cmd_sport = _p9._1;
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_fpawel$gobet_front$Content$Sport(model_sport),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$ul,
 					{
 						ctor: '::',
-						_0: A2(_elm_lang$core$Platform_Cmd$map, _fpawel$gobet_front$Msg$Sport, cmd_sport),
+						_0: _elm_lang$html$Html_Attributes$class('dropdown-menu'),
 						_1: {ctor: '[]'}
-					});
-			} else {
-				return _elm_lang$core$Native_Utils.crashCase(
-					'Content',
-					{
-						start: {line: 25, column: 13},
-						end: {line: 34, column: 85}
 					},
-					_p8)(
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						'unknown event type id ',
-						_elm_lang$core$Basics$toString(_p11)));
+					_p1.items),
+				_1: {ctor: '[]'}
 			}
-		}
-	});
-var _fpawel$gobet_front$Content$update = F2(
-	function (msg, model) {
-		var _p12 = {ctor: '_Tuple2', _0: msg, _1: model};
-		_v7_2:
-		do {
-			if (_p12.ctor === '_Tuple2') {
-				if (_p12._1.ctor === 'Football') {
-					if (_p12._0.ctor === 'Football') {
-						var _p13 = A2(_fpawel$gobet_front$Football$update, _p12._0._0, _p12._1._0);
-						var updated_football = _p13._0;
-						var cmd_football = _p13._1;
-						return A2(
-							_elm_lang$core$Platform_Cmd_ops['!'],
-							_fpawel$gobet_front$Content$Football(updated_football),
-							{
-								ctor: '::',
-								_0: A2(_elm_lang$core$Platform_Cmd$map, _fpawel$gobet_front$Msg$Football, cmd_football),
-								_1: {ctor: '[]'}
-							});
-					} else {
-						break _v7_2;
-					}
-				} else {
-					if (_p12._0.ctor === 'Sport') {
-						var _p14 = A2(_fpawel$gobet_front$Sport$update, _p12._0._0, _p12._1._0);
-						var updated_sport = _p14._0;
-						var cmd_sport = _p14._1;
-						return A2(
-							_elm_lang$core$Platform_Cmd_ops['!'],
-							_fpawel$gobet_front$Content$Sport(updated_sport),
-							{
-								ctor: '::',
-								_0: A2(_elm_lang$core$Platform_Cmd$map, _fpawel$gobet_front$Msg$Sport, cmd_sport),
-								_1: {ctor: '[]'}
-							});
-					} else {
-						break _v7_2;
-					}
-				}
-			} else {
-				break _v7_2;
-			}
-		} while(false);
-		return _elm_lang$core$Native_Utils.crashCase(
-			'Content',
+		});
+};
+var _fpawel$gobet_front$Navbar$dropNav = _elm_lang$core$List$map(
+	function (_p2) {
+		var _p3 = _p2;
+		return A2(
+			_elm_lang$html$Html$li,
+			{ctor: '[]'},
 			{
-				start: {line: 53, column: 5},
-				end: {line: 69, column: 67}
-			},
-			_p12)(
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'wrong content message: ',
-				_elm_lang$core$Basics$toString(_p12)));
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$a,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$href(
+							A2(_elm_lang$core$Basics_ops['++'], '#', _p3.route)),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(_p3.name),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			});
 	});
-
-var _fpawel$gobet_front$Main$navbarHeader = A2(
+var _fpawel$gobet_front$Navbar$navbarHeader = A2(
 	_elm_lang$html$Html$div,
 	{
 		ctor: '::',
@@ -13237,57 +11645,31 @@ var _fpawel$gobet_front$Main$navbarHeader = A2(
 				},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text('Centbet'),
+					_0: _elm_lang$html$Html$text('GOBET'),
 					_1: {ctor: '[]'}
 				}),
 			_1: {ctor: '[]'}
 		}
 	});
-var _fpawel$gobet_front$Main$dropNavEventTypes = function (_p0) {
-	var _p1 = _p0;
-	var linkEventType = function (_p2) {
-		var _p3 = _p2;
-		return A2(
-			_elm_lang$html$Html$a,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$href(
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						'#sport/',
-						_elm_lang$core$Basics$toString(_p3.id))),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(_p3.name),
-				_1: {ctor: '[]'}
-			});
-	};
-	return A2(
-		_elm_lang$core$List$map,
-		function (x) {
-			return A2(
-				_elm_lang$html$Html$li,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: x,
-					_1: {ctor: '[]'}
-				});
+var _fpawel$gobet_front$Navbar$view = function (menu) {
+	var menu_element = A2(
+		_elm_lang$html$Html$ul,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('nav navbar-nav'),
+			_1: {ctor: '[]'}
 		},
 		A2(
 			_elm_lang$core$List$map,
-			linkEventType,
-			A2(
-				_elm_lang$core$List$sortBy,
-				function (_p4) {
-					var _p5 = _p4;
-					return _p5.market_count * -1;
-				},
-				_p1.eventTypes)));
-};
-var _fpawel$gobet_front$Main$navbar = function (m) {
+			function (_p4) {
+				var _p5 = _p4;
+				return _fpawel$gobet_front$Navbar$dropDown(
+					{
+						name: _p5.name,
+						items: _fpawel$gobet_front$Navbar$dropNav(_p5.items)
+					});
+			},
+			menu));
 	return A2(
 		_elm_lang$html$Html$nav,
 		{
@@ -13306,7 +11688,7 @@ var _fpawel$gobet_front$Main$navbar = function (m) {
 				},
 				{
 					ctor: '::',
-					_0: _fpawel$gobet_front$Main$navbarHeader,
+					_0: _fpawel$gobet_front$Navbar$navbarHeader,
 					_1: {
 						ctor: '::',
 						_0: A2(
@@ -13318,21 +11700,7 @@ var _fpawel$gobet_front$Main$navbar = function (m) {
 							},
 							{
 								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$ul,
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$class('nav navbar-nav'),
-										_1: {ctor: '[]'}
-									},
-									{
-										ctor: '::',
-										_0: A2(
-											_fpawel$gobet_front$Help_Component$mainMenuItem,
-											_fpawel$gobet_front$Content$what(m.content),
-											_fpawel$gobet_front$Main$dropNavEventTypes(m)),
-										_1: {ctor: '[]'}
-									}),
+								_0: menu_element,
 								_1: {ctor: '[]'}
 							}),
 						_1: {ctor: '[]'}
@@ -13341,13 +11709,601 @@ var _fpawel$gobet_front$Main$navbar = function (m) {
 			_1: {ctor: '[]'}
 		});
 };
-var _fpawel$gobet_front$Main$view = function (model) {
+
+var _fpawel$gobet_front$Sport$viewEventName = function (s) {
+	var _p0 = A3(
+		_elm_lang$core$Regex$split,
+		_elm_lang$core$Regex$AtMost(1),
+		_elm_lang$core$Regex$regex(' [v@\\-] '),
+		s);
+	if (((_p0.ctor === '::') && (_p0._1.ctor === '::')) && (_p0._1._1.ctor === '[]')) {
+		return {
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$td,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(_p0._0),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$td,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(_p0._1._0),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
+		};
+	} else {
+		return {
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$td,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$colspan(2),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(s),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		};
+	}
+};
+var _fpawel$gobet_front$Sport$dropNavSports = function (sports) {
+	return A2(
+		_elm_lang$core$List$map,
+		function (x) {
+			return {
+				name: x.name,
+				route: A2(
+					_elm_lang$core$Basics_ops['++'],
+					'sport/',
+					_elm_lang$core$Basics$toString(x.id))
+			};
+		},
+		A2(
+			_elm_lang$core$List$sortBy,
+			function (_p1) {
+				var _p2 = _p1;
+				return _p2.market_count * -1;
+			},
+			sports));
+};
+var _fpawel$gobet_front$Sport$formatDay2 = function (_p3) {
+	var _p4 = _p3;
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		_elm_lang$core$Basics$toString(_p4._0),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'_',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_elm_lang$core$Basics$toString(_p4._1),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'_',
+					_elm_lang$core$Basics$toString(_p4._2)))));
+};
+var _fpawel$gobet_front$Sport$formatDay1 = function (_p5) {
+	var _p6 = _p5;
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		_elm_lang$core$Basics$toString(_p6._0),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			' ',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_fpawel$gobet_front$Month$format1(_p6._1),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					' ',
+					_elm_lang$core$Basics$toString(_p6._2)))));
+};
+var _fpawel$gobet_front$Sport$dropNavDays = function (_p7) {
+	var _p8 = _p7;
+	return A2(
+		_elm_lang$core$List$map,
+		function (day) {
+			return {
+				name: _fpawel$gobet_front$Sport$formatDay1(day),
+				route: A2(
+					_elm_lang$core$Basics_ops['++'],
+					'sport/',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(_p8.sport.id),
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'_day_',
+							_fpawel$gobet_front$Sport$formatDay2(day))))
+			};
+		},
+		A2(
+			_elm_lang$core$List$sortBy,
+			function (_p9) {
+				var _p10 = _p9;
+				return {ctor: '_Tuple3', _0: _p10._2, _1: _p10._1, _2: _p10._0};
+			},
+			A2(
+				_elm_lang$core$List$map,
+				_elm_lang$core$Tuple$first,
+				_elm_lang$core$Dict$toList(
+					_fpawel$gobet_front$Aping_Events$groupByDays(_p8.events)))));
+};
+var _fpawel$gobet_front$Sport$eventRow = function (_p11) {
+	var _p12 = _p11;
+	return A2(
+		_elm_lang$html$Html$tr,
+		{ctor: '[]'},
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$td,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							_fpawel$gobet_front$Sport$formatDay1(
+								_fpawel$gobet_front$Help_Utils$day_month_year(_p12.openDate))),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			},
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_fpawel$gobet_front$Sport$viewEventName(_p12.name),
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$td,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(_p12.country),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				})));
+};
+var _fpawel$gobet_front$Sport$viewEvents = function (_p13) {
+	var _p14 = _p13;
+	var events_ = A2(
+		_elm_lang$core$List$sortBy,
+		function (_p15) {
+			var _p16 = _p15;
+			return _elm_lang$core$Date$toTime(_p16.openDate);
+		},
+		_p14.events);
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: _fpawel$gobet_front$Main$navbar(model),
+			_0: A2(
+				_elm_lang$html$Html$table,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('table table-condensed'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$tbody,
+						{ctor: '[]'},
+						A2(_elm_lang$core$List$map, _fpawel$gobet_front$Sport$eventRow, events_)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$p,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$h3,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									_elm_lang$core$Basics$toString(_p14.sport.market_count)),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('рынков'),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$h3,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(
+											_elm_lang$core$Basics$toString(
+												_elm_lang$core$List$length(events_))),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('событий'),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _fpawel$gobet_front$Sport$view2 = function (model) {
+	var _p17 = model.error;
+	if (_p17.ctor === 'Nothing') {
+		return _elm_lang$core$List$isEmpty(model.events) ? _fpawel$gobet_front$Help_Component$spinner_text('Подготовка данных...') : _fpawel$gobet_front$Sport$viewEvents(model);
+	} else {
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$p,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(_p17._0),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			});
+	}
+};
+var _fpawel$gobet_front$Sport$navbarConfig = function (m) {
+	var mdays = _fpawel$gobet_front$Sport$dropNavDays(m);
+	var strDay = _elm_lang$core$Native_Utils.eq(
+		m.day,
+		{ctor: '_Tuple3', _0: 0, _1: 0, _2: 0}) ? '(выбрать день)' : _fpawel$gobet_front$Sport$formatDay1(m.day);
+	var days = _elm_lang$core$List$isEmpty(mdays) ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(
+		{name: strDay, items: mdays});
+	var dropNavSports = A2(
+		_elm_lang$core$List$map,
+		function (x) {
+			return {
+				name: x.name,
+				route: A2(
+					_elm_lang$core$Basics_ops['++'],
+					'sport/',
+					_elm_lang$core$Basics$toString(x.id))
+			};
+		},
+		A2(
+			_elm_lang$core$List$sortBy,
+			function (_p18) {
+				var _p19 = _p18;
+				return _p19.market_count * -1;
+			},
+			m.sports));
+	var sports = _elm_lang$core$Maybe$Just(
+		{name: m.sport.name, items: dropNavSports});
+	return A2(
+		_elm_lang$core$List$filterMap,
+		_elm_lang$core$Basics$identity,
+		{
+			ctor: '::',
+			_0: sports,
+			_1: {
+				ctor: '::',
+				_0: days,
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _fpawel$gobet_front$Sport$dropDownSubmenu = function (menuItem) {
+	var _p20 = menuItem;
+	if (_p20.ctor === 'Node') {
+		return A2(
+			_elm_lang$html$Html$li,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('dropdown-submenu'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$a,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$href('#'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(_p20._0),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$ul,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('dropdown-menu'),
+							_1: {ctor: '[]'}
+						},
+						A2(_elm_lang$core$List$map, _fpawel$gobet_front$Sport$dropDownSubmenu, _p20._1)),
+					_1: {ctor: '[]'}
+				}
+			});
+	} else {
+		return A2(
+			_elm_lang$html$Html$li,
+			{ctor: '[]'},
+			_elm_lang$core$List$singleton(
+				A2(
+					_elm_lang$html$Html$a,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$href('#'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onClick(_p20._1),
+							_1: {ctor: '[]'}
+						}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(_p20._0),
+						_1: {ctor: '[]'}
+					})));
+	}
+};
+var _fpawel$gobet_front$Sport$dropNavDateButton = A2(
+	_elm_lang$html$Html$button,
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html_Attributes$class('btn btn-primary dropdown-toggle'),
+		_1: {
+			ctor: '::',
+			_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-toggle', 'dropdown'),
+			_1: {
+				ctor: '::',
+				_0: A2(_elm_lang$html$Html_Attributes$attribute, 'type', 'button'),
+				_1: {ctor: '[]'}
+			}
+		}
+	},
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html$text('Dropdown'),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$span,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('caret'),
+					_1: {ctor: '[]'}
+				},
+				{ctor: '[]'}),
+			_1: {ctor: '[]'}
+		}
+	});
+var _fpawel$gobet_front$Sport$today = function (_p21) {
+	var _p22 = _p21;
+	return _fpawel$gobet_front$Help_Utils$day_month_year(
+		_elm_lang$core$Date$fromTime(_p22.time));
+};
+var _fpawel$gobet_front$Sport$Model = F7(
+	function (a, b, c, d, e, f, g) {
+		return {location: a, sports: b, sport: c, events: d, time: e, day: f, error: g};
+	});
+var _fpawel$gobet_front$Sport$NewDay = function (a) {
+	return {ctor: 'NewDay', _0: a};
+};
+var _fpawel$gobet_front$Sport$Tick = function (a) {
+	return {ctor: 'Tick', _0: a};
+};
+var _fpawel$gobet_front$Sport$subscriptions = function (model) {
+	return A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second, _fpawel$gobet_front$Sport$Tick);
+};
+var _fpawel$gobet_front$Sport$NewEvents = function (a) {
+	return {ctor: 'NewEvents', _0: a};
+};
+var _fpawel$gobet_front$Sport$httpRequestEvents = function (_p23) {
+	var _p24 = _p23;
+	var _p25 = _p24.location;
+	var decoder = A2(
+		_elm_lang$core$Json_Decode$field,
+		'result',
+		_elm_lang$core$Json_Decode$list(_fpawel$gobet_front$Aping_Decoder$event));
+	var eventsURL = A2(
+		_elm_lang$core$Basics_ops['++'],
+		_p25.protocol,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'//',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_p25.host,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'/events/',
+					_elm_lang$core$Basics$toString(_p24.sport.id)))));
+	return A2(
+		_elm_lang$http$Http$send,
+		_fpawel$gobet_front$Sport$NewEvents,
+		A2(_elm_lang$http$Http$get, eventsURL, decoder));
+};
+var _fpawel$gobet_front$Sport$init = function (_p26) {
+	var _p27 = _p26;
+	return A2(
+		_elm_lang$core$Platform_Cmd_ops['!'],
+		{
+			location: _p27.location,
+			sport: _p27.sport,
+			sports: _p27.sports,
+			events: {ctor: '[]'},
+			day: {ctor: '_Tuple3', _0: 0, _1: 0, _2: 0},
+			error: _elm_lang$core$Maybe$Nothing,
+			time: 0
+		},
+		{
+			ctor: '::',
+			_0: _fpawel$gobet_front$Sport$httpRequestEvents(_p27),
+			_1: {ctor: '[]'}
+		});
+};
+var _fpawel$gobet_front$Sport$update = F2(
+	function (msg, m) {
+		var _p28 = msg;
+		switch (_p28.ctor) {
+			case 'NewDay':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						m,
+						{day: _p28._0}),
+					{ctor: '[]'});
+			case 'Tick':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						m,
+						{time: _p28._0}),
+					{ctor: '[]'});
+			default:
+				if (_p28._0.ctor === 'Ok') {
+					var _p29 = _p28._0._0;
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							m,
+							{
+								events: _p29,
+								day: A2(
+									_fpawel$gobet_front$Aping_Events$defaultDay,
+									_fpawel$gobet_front$Sport$today(m),
+									_p29)
+							}),
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							m,
+							{
+								error: _elm_lang$core$Maybe$Just(
+									_elm_lang$core$Basics$toString(_p28._0._0))
+							}),
+						{
+							ctor: '::',
+							_0: _fpawel$gobet_front$Sport$httpRequestEvents(m),
+							_1: {ctor: '[]'}
+						});
+				}
+		}
+	});
+var _fpawel$gobet_front$Sport$Leaf = F2(
+	function (a, b) {
+		return {ctor: 'Leaf', _0: a, _1: b};
+	});
+var _fpawel$gobet_front$Sport$Node = F2(
+	function (a, b) {
+		return {ctor: 'Node', _0: a, _1: b};
+	});
+var _fpawel$gobet_front$Sport$dropNavDate = function (_p30) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('dropdown'),
+			_1: {ctor: '[]'}
+		},
+		A2(
+			F2(
+				function (x, y) {
+					return {ctor: '::', _0: x, _1: y};
+				}),
+			_fpawel$gobet_front$Sport$dropNavDateButton,
+			_elm_lang$core$List$singleton(
+				A2(
+					_elm_lang$html$Html$ul,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('dropdown-menu multi-level'),
+						_1: {
+							ctor: '::',
+							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'role', 'menu'),
+							_1: {
+								ctor: '::',
+								_0: A2(_elm_lang$html$Html_Attributes$attribute, 'aria-labelledby', 'dropdownMenu'),
+								_1: {ctor: '[]'}
+							}
+						}
+					},
+					A2(
+						_elm_lang$core$List$map,
+						_fpawel$gobet_front$Sport$dropDownSubmenu,
+						A2(
+							_elm_lang$core$List$map,
+							function (_p31) {
+								var _p32 = _p31;
+								var _p39 = _p32._0;
+								return A2(
+									_fpawel$gobet_front$Sport$Node,
+									_elm_lang$core$Basics$toString(_p39),
+									A2(
+										_elm_lang$core$List$map,
+										function (_p33) {
+											var _p34 = _p33;
+											var _p38 = _p34._0;
+											return A2(
+												_fpawel$gobet_front$Sport$Node,
+												_elm_lang$core$Basics$toString(_p38),
+												A2(
+													_elm_lang$core$List$map,
+													function (_p35) {
+														var _p36 = _p35;
+														var _p37 = _p36._0;
+														return A2(
+															_fpawel$gobet_front$Sport$Leaf,
+															_elm_lang$core$Basics$toString(_p37),
+															_fpawel$gobet_front$Sport$NewDay(
+																{ctor: '_Tuple3', _0: _p37, _1: _p38, _2: _p39}));
+													},
+													_p34._1));
+										},
+										_p32._1));
+							},
+							_fpawel$gobet_front$Aping_Events$dateTree(
+								function (_) {
+									return _.events;
+								}(_p30))))))));
+};
+var _fpawel$gobet_front$Sport$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _fpawel$gobet_front$Navbar$view(
+				_fpawel$gobet_front$Sport$navbarConfig(model)),
 			_1: {
 				ctor: '::',
 				_0: A2(
@@ -13359,66 +12315,198 @@ var _fpawel$gobet_front$Main$view = function (model) {
 					},
 					{
 						ctor: '::',
-						_0: _fpawel$gobet_front$Content$view(model.content),
-						_1: {ctor: '[]'}
+						_0: _fpawel$gobet_front$Sport$dropNavDate(model),
+						_1: {
+							ctor: '::',
+							_0: _fpawel$gobet_front$Sport$view2(model),
+							_1: {ctor: '[]'}
+						}
 					}),
 				_1: {ctor: '[]'}
 			}
 		});
 };
-var _fpawel$gobet_front$Main$subscriptions = function (_p6) {
-	var _p7 = _p6;
-	return _fpawel$gobet_front$Content$subscriptions(_p7.content);
+
+var _fpawel$gobet_front$Msg$UrlChange = function (a) {
+	return {ctor: 'UrlChange', _0: a};
+};
+var _fpawel$gobet_front$Msg$Sport = function (a) {
+	return {ctor: 'Sport', _0: a};
+};
+
+var _fpawel$gobet_front$Routing$Sport = function (a) {
+	return {ctor: 'Sport', _0: a};
+};
+var _fpawel$gobet_front$Routing$parser = _evancz$url_parser$UrlParser$oneOf(
+	{
+		ctor: '::',
+		_0: A2(
+			_evancz$url_parser$UrlParser$map,
+			_fpawel$gobet_front$Routing$Sport,
+			A2(
+				_evancz$url_parser$UrlParser_ops['</>'],
+				_evancz$url_parser$UrlParser$s('sport'),
+				_evancz$url_parser$UrlParser$int)),
+		_1: {ctor: '[]'}
+	});
+
+var _fpawel$gobet_front$Content$what = function (x) {
+	var _p0 = x;
+	return _p0._0.sport.name;
+};
+var _fpawel$gobet_front$Content$subscriptions = function (model) {
+	var _p1 = model;
+	return A2(
+		_elm_lang$core$Platform_Sub$map,
+		_fpawel$gobet_front$Msg$Sport,
+		_fpawel$gobet_front$Sport$subscriptions(_p1._0));
+};
+var _fpawel$gobet_front$Content$view = function (model) {
+	var _p2 = model;
+	return A2(
+		_elm_lang$html$Html$map,
+		_fpawel$gobet_front$Msg$Sport,
+		_fpawel$gobet_front$Sport$view(_p2._0));
+};
+var _fpawel$gobet_front$Content$route = function (model) {
+	var _p3 = model;
+	return _fpawel$gobet_front$Routing$Sport(_p3._0.sport.id);
+};
+var _fpawel$gobet_front$Content$Sport = function (a) {
+	return {ctor: 'Sport', _0: a};
+};
+var _fpawel$gobet_front$Content$init = F2(
+	function (_p4, route) {
+		var _p5 = _p4;
+		var _p13 = _p5.sports;
+		var _p6 = route;
+		var _p12 = _p6._0;
+		var _p9 = A2(
+			_elm_lang$core$List$filter,
+			function (_p7) {
+				var _p8 = _p7;
+				return _elm_lang$core$Native_Utils.eq(_p8.id, _p12);
+			},
+			_p13);
+		if (_p9.ctor === '::') {
+			var _p10 = _fpawel$gobet_front$Sport$init(
+				{location: _p5.location, sport: _p9._0, sports: _p13});
+			var model_sport = _p10._0;
+			var cmd_sport = _p10._1;
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				_fpawel$gobet_front$Content$Sport(model_sport),
+				{
+					ctor: '::',
+					_0: A2(_elm_lang$core$Platform_Cmd$map, _fpawel$gobet_front$Msg$Sport, cmd_sport),
+					_1: {ctor: '[]'}
+				});
+		} else {
+			return _elm_lang$core$Native_Utils.crashCase(
+				'Content',
+				{
+					start: {line: 30, column: 13},
+					end: {line: 43, column: 75}
+				},
+				_p9)(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'unknown sport id ',
+					_elm_lang$core$Basics$toString(_p12)));
+		}
+	});
+var _fpawel$gobet_front$Content$update = F2(
+	function (msg, model) {
+		var _p14 = {ctor: '_Tuple2', _0: msg, _1: model};
+		if ((_p14.ctor === '_Tuple2') && (_p14._0.ctor === 'Sport')) {
+			var _p15 = A2(_fpawel$gobet_front$Sport$update, _p14._0._0, _p14._1._0);
+			var updated_sport = _p15._0;
+			var cmd_sport = _p15._1;
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				_fpawel$gobet_front$Content$Sport(updated_sport),
+				{
+					ctor: '::',
+					_0: A2(_elm_lang$core$Platform_Cmd$map, _fpawel$gobet_front$Msg$Sport, cmd_sport),
+					_1: {ctor: '[]'}
+				});
+		} else {
+			return _elm_lang$core$Native_Utils.crashCase(
+				'Content',
+				{
+					start: {line: 55, column: 5},
+					end: {line: 64, column: 67}
+				},
+				_p14)(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'wrong content message: ',
+					_elm_lang$core$Basics$toString(_p14)));
+		}
+	});
+
+var _fpawel$gobet_front$Main$view = function (model) {
+	return _fpawel$gobet_front$Content$view(model.content);
+};
+var _fpawel$gobet_front$Main$subscriptions = function (_p0) {
+	var _p1 = _p0;
+	return _fpawel$gobet_front$Content$subscriptions(_p1.content);
 };
 var _fpawel$gobet_front$Main$updateContent = F2(
-	function (model, _p8) {
-		var _p9 = _p8;
+	function (model, _p2) {
+		var _p3 = _p2;
 		return A2(
 			_elm_lang$core$Platform_Cmd_ops['!'],
 			_elm_lang$core$Native_Utils.update(
 				model,
-				{content: _p9._0}),
+				{content: _p3._0}),
 			{
 				ctor: '::',
-				_0: _p9._1,
+				_0: _p3._1,
 				_1: {ctor: '[]'}
 			});
 	});
 var _fpawel$gobet_front$Main$update = F2(
 	function (msg, model) {
-		var _p10 = msg;
-		if (_p10.ctor === 'UrlChange') {
+		var _p4 = msg;
+		if (_p4.ctor === 'UrlChange') {
 			var current_route = _fpawel$gobet_front$Content$route(model.content);
 			var new_route = A2(
 				_elm_lang$core$Maybe$withDefault,
 				current_route,
-				A2(_evancz$url_parser$UrlParser$parseHash, _fpawel$gobet_front$Routing$parser, _p10._0));
+				A2(_evancz$url_parser$UrlParser$parseHash, _fpawel$gobet_front$Routing$parser, _p4._0));
 			return _elm_lang$core$Native_Utils.eq(new_route, current_route) ? A2(
 				_elm_lang$core$Platform_Cmd_ops['!'],
 				model,
 				{ctor: '[]'}) : A2(
 				_fpawel$gobet_front$Main$updateContent,
 				model,
-				A3(_fpawel$gobet_front$Content$init, model.location, model.eventTypes, new_route));
+				A2(
+					_fpawel$gobet_front$Content$init,
+					{location: model.location, sports: model.sports},
+					new_route));
 		} else {
 			return A2(
 				_fpawel$gobet_front$Main$updateContent,
 				model,
-				A2(_fpawel$gobet_front$Content$update, _p10, model.content));
+				A2(_fpawel$gobet_front$Content$update, _p4, model.content));
 		}
 	});
 var _fpawel$gobet_front$Main$Model = F3(
 	function (a, b, c) {
-		return {content: a, eventTypes: b, location: c};
+		return {content: a, sports: b, location: c};
 	});
 var _fpawel$gobet_front$Main$init = F2(
-	function (eventTypes, location) {
-		var _p11 = A3(_fpawel$gobet_front$Content$init, location, eventTypes, _fpawel$gobet_front$Routing$Football);
-		var content = _p11._0;
-		var cmd = _p11._1;
+	function (sports, location) {
+		var _p5 = A2(
+			_fpawel$gobet_front$Content$init,
+			{location: location, sports: sports},
+			_fpawel$gobet_front$Routing$Sport(1));
+		var content = _p5._0;
+		var cmd = _p5._1;
 		return A2(
 			_elm_lang$core$Platform_Cmd_ops['!'],
-			A3(_fpawel$gobet_front$Main$Model, content, eventTypes, location),
+			A3(_fpawel$gobet_front$Main$Model, content, sports, location),
 			{
 				ctor: '::',
 				_0: cmd,
