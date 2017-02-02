@@ -6456,137 +6456,6 @@ var _elm_lang$core$Regex$AtMost = function (a) {
 };
 var _elm_lang$core$Regex$All = {ctor: 'All'};
 
-var _elm_lang$core$Set$foldr = F3(
-	function (f, b, _p0) {
-		var _p1 = _p0;
-		return A3(
-			_elm_lang$core$Dict$foldr,
-			F3(
-				function (k, _p2, b) {
-					return A2(f, k, b);
-				}),
-			b,
-			_p1._0);
-	});
-var _elm_lang$core$Set$foldl = F3(
-	function (f, b, _p3) {
-		var _p4 = _p3;
-		return A3(
-			_elm_lang$core$Dict$foldl,
-			F3(
-				function (k, _p5, b) {
-					return A2(f, k, b);
-				}),
-			b,
-			_p4._0);
-	});
-var _elm_lang$core$Set$toList = function (_p6) {
-	var _p7 = _p6;
-	return _elm_lang$core$Dict$keys(_p7._0);
-};
-var _elm_lang$core$Set$size = function (_p8) {
-	var _p9 = _p8;
-	return _elm_lang$core$Dict$size(_p9._0);
-};
-var _elm_lang$core$Set$member = F2(
-	function (k, _p10) {
-		var _p11 = _p10;
-		return A2(_elm_lang$core$Dict$member, k, _p11._0);
-	});
-var _elm_lang$core$Set$isEmpty = function (_p12) {
-	var _p13 = _p12;
-	return _elm_lang$core$Dict$isEmpty(_p13._0);
-};
-var _elm_lang$core$Set$Set_elm_builtin = function (a) {
-	return {ctor: 'Set_elm_builtin', _0: a};
-};
-var _elm_lang$core$Set$empty = _elm_lang$core$Set$Set_elm_builtin(_elm_lang$core$Dict$empty);
-var _elm_lang$core$Set$singleton = function (k) {
-	return _elm_lang$core$Set$Set_elm_builtin(
-		A2(
-			_elm_lang$core$Dict$singleton,
-			k,
-			{ctor: '_Tuple0'}));
-};
-var _elm_lang$core$Set$insert = F2(
-	function (k, _p14) {
-		var _p15 = _p14;
-		return _elm_lang$core$Set$Set_elm_builtin(
-			A3(
-				_elm_lang$core$Dict$insert,
-				k,
-				{ctor: '_Tuple0'},
-				_p15._0));
-	});
-var _elm_lang$core$Set$fromList = function (xs) {
-	return A3(_elm_lang$core$List$foldl, _elm_lang$core$Set$insert, _elm_lang$core$Set$empty, xs);
-};
-var _elm_lang$core$Set$map = F2(
-	function (f, s) {
-		return _elm_lang$core$Set$fromList(
-			A2(
-				_elm_lang$core$List$map,
-				f,
-				_elm_lang$core$Set$toList(s)));
-	});
-var _elm_lang$core$Set$remove = F2(
-	function (k, _p16) {
-		var _p17 = _p16;
-		return _elm_lang$core$Set$Set_elm_builtin(
-			A2(_elm_lang$core$Dict$remove, k, _p17._0));
-	});
-var _elm_lang$core$Set$union = F2(
-	function (_p19, _p18) {
-		var _p20 = _p19;
-		var _p21 = _p18;
-		return _elm_lang$core$Set$Set_elm_builtin(
-			A2(_elm_lang$core$Dict$union, _p20._0, _p21._0));
-	});
-var _elm_lang$core$Set$intersect = F2(
-	function (_p23, _p22) {
-		var _p24 = _p23;
-		var _p25 = _p22;
-		return _elm_lang$core$Set$Set_elm_builtin(
-			A2(_elm_lang$core$Dict$intersect, _p24._0, _p25._0));
-	});
-var _elm_lang$core$Set$diff = F2(
-	function (_p27, _p26) {
-		var _p28 = _p27;
-		var _p29 = _p26;
-		return _elm_lang$core$Set$Set_elm_builtin(
-			A2(_elm_lang$core$Dict$diff, _p28._0, _p29._0));
-	});
-var _elm_lang$core$Set$filter = F2(
-	function (p, _p30) {
-		var _p31 = _p30;
-		return _elm_lang$core$Set$Set_elm_builtin(
-			A2(
-				_elm_lang$core$Dict$filter,
-				F2(
-					function (k, _p32) {
-						return p(k);
-					}),
-				_p31._0));
-	});
-var _elm_lang$core$Set$partition = F2(
-	function (p, _p33) {
-		var _p34 = _p33;
-		var _p35 = A2(
-			_elm_lang$core$Dict$partition,
-			F2(
-				function (k, _p36) {
-					return p(k);
-				}),
-			_p34._0);
-		var p1 = _p35._0;
-		var p2 = _p35._1;
-		return {
-			ctor: '_Tuple2',
-			_0: _elm_lang$core$Set$Set_elm_builtin(p1),
-			_1: _elm_lang$core$Set$Set_elm_builtin(p2)
-		};
-	});
-
 var _elm_lang$dom$Native_Dom = function() {
 
 var fakeNode = {
@@ -9276,6 +9145,14 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
+var _elm_lang$html$Html_Keyed$node = _elm_lang$virtual_dom$VirtualDom$keyedNode;
+var _elm_lang$html$Html_Keyed$ol = _elm_lang$html$Html_Keyed$node('ol');
+var _elm_lang$html$Html_Keyed$ul = _elm_lang$html$Html_Keyed$node('ul');
+
+var _elm_lang$html$Html_Lazy$lazy3 = _elm_lang$virtual_dom$VirtualDom$lazy3;
+var _elm_lang$html$Html_Lazy$lazy2 = _elm_lang$virtual_dom$VirtualDom$lazy2;
+var _elm_lang$html$Html_Lazy$lazy = _elm_lang$virtual_dom$VirtualDom$lazy;
+
 var _elm_lang$http$Native_Http = function() {
 
 
@@ -10039,6 +9916,480 @@ var _elm_lang$navigation$Navigation$onEffects = F4(
 	});
 _elm_lang$core$Native_Platform.effectManagers['Navigation'] = {pkg: 'elm-lang/navigation', init: _elm_lang$navigation$Navigation$init, onEffects: _elm_lang$navigation$Navigation$onEffects, onSelfMsg: _elm_lang$navigation$Navigation$onSelfMsg, tag: 'fx', cmdMap: _elm_lang$navigation$Navigation$cmdMap, subMap: _elm_lang$navigation$Navigation$subMap};
 
+var _evancz$elm_sortable_table$Table$findSorter = F2(
+	function (selectedColumn, columnData) {
+		findSorter:
+		while (true) {
+			var _p0 = columnData;
+			if (_p0.ctor === '[]') {
+				return _elm_lang$core$Maybe$Nothing;
+			} else {
+				if (_elm_lang$core$Native_Utils.eq(_p0._0.name, selectedColumn)) {
+					return _elm_lang$core$Maybe$Just(_p0._0.sorter);
+				} else {
+					var _v1 = selectedColumn,
+						_v2 = _p0._1;
+					selectedColumn = _v1;
+					columnData = _v2;
+					continue findSorter;
+				}
+			}
+		}
+	});
+var _evancz$elm_sortable_table$Table$applySorter = F3(
+	function (isReversed, sorter, data) {
+		var _p1 = sorter;
+		switch (_p1.ctor) {
+			case 'None':
+				return data;
+			case 'Increasing':
+				return _p1._0(data);
+			case 'Decreasing':
+				return _elm_lang$core$List$reverse(
+					_p1._0(data));
+			case 'IncOrDec':
+				var _p2 = _p1._0;
+				return isReversed ? _elm_lang$core$List$reverse(
+					_p2(data)) : _p2(data);
+			default:
+				var _p3 = _p1._0;
+				return isReversed ? _p3(data) : _elm_lang$core$List$reverse(
+					_p3(data));
+		}
+	});
+var _evancz$elm_sortable_table$Table$sort = F3(
+	function (_p4, columnData, data) {
+		var _p5 = _p4;
+		var _p6 = A2(_evancz$elm_sortable_table$Table$findSorter, _p5._0, columnData);
+		if (_p6.ctor === 'Nothing') {
+			return data;
+		} else {
+			return A3(_evancz$elm_sortable_table$Table$applySorter, _p5._1, _p6._0, data);
+		}
+	});
+var _evancz$elm_sortable_table$Table$viewCell = F2(
+	function (data, _p7) {
+		var _p8 = _p7;
+		var details = _p8.viewData(data);
+		return A2(_elm_lang$html$Html$td, details.attributes, details.children);
+	});
+var _evancz$elm_sortable_table$Table$viewRowHelp = F3(
+	function (columns, toRowAttrs, data) {
+		return A2(
+			_elm_lang$html$Html$tr,
+			toRowAttrs(data),
+			A2(
+				_elm_lang$core$List$map,
+				_evancz$elm_sortable_table$Table$viewCell(data),
+				columns));
+	});
+var _evancz$elm_sortable_table$Table$viewRow = F4(
+	function (toId, columns, toRowAttrs, data) {
+		return {
+			ctor: '_Tuple2',
+			_0: toId(data),
+			_1: A4(_elm_lang$html$Html_Lazy$lazy3, _evancz$elm_sortable_table$Table$viewRowHelp, columns, toRowAttrs, data)
+		};
+	});
+var _evancz$elm_sortable_table$Table$simpleRowAttrs = function (_p9) {
+	return {ctor: '[]'};
+};
+var _evancz$elm_sortable_table$Table$lightGrey = function (symbol) {
+	return A2(
+		_elm_lang$html$Html$span,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'color', _1: '#ccc'},
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(
+				A2(_elm_lang$core$Basics_ops['++'], ' ', symbol)),
+			_1: {ctor: '[]'}
+		});
+};
+var _evancz$elm_sortable_table$Table$darkGrey = function (symbol) {
+	return A2(
+		_elm_lang$html$Html$span,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'color', _1: '#555'},
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(
+				A2(_elm_lang$core$Basics_ops['++'], ' ', symbol)),
+			_1: {ctor: '[]'}
+		});
+};
+var _evancz$elm_sortable_table$Table$simpleTheadHelp = function (_p10) {
+	var _p11 = _p10;
+	var _p13 = _p11._0;
+	var content = function () {
+		var _p12 = _p11._1;
+		switch (_p12.ctor) {
+			case 'Unsortable':
+				return {
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(_p13),
+					_1: {ctor: '[]'}
+				};
+			case 'Sortable':
+				return {
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(_p13),
+					_1: {
+						ctor: '::',
+						_0: _p12._0 ? _evancz$elm_sortable_table$Table$darkGrey('↓') : _evancz$elm_sortable_table$Table$lightGrey('↓'),
+						_1: {ctor: '[]'}
+					}
+				};
+			default:
+				if (_p12._0.ctor === 'Nothing') {
+					return {
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(_p13),
+						_1: {
+							ctor: '::',
+							_0: _evancz$elm_sortable_table$Table$lightGrey('↕'),
+							_1: {ctor: '[]'}
+						}
+					};
+				} else {
+					return {
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(_p13),
+						_1: {
+							ctor: '::',
+							_0: _evancz$elm_sortable_table$Table$darkGrey(
+								_p12._0._0 ? '↑' : '↓'),
+							_1: {ctor: '[]'}
+						}
+					};
+				}
+		}
+	}();
+	return A2(
+		_elm_lang$html$Html$th,
+		{
+			ctor: '::',
+			_0: _p11._2,
+			_1: {ctor: '[]'}
+		},
+		content);
+};
+var _evancz$elm_sortable_table$Table$Customizations = F6(
+	function (a, b, c, d, e, f) {
+		return {tableAttrs: a, caption: b, thead: c, tfoot: d, tbodyAttrs: e, rowAttrs: f};
+	});
+var _evancz$elm_sortable_table$Table$HtmlDetails = F2(
+	function (a, b) {
+		return {attributes: a, children: b};
+	});
+var _evancz$elm_sortable_table$Table$simpleThead = function (headers) {
+	return A2(
+		_evancz$elm_sortable_table$Table$HtmlDetails,
+		{ctor: '[]'},
+		A2(_elm_lang$core$List$map, _evancz$elm_sortable_table$Table$simpleTheadHelp, headers));
+};
+var _evancz$elm_sortable_table$Table$defaultCustomizations = {
+	tableAttrs: {ctor: '[]'},
+	caption: _elm_lang$core$Maybe$Nothing,
+	thead: _evancz$elm_sortable_table$Table$simpleThead,
+	tfoot: _elm_lang$core$Maybe$Nothing,
+	tbodyAttrs: {ctor: '[]'},
+	rowAttrs: _evancz$elm_sortable_table$Table$simpleRowAttrs
+};
+var _evancz$elm_sortable_table$Table$textDetails = function (str) {
+	return A2(
+		_evancz$elm_sortable_table$Table$HtmlDetails,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(str),
+			_1: {ctor: '[]'}
+		});
+};
+var _evancz$elm_sortable_table$Table$ColumnData = F3(
+	function (a, b, c) {
+		return {name: a, viewData: b, sorter: c};
+	});
+var _evancz$elm_sortable_table$Table$State = F2(
+	function (a, b) {
+		return {ctor: 'State', _0: a, _1: b};
+	});
+var _evancz$elm_sortable_table$Table$initialSort = function (header) {
+	return A2(_evancz$elm_sortable_table$Table$State, header, false);
+};
+var _evancz$elm_sortable_table$Table$onClick = F3(
+	function (name, isReversed, toMsg) {
+		return A2(
+			_elm_lang$html$Html_Events$on,
+			'click',
+			A2(
+				_elm_lang$core$Json_Decode$map,
+				toMsg,
+				A3(
+					_elm_lang$core$Json_Decode$map2,
+					_evancz$elm_sortable_table$Table$State,
+					_elm_lang$core$Json_Decode$succeed(name),
+					_elm_lang$core$Json_Decode$succeed(isReversed))));
+	});
+var _evancz$elm_sortable_table$Table$Config = function (a) {
+	return {ctor: 'Config', _0: a};
+};
+var _evancz$elm_sortable_table$Table$config = function (_p14) {
+	var _p15 = _p14;
+	return _evancz$elm_sortable_table$Table$Config(
+		{
+			toId: _p15.toId,
+			toMsg: _p15.toMsg,
+			columns: A2(
+				_elm_lang$core$List$map,
+				function (_p16) {
+					var _p17 = _p16;
+					return _p17._0;
+				},
+				_p15.columns),
+			customizations: _evancz$elm_sortable_table$Table$defaultCustomizations
+		});
+};
+var _evancz$elm_sortable_table$Table$customConfig = function (_p18) {
+	var _p19 = _p18;
+	return _evancz$elm_sortable_table$Table$Config(
+		{
+			toId: _p19.toId,
+			toMsg: _p19.toMsg,
+			columns: A2(
+				_elm_lang$core$List$map,
+				function (_p20) {
+					var _p21 = _p20;
+					return _p21._0;
+				},
+				_p19.columns),
+			customizations: _p19.customizations
+		});
+};
+var _evancz$elm_sortable_table$Table$Reversible = function (a) {
+	return {ctor: 'Reversible', _0: a};
+};
+var _evancz$elm_sortable_table$Table$Sortable = function (a) {
+	return {ctor: 'Sortable', _0: a};
+};
+var _evancz$elm_sortable_table$Table$Unsortable = {ctor: 'Unsortable'};
+var _evancz$elm_sortable_table$Table$toHeaderInfo = F3(
+	function (_p23, toMsg, _p22) {
+		var _p24 = _p23;
+		var _p29 = _p24._0;
+		var _p28 = _p24._1;
+		var _p25 = _p22;
+		var _p27 = _p25.name;
+		var _p26 = _p25.sorter;
+		switch (_p26.ctor) {
+			case 'None':
+				return {
+					ctor: '_Tuple3',
+					_0: _p27,
+					_1: _evancz$elm_sortable_table$Table$Unsortable,
+					_2: A3(_evancz$elm_sortable_table$Table$onClick, _p29, _p28, toMsg)
+				};
+			case 'Increasing':
+				return {
+					ctor: '_Tuple3',
+					_0: _p27,
+					_1: _evancz$elm_sortable_table$Table$Sortable(
+						_elm_lang$core$Native_Utils.eq(_p27, _p29)),
+					_2: A3(_evancz$elm_sortable_table$Table$onClick, _p27, false, toMsg)
+				};
+			case 'Decreasing':
+				return {
+					ctor: '_Tuple3',
+					_0: _p27,
+					_1: _evancz$elm_sortable_table$Table$Sortable(
+						_elm_lang$core$Native_Utils.eq(_p27, _p29)),
+					_2: A3(_evancz$elm_sortable_table$Table$onClick, _p27, false, toMsg)
+				};
+			case 'IncOrDec':
+				return _elm_lang$core$Native_Utils.eq(_p27, _p29) ? {
+					ctor: '_Tuple3',
+					_0: _p27,
+					_1: _evancz$elm_sortable_table$Table$Reversible(
+						_elm_lang$core$Maybe$Just(_p28)),
+					_2: A3(_evancz$elm_sortable_table$Table$onClick, _p27, !_p28, toMsg)
+				} : {
+					ctor: '_Tuple3',
+					_0: _p27,
+					_1: _evancz$elm_sortable_table$Table$Reversible(_elm_lang$core$Maybe$Nothing),
+					_2: A3(_evancz$elm_sortable_table$Table$onClick, _p27, false, toMsg)
+				};
+			default:
+				return _elm_lang$core$Native_Utils.eq(_p27, _p29) ? {
+					ctor: '_Tuple3',
+					_0: _p27,
+					_1: _evancz$elm_sortable_table$Table$Reversible(
+						_elm_lang$core$Maybe$Just(_p28)),
+					_2: A3(_evancz$elm_sortable_table$Table$onClick, _p27, !_p28, toMsg)
+				} : {
+					ctor: '_Tuple3',
+					_0: _p27,
+					_1: _evancz$elm_sortable_table$Table$Reversible(_elm_lang$core$Maybe$Nothing),
+					_2: A3(_evancz$elm_sortable_table$Table$onClick, _p27, false, toMsg)
+				};
+		}
+	});
+var _evancz$elm_sortable_table$Table$view = F3(
+	function (_p30, state, data) {
+		var _p31 = _p30;
+		var _p35 = _p31._0.customizations;
+		var _p34 = _p31._0.columns;
+		var theadDetails = _p35.thead(
+			A2(
+				_elm_lang$core$List$map,
+				A2(_evancz$elm_sortable_table$Table$toHeaderInfo, state, _p31._0.toMsg),
+				_p34));
+		var thead = A2(_elm_lang$html$Html$thead, theadDetails.attributes, theadDetails.children);
+		var sortedData = A3(_evancz$elm_sortable_table$Table$sort, state, _p34, data);
+		var tbody = A3(
+			_elm_lang$html$Html_Keyed$node,
+			'tbody',
+			_p35.tbodyAttrs,
+			A2(
+				_elm_lang$core$List$map,
+				A3(_evancz$elm_sortable_table$Table$viewRow, _p31._0.toId, _p34, _p35.rowAttrs),
+				sortedData));
+		var withFoot = function () {
+			var _p32 = _p35.tfoot;
+			if (_p32.ctor === 'Nothing') {
+				return {
+					ctor: '::',
+					_0: tbody,
+					_1: {ctor: '[]'}
+				};
+			} else {
+				return {
+					ctor: '::',
+					_0: A2(_elm_lang$html$Html$tfoot, _p32._0.attributes, _p32._0.children),
+					_1: {
+						ctor: '::',
+						_0: tbody,
+						_1: {ctor: '[]'}
+					}
+				};
+			}
+		}();
+		return A2(
+			_elm_lang$html$Html$table,
+			_p35.tableAttrs,
+			function () {
+				var _p33 = _p35.caption;
+				if (_p33.ctor === 'Nothing') {
+					return {ctor: '::', _0: thead, _1: withFoot};
+				} else {
+					return {
+						ctor: '::',
+						_0: A2(_elm_lang$html$Html$caption, _p33._0.attributes, _p33._0.children),
+						_1: {ctor: '::', _0: thead, _1: withFoot}
+					};
+				}
+			}());
+	});
+var _evancz$elm_sortable_table$Table$Column = function (a) {
+	return {ctor: 'Column', _0: a};
+};
+var _evancz$elm_sortable_table$Table$customColumn = function (_p36) {
+	var _p37 = _p36;
+	return _evancz$elm_sortable_table$Table$Column(
+		A3(
+			_evancz$elm_sortable_table$Table$ColumnData,
+			_p37.name,
+			function (_p38) {
+				return _evancz$elm_sortable_table$Table$textDetails(
+					_p37.viewData(_p38));
+			},
+			_p37.sorter));
+};
+var _evancz$elm_sortable_table$Table$veryCustomColumn = _evancz$elm_sortable_table$Table$Column;
+var _evancz$elm_sortable_table$Table$DecOrInc = function (a) {
+	return {ctor: 'DecOrInc', _0: a};
+};
+var _evancz$elm_sortable_table$Table$decreasingOrIncreasingBy = function (toComparable) {
+	return _evancz$elm_sortable_table$Table$DecOrInc(
+		_elm_lang$core$List$sortBy(toComparable));
+};
+var _evancz$elm_sortable_table$Table$IncOrDec = function (a) {
+	return {ctor: 'IncOrDec', _0: a};
+};
+var _evancz$elm_sortable_table$Table$increasingOrDecreasingBy = function (toComparable) {
+	return _evancz$elm_sortable_table$Table$IncOrDec(
+		_elm_lang$core$List$sortBy(toComparable));
+};
+var _evancz$elm_sortable_table$Table$stringColumn = F2(
+	function (name, toStr) {
+		return _evancz$elm_sortable_table$Table$Column(
+			{
+				name: name,
+				viewData: function (_p39) {
+					return _evancz$elm_sortable_table$Table$textDetails(
+						toStr(_p39));
+				},
+				sorter: _evancz$elm_sortable_table$Table$increasingOrDecreasingBy(toStr)
+			});
+	});
+var _evancz$elm_sortable_table$Table$intColumn = F2(
+	function (name, toInt) {
+		return _evancz$elm_sortable_table$Table$Column(
+			{
+				name: name,
+				viewData: function (_p40) {
+					return _evancz$elm_sortable_table$Table$textDetails(
+						_elm_lang$core$Basics$toString(
+							toInt(_p40)));
+				},
+				sorter: _evancz$elm_sortable_table$Table$increasingOrDecreasingBy(toInt)
+			});
+	});
+var _evancz$elm_sortable_table$Table$floatColumn = F2(
+	function (name, toFloat) {
+		return _evancz$elm_sortable_table$Table$Column(
+			{
+				name: name,
+				viewData: function (_p41) {
+					return _evancz$elm_sortable_table$Table$textDetails(
+						_elm_lang$core$Basics$toString(
+							toFloat(_p41)));
+				},
+				sorter: _evancz$elm_sortable_table$Table$increasingOrDecreasingBy(toFloat)
+			});
+	});
+var _evancz$elm_sortable_table$Table$Decreasing = function (a) {
+	return {ctor: 'Decreasing', _0: a};
+};
+var _evancz$elm_sortable_table$Table$decreasingBy = function (toComparable) {
+	return _evancz$elm_sortable_table$Table$Decreasing(
+		_elm_lang$core$List$sortBy(toComparable));
+};
+var _evancz$elm_sortable_table$Table$Increasing = function (a) {
+	return {ctor: 'Increasing', _0: a};
+};
+var _evancz$elm_sortable_table$Table$increasingBy = function (toComparable) {
+	return _evancz$elm_sortable_table$Table$Increasing(
+		_elm_lang$core$List$sortBy(toComparable));
+};
+var _evancz$elm_sortable_table$Table$None = {ctor: 'None'};
+var _evancz$elm_sortable_table$Table$unsortable = _evancz$elm_sortable_table$Table$None;
+
 var _evancz$url_parser$UrlParser$toKeyValuePair = function (segment) {
 	var _p0 = A2(_elm_lang$core$String$split, '=', segment);
 	if (((_p0.ctor === '::') && (_p0._1.ctor === '::')) && (_p0._1._1.ctor === '[]')) {
@@ -10290,6 +10641,44 @@ var _evancz$url_parser$UrlParser$intParam = function (name) {
 	return A2(_evancz$url_parser$UrlParser$customParam, name, _evancz$url_parser$UrlParser$intParamHelp);
 };
 
+var _fpawel$gobet_front$Aping$eventTeams = function (s) {
+	var _p0 = A3(
+		_elm_lang$core$Regex$split,
+		_elm_lang$core$Regex$AtMost(1),
+		_elm_lang$core$Regex$regex(' [v@\\-] '),
+		s);
+	if (((_p0.ctor === '::') && (_p0._1.ctor === '::')) && (_p0._1._1.ctor === '[]')) {
+		return _elm_lang$core$Maybe$Just(
+			{ctor: '_Tuple2', _0: _p0._0, _1: _p0._1._0});
+	} else {
+		return _elm_lang$core$Maybe$Nothing;
+	}
+};
+var _fpawel$gobet_front$Aping$getSportByID = F2(
+	function (sportID, sports) {
+		var _p3 = A2(
+			_elm_lang$core$List$filter,
+			function (_p1) {
+				var _p2 = _p1;
+				return _elm_lang$core$Native_Utils.eq(_p2.id, sportID);
+			},
+			sports);
+		if (_p3.ctor === '::') {
+			return _p3._0;
+		} else {
+			return _elm_lang$core$Native_Utils.crashCase(
+				'Aping',
+				{
+					start: {line: 26, column: 5},
+					end: {line: 31, column: 67}
+				},
+				_p3)(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'unknown sport id ',
+					_elm_lang$core$Basics$toString(sportID)));
+		}
+	});
 var _fpawel$gobet_front$Aping$Sport = F3(
 	function (a, b, c) {
 		return {id: a, name: b, market_count: c};
@@ -10922,457 +11311,6 @@ var _fpawel$gobet_front$Aping_Decoder$event = A4(
 						_elm_lang$core$Json_Decode$int,
 						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Aping$Event)))))));
 
-var _fpawel$gobet_front$Month$getMaybe = F2(
-	function (s, x) {
-		var _p0 = x;
-		if (_p0.ctor === 'Just') {
-			return _p0._0;
-		} else {
-			return _elm_lang$core$Native_Utils.crashCase(
-				'Month',
-				{
-					start: {line: 86, column: 5},
-					end: {line: 91, column: 26}
-				},
-				_p0)(s);
-		}
-	});
-var _fpawel$gobet_front$Month$values = {
-	ctor: '::',
-	_0: _elm_lang$core$Date$Jan,
-	_1: {
-		ctor: '::',
-		_0: _elm_lang$core$Date$Feb,
-		_1: {
-			ctor: '::',
-			_0: _elm_lang$core$Date$Mar,
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$core$Date$Apr,
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$core$Date$May,
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$core$Date$Jun,
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$core$Date$Jul,
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$core$Date$Aug,
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$core$Date$Sep,
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$core$Date$Oct,
-										_1: {
-											ctor: '::',
-											_0: _elm_lang$core$Date$Nov,
-											_1: {
-												ctor: '::',
-												_0: _elm_lang$core$Date$Dec,
-												_1: {ctor: '[]'}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-};
-var _fpawel$gobet_front$Month$nvalues = A2(
-	_elm_lang$core$List$map,
-	function (_p2) {
-		var _p3 = _p2;
-		return {
-			ctor: '_Tuple2',
-			_0: _p3._0,
-			_1: {ctor: '_Tuple2', _0: _p3._1, _1: _p3._2}
-		};
-	},
-	A4(
-		_elm_lang$core$List$map3,
-		F3(
-			function (v0, v1, v2) {
-				return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
-			}),
-		A2(_elm_lang$core$List$range, 1, 12),
-		{
-			ctor: '::',
-			_0: 'января',
-			_1: {
-				ctor: '::',
-				_0: 'февраля',
-				_1: {
-					ctor: '::',
-					_0: 'марта',
-					_1: {
-						ctor: '::',
-						_0: 'апреля',
-						_1: {
-							ctor: '::',
-							_0: 'мая',
-							_1: {
-								ctor: '::',
-								_0: 'июня',
-								_1: {
-									ctor: '::',
-									_0: 'июля',
-									_1: {
-										ctor: '::',
-										_0: 'августа',
-										_1: {
-											ctor: '::',
-											_0: 'сентября',
-											_1: {
-												ctor: '::',
-												_0: 'октября',
-												_1: {
-													ctor: '::',
-													_0: 'ноября',
-													_1: {
-														ctor: '::',
-														_0: 'декабря',
-														_1: {ctor: '[]'}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		},
-		_fpawel$gobet_front$Month$values));
-var _fpawel$gobet_front$Month$mvalues = _elm_lang$core$Dict$fromList(_fpawel$gobet_front$Month$nvalues);
-var _fpawel$gobet_front$Month$fromNumber = function (n) {
-	return _elm_lang$core$Tuple$second(
-		A2(
-			_fpawel$gobet_front$Month$getMaybe,
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'Month.fromNumber ',
-				_elm_lang$core$Basics$toString(n)),
-			A2(_elm_lang$core$Dict$get, n, _fpawel$gobet_front$Month$mvalues)));
-};
-var _fpawel$gobet_front$Month$format1 = function (n) {
-	return A2(
-		_fpawel$gobet_front$Month$getMaybe,
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			'Month.format1 ',
-			_elm_lang$core$Basics$toString(n)),
-		A2(
-			_elm_lang$core$Maybe$map,
-			function (_p4) {
-				var _p5 = _p4;
-				return _p5._0;
-			},
-			A2(_elm_lang$core$Dict$get, n, _fpawel$gobet_front$Month$mvalues)));
-};
-var _fpawel$gobet_front$Month$toNumber = function (m) {
-	return A2(
-		_fpawel$gobet_front$Month$getMaybe,
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			'Month.toNumber ',
-			_elm_lang$core$Basics$toString(m)),
-		_elm_lang$core$List$head(
-			A2(
-				_elm_lang$core$List$filterMap,
-				function (_p6) {
-					var _p7 = _p6;
-					return _elm_lang$core$Native_Utils.eq(m, _p7._1._1) ? _elm_lang$core$Maybe$Just(_p7._0) : _elm_lang$core$Maybe$Nothing;
-				},
-				_fpawel$gobet_front$Month$nvalues)));
-};
-
-var _fpawel$gobet_front$Help_Utils$listGoupBy = F2(
-	function (fk, lst) {
-		return A3(
-			_elm_lang$core$List$foldr,
-			F2(
-				function (x, acc) {
-					var k = fk(x);
-					var xs = A2(
-						F2(
-							function (x, y) {
-								return {ctor: '::', _0: x, _1: y};
-							}),
-						x,
-						A2(
-							_elm_lang$core$Maybe$withDefault,
-							{ctor: '[]'},
-							A2(_elm_lang$core$Dict$get, k, acc)));
-					return A3(_elm_lang$core$Dict$insert, k, xs, acc);
-				}),
-			_elm_lang$core$Dict$empty,
-			lst);
-	});
-var _fpawel$gobet_front$Help_Utils$day_month_year = function (date) {
-	var year = _elm_lang$core$Date$year(date);
-	var month = _fpawel$gobet_front$Month$toNumber(
-		_elm_lang$core$Date$month(date));
-	var day = _elm_lang$core$Date$day(date);
-	return {ctor: '_Tuple3', _0: day, _1: month, _2: year};
-};
-var _fpawel$gobet_front$Help_Utils$list_window1 = F3(
-	function (acc, m, xs) {
-		list_window1:
-		while (true) {
-			var _p0 = A2(
-				_elm_lang$core$List$partition,
-				function (_p1) {
-					var _p2 = _p1;
-					return _elm_lang$core$Native_Utils.cmp(_p2._0, m) < 0;
-				},
-				A2(
-					_elm_lang$core$List$indexedMap,
-					F2(
-						function (n, x) {
-							return {ctor: '_Tuple2', _0: n, _1: x};
-						}),
-					xs));
-			var xs1_ = _p0._0;
-			var xs2_ = _p0._1;
-			var xs1 = A2(_elm_lang$core$List$map, _elm_lang$core$Tuple$second, xs1_);
-			var xs2 = A2(_elm_lang$core$List$map, _elm_lang$core$Tuple$second, xs2_);
-			if (_elm_lang$core$List$isEmpty(xs1)) {
-				return acc;
-			} else {
-				var _v1 = {ctor: '::', _0: xs1, _1: acc},
-					_v2 = m,
-					_v3 = xs2;
-				acc = _v1;
-				m = _v2;
-				xs = _v3;
-				continue list_window1;
-			}
-		}
-	});
-var _fpawel$gobet_front$Help_Utils$list_window = F2(
-	function (n, xs) {
-		return _elm_lang$core$List$reverse(
-			A3(
-				_fpawel$gobet_front$Help_Utils$list_window1,
-				{ctor: '[]'},
-				n,
-				xs));
-	});
-var _fpawel$gobet_front$Help_Utils$list_parts_n = F2(
-	function (n, xs) {
-		var len = _elm_lang$core$List$length(xs);
-		var a = (len / n) | 0;
-		var b = A2(_elm_lang$core$Basics$rem, len, n);
-		var c = _elm_lang$core$Native_Utils.eq(b, 0) ? a : (a + 1);
-		return A2(_fpawel$gobet_front$Help_Utils$list_window, c, xs);
-	});
-var _fpawel$gobet_front$Help_Utils$websocketURL = function (_p3) {
-	var _p4 = _p3;
-	var _p5 = _p4.protocol;
-	return (!A2(_elm_lang$core$String$startsWith, 'http', _p5)) ? _elm_lang$core$Native_Utils.crash(
-		'Help.Utils',
-		{
-			start: {line: 39, column: 16},
-			end: {line: 39, column: 27}
-		})(
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			'wrong protocol `',
-			A2(_elm_lang$core$Basics_ops['++'], _p5, 'wrong name of the protocol - expected a string that starts with `http`'))) : A2(
-		_elm_lang$core$Basics_ops['++'],
-		'ws',
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			A2(_elm_lang$core$String$dropLeft, 4, _p5),
-			A2(_elm_lang$core$Basics_ops['++'], '//', _p4.host)));
-};
-var _fpawel$gobet_front$Help_Utils$isNothing = function (_p6) {
-	return A2(
-		_elm_lang$core$Maybe$withDefault,
-		true,
-		A2(
-			_elm_lang$core$Maybe$map,
-			function (_p7) {
-				return false;
-			},
-			_p6));
-};
-var _fpawel$gobet_front$Help_Utils$isJust = function (_p8) {
-	return A2(
-		_elm_lang$core$Maybe$withDefault,
-		false,
-		A2(
-			_elm_lang$core$Maybe$map,
-			function (_p9) {
-				return true;
-			},
-			_p8));
-};
-var _fpawel$gobet_front$Help_Utils$compareInvert = F2(
-	function (n1, n2) {
-		var _p10 = A2(_elm_lang$core$Basics$compare, n1, n2);
-		switch (_p10.ctor) {
-			case 'LT':
-				return _elm_lang$core$Basics$GT;
-			case 'EQ':
-				return _elm_lang$core$Basics$EQ;
-			default:
-				return _elm_lang$core$Basics$LT;
-		}
-	});
-
-var _fpawel$gobet_front$Aping_Events$groupByDays = _fpawel$gobet_front$Help_Utils$listGoupBy(
-	function (event) {
-		var year = _elm_lang$core$Date$year(event.openDate);
-		var month = _fpawel$gobet_front$Month$toNumber(
-			_elm_lang$core$Date$month(event.openDate));
-		var day = _elm_lang$core$Date$day(event.openDate);
-		return {ctor: '_Tuple3', _0: day, _1: month, _2: year};
-	});
-var _fpawel$gobet_front$Aping_Events$dateTree = function (events) {
-	var mdays = _fpawel$gobet_front$Aping_Events$groupByDays(events);
-	var ndays = A2(
-		_elm_lang$core$List$map,
-		_elm_lang$core$Tuple$first,
-		_elm_lang$core$Dict$toList(mdays));
-	var nyears = _elm_lang$core$Set$fromList(
-		A2(
-			_elm_lang$core$List$map,
-			function (_p0) {
-				var _p1 = _p0;
-				return _p1._2;
-			},
-			ndays));
-	return A2(
-		_elm_lang$core$List$map,
-		function (y) {
-			return A2(
-				F2(
-					function (v0, v1) {
-						return {ctor: '_Tuple2', _0: v0, _1: v1};
-					}),
-				y,
-				A2(
-					_elm_lang$core$List$map,
-					function (m) {
-						return A2(
-							F2(
-								function (v0, v1) {
-									return {ctor: '_Tuple2', _0: v0, _1: v1};
-								}),
-							m,
-							A2(
-								_elm_lang$core$List$map,
-								function (d) {
-									return A2(
-										F2(
-											function (v0, v1) {
-												return {ctor: '_Tuple2', _0: v0, _1: v1};
-											}),
-										d,
-										A2(
-											_elm_lang$core$Maybe$withDefault,
-											{ctor: '[]'},
-											A2(
-												_elm_lang$core$Dict$get,
-												{ctor: '_Tuple3', _0: d, _1: m, _2: y},
-												mdays)));
-								},
-								_elm_lang$core$Set$toList(
-									_elm_lang$core$Set$fromList(
-										A2(
-											_elm_lang$core$List$map,
-											function (_p2) {
-												var _p3 = _p2;
-												return _p3._0;
-											},
-											A2(
-												_elm_lang$core$List$filter,
-												function (_p4) {
-													var _p5 = _p4;
-													return _elm_lang$core$Native_Utils.eq(_p5._2, y) && _elm_lang$core$Native_Utils.eq(_p5._1, m);
-												},
-												ndays))))));
-					},
-					_elm_lang$core$Set$toList(
-						_elm_lang$core$Set$fromList(
-							A2(
-								_elm_lang$core$List$map,
-								function (_p6) {
-									var _p7 = _p6;
-									return _p7._1;
-								},
-								A2(
-									_elm_lang$core$List$filter,
-									function (_p8) {
-										var _p9 = _p8;
-										return _elm_lang$core$Native_Utils.eq(_p9._2, y);
-									},
-									ndays))))));
-		},
-		_elm_lang$core$Set$toList(nyears));
-};
-var _fpawel$gobet_front$Aping_Events$defaultDay = F2(
-	function (today, events) {
-		var days = A2(
-			_elm_lang$core$List$map,
-			_elm_lang$core$Tuple$first,
-			_elm_lang$core$Dict$toList(
-				_fpawel$gobet_front$Aping_Events$groupByDays(events)));
-		return A2(
-			_elm_lang$core$Set$member,
-			today,
-			_elm_lang$core$Set$fromList(days)) ? today : A2(
-			_elm_lang$core$Maybe$withDefault,
-			A2(
-				_elm_lang$core$Maybe$withDefault,
-				{ctor: '_Tuple3', _0: 0, _1: 0, _2: 0},
-				_elm_lang$core$List$head(days)),
-			_elm_lang$core$List$head(
-				A2(
-					_elm_lang$core$List$filter,
-					function (x) {
-						return _elm_lang$core$Native_Utils.cmp(x, today) > 0;
-					},
-					days)));
-	});
-var _fpawel$gobet_front$Aping_Events$countries = function (_p10) {
-	return A2(
-		_elm_lang$core$List$map,
-		_elm_lang$core$Tuple$first,
-		A2(
-			_elm_lang$core$List$sortWith,
-			F2(
-				function (_p12, _p11) {
-					var _p13 = _p12;
-					var _p14 = _p11;
-					return A2(_fpawel$gobet_front$Help_Utils$compareInvert, _p13._1, _p14._1);
-				}),
-			_elm_lang$core$Dict$toList(
-				A3(
-					_elm_lang$core$List$foldr,
-					F2(
-						function (event, acc) {
-							var n = A2(
-								_elm_lang$core$Maybe$withDefault,
-								0,
-								A2(_elm_lang$core$Dict$get, event.country, acc));
-							return A3(_elm_lang$core$Dict$insert, event.country, n + 1, acc);
-						}),
-					_elm_lang$core$Dict$empty,
-					_p10))));
-};
-
 var _fpawel$gobet_front$Help_Component$mainMenuItem = F2(
 	function (title, items) {
 		return A2(
@@ -11488,7 +11426,928 @@ var _fpawel$gobet_front$Help_Component$spinner_text = function (text) {
 		});
 };
 
-var _fpawel$gobet_front$Navbar$dropDown = function (_p0) {
+var _fpawel$gobet_front$DateUtils_Month$getMaybe = F2(
+	function (s, x) {
+		var _p0 = x;
+		if (_p0.ctor === 'Just') {
+			return _p0._0;
+		} else {
+			return _elm_lang$core$Native_Utils.crashCase(
+				'DateUtils.Month',
+				{
+					start: {line: 106, column: 5},
+					end: {line: 111, column: 26}
+				},
+				_p0)(s);
+		}
+	});
+var _fpawel$gobet_front$DateUtils_Month$values = {
+	ctor: '::',
+	_0: _elm_lang$core$Date$Jan,
+	_1: {
+		ctor: '::',
+		_0: _elm_lang$core$Date$Feb,
+		_1: {
+			ctor: '::',
+			_0: _elm_lang$core$Date$Mar,
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$core$Date$Apr,
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$core$Date$May,
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$core$Date$Jun,
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$core$Date$Jul,
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$core$Date$Aug,
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$core$Date$Sep,
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$core$Date$Oct,
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$core$Date$Nov,
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$core$Date$Dec,
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _fpawel$gobet_front$DateUtils_Month$nvalues = A2(
+	_elm_lang$core$List$map,
+	function (_p2) {
+		var _p3 = _p2;
+		return {
+			ctor: '_Tuple2',
+			_0: _p3._0,
+			_1: {ctor: '_Tuple3', _0: _p3._1, _1: _p3._2, _2: _p3._3}
+		};
+	},
+	A5(
+		_elm_lang$core$List$map4,
+		F4(
+			function (v0, v1, v2, v3) {
+				return {ctor: '_Tuple4', _0: v0, _1: v1, _2: v2, _3: v3};
+			}),
+		A2(_elm_lang$core$List$range, 1, 12),
+		{
+			ctor: '::',
+			_0: 'января',
+			_1: {
+				ctor: '::',
+				_0: 'февраля',
+				_1: {
+					ctor: '::',
+					_0: 'марта',
+					_1: {
+						ctor: '::',
+						_0: 'апреля',
+						_1: {
+							ctor: '::',
+							_0: 'мая',
+							_1: {
+								ctor: '::',
+								_0: 'июня',
+								_1: {
+									ctor: '::',
+									_0: 'июля',
+									_1: {
+										ctor: '::',
+										_0: 'августа',
+										_1: {
+											ctor: '::',
+											_0: 'сентября',
+											_1: {
+												ctor: '::',
+												_0: 'октября',
+												_1: {
+													ctor: '::',
+													_0: 'ноября',
+													_1: {
+														ctor: '::',
+														_0: 'декабря',
+														_1: {ctor: '[]'}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			ctor: '::',
+			_0: 'январь',
+			_1: {
+				ctor: '::',
+				_0: 'февраль',
+				_1: {
+					ctor: '::',
+					_0: 'март',
+					_1: {
+						ctor: '::',
+						_0: 'апрель',
+						_1: {
+							ctor: '::',
+							_0: 'май',
+							_1: {
+								ctor: '::',
+								_0: 'июнь',
+								_1: {
+									ctor: '::',
+									_0: 'июль',
+									_1: {
+										ctor: '::',
+										_0: 'август',
+										_1: {
+											ctor: '::',
+											_0: 'сентябрь',
+											_1: {
+												ctor: '::',
+												_0: 'октябрь',
+												_1: {
+													ctor: '::',
+													_0: 'ноябрь',
+													_1: {
+														ctor: '::',
+														_0: 'декабрь',
+														_1: {ctor: '[]'}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		_fpawel$gobet_front$DateUtils_Month$values));
+var _fpawel$gobet_front$DateUtils_Month$mvalues = _elm_lang$core$Dict$fromList(_fpawel$gobet_front$DateUtils_Month$nvalues);
+var _fpawel$gobet_front$DateUtils_Month$fromNumber = function (n) {
+	return function (_p4) {
+		var _p5 = _p4;
+		return _p5._2;
+	}(
+		A2(
+			_fpawel$gobet_front$DateUtils_Month$getMaybe,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'Month.fromNumber ',
+				_elm_lang$core$Basics$toString(n)),
+			A2(_elm_lang$core$Dict$get, n, _fpawel$gobet_front$DateUtils_Month$mvalues)));
+};
+var _fpawel$gobet_front$DateUtils_Month$format1 = function (n) {
+	return A2(
+		_fpawel$gobet_front$DateUtils_Month$getMaybe,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'Month.format1 ',
+			_elm_lang$core$Basics$toString(n)),
+		A2(
+			_elm_lang$core$Maybe$map,
+			function (_p6) {
+				var _p7 = _p6;
+				return _p7._0;
+			},
+			A2(_elm_lang$core$Dict$get, n, _fpawel$gobet_front$DateUtils_Month$mvalues)));
+};
+var _fpawel$gobet_front$DateUtils_Month$format2 = function (n) {
+	return A2(
+		_fpawel$gobet_front$DateUtils_Month$getMaybe,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'Month.format2 ',
+			_elm_lang$core$Basics$toString(n)),
+		A2(
+			_elm_lang$core$Maybe$map,
+			function (_p8) {
+				var _p9 = _p8;
+				return _p9._1;
+			},
+			A2(_elm_lang$core$Dict$get, n, _fpawel$gobet_front$DateUtils_Month$mvalues)));
+};
+var _fpawel$gobet_front$DateUtils_Month$toNumber = function (m) {
+	return A2(
+		_fpawel$gobet_front$DateUtils_Month$getMaybe,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'Month.toNumber ',
+			_elm_lang$core$Basics$toString(m)),
+		_elm_lang$core$List$head(
+			A2(
+				_elm_lang$core$List$filterMap,
+				function (_p10) {
+					var _p11 = _p10;
+					return _elm_lang$core$Native_Utils.eq(m, _p11._1._2) ? _elm_lang$core$Maybe$Just(_p11._0) : _elm_lang$core$Maybe$Nothing;
+				},
+				_fpawel$gobet_front$DateUtils_Month$nvalues)));
+};
+
+var _fpawel$gobet_front$DateUtils$formatDayMonth = function (_p0) {
+	var _p1 = _p0;
+	var _p2 = _p1.day;
+	var strMonth = _fpawel$gobet_front$DateUtils_Month$format1(_p1.month);
+	var strDay = A2(
+		_elm_lang$core$Basics_ops['++'],
+		(_elm_lang$core$Native_Utils.cmp(_p2, 10) < 0) ? '0' : '',
+		_elm_lang$core$Basics$toString(_p2));
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		strDay,
+		A2(_elm_lang$core$Basics_ops['++'], ' ', strMonth));
+};
+var _fpawel$gobet_front$DateUtils$formatDayMonthYear = function (_p3) {
+	var _p4 = _p3;
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		_fpawel$gobet_front$DateUtils$formatDayMonth(_p4),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			' ',
+			_elm_lang$core$Basics$toString(_p4.year)));
+};
+var _fpawel$gobet_front$DateUtils$dateTimeFromDate = function (date) {
+	var year = _elm_lang$core$Date$year(date);
+	var month = _fpawel$gobet_front$DateUtils_Month$toNumber(
+		_elm_lang$core$Date$month(date));
+	var day = _elm_lang$core$Date$day(date);
+	var hour = _elm_lang$core$Date$hour(date);
+	var minute = _elm_lang$core$Date$minute(date);
+	var second = _elm_lang$core$Date$second(date);
+	var millis = _elm_lang$core$Date$millisecond(date);
+	return {millis: millis, second: second, minute: minute, hour: hour, day: day, month: month, year: year};
+};
+var _fpawel$gobet_front$DateUtils$dateFromDate = function (date) {
+	var year = _elm_lang$core$Date$year(date);
+	var month = _fpawel$gobet_front$DateUtils_Month$toNumber(
+		_elm_lang$core$Date$month(date));
+	var day = _elm_lang$core$Date$day(date);
+	return {day: day, month: month, year: year};
+};
+var _fpawel$gobet_front$DateUtils$formatDate1 = function (d) {
+	var _p5 = _fpawel$gobet_front$DateUtils$dateFromDate(d);
+	var day = _p5.day;
+	var month = _p5.month;
+	var year = _p5.year;
+	var strDay = A2(
+		_elm_lang$core$Basics_ops['++'],
+		(_elm_lang$core$Native_Utils.cmp(day, 10) < 0) ? '0' : '',
+		_elm_lang$core$Basics$toString(day));
+	var strMonth = A2(
+		_elm_lang$core$Basics_ops['++'],
+		(_elm_lang$core$Native_Utils.cmp(month, 10) < 0) ? '0' : '',
+		_elm_lang$core$Basics$toString(month));
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		strDay,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			' ',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				strMonth,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					' ',
+					_elm_lang$core$Basics$toString(year)))));
+};
+var _fpawel$gobet_front$DateUtils$whatDayAfter = F2(
+	function (nowTime, date) {
+		var nowDate = _fpawel$gobet_front$DateUtils$dateFromDate(
+			_elm_lang$core$Date$fromTime(nowTime));
+		var isNthDayAfter = function (n) {
+			return _elm_lang$core$Native_Utils.eq(
+				date,
+				_elm_lang$core$Native_Utils.update(
+					nowDate,
+					{day: nowDate.day + n}));
+		};
+		if (isNthDayAfter(0)) {
+			return 'Сегодня';
+		} else {
+			if (isNthDayAfter(1)) {
+				return 'Завтра';
+			} else {
+				if (isNthDayAfter(2)) {
+					return 'Послезавтра';
+				} else {
+					var _p6 = A2(
+						_elm_lang$core$List$filter,
+						isNthDayAfter,
+						A2(_elm_lang$core$List$range, 3, 6));
+					if (_p6.ctor === '::') {
+						return _elm_lang$core$Basics$toString(
+							_elm_lang$core$Date$dayOfWeek(
+								_elm_lang$core$Date$fromTime(
+									nowTime + ((_elm_lang$core$Time$hour * 24) * _elm_lang$core$Basics$toFloat(_p6._0)))));
+					} else {
+						return _elm_lang$core$Native_Utils.eq(date.year, nowDate.year) ? _fpawel$gobet_front$DateUtils$formatDayMonth(date) : _fpawel$gobet_front$DateUtils$formatDayMonthYear(date);
+					}
+				}
+			}
+		}
+	});
+var _fpawel$gobet_front$DateUtils$timeIncDay = F2(
+	function (n, t) {
+		return t + ((n * 24) * _elm_lang$core$Time$hour);
+	});
+var _fpawel$gobet_front$DateUtils$dateFromTime = function (_p7) {
+	return _fpawel$gobet_front$DateUtils$dateFromDate(
+		_elm_lang$core$Date$fromTime(_p7));
+};
+var _fpawel$gobet_front$DateUtils$Date = F3(
+	function (a, b, c) {
+		return {day: a, month: b, year: c};
+	});
+var _fpawel$gobet_front$DateUtils$DateTime = F7(
+	function (a, b, c, d, e, f, g) {
+		return {millis: a, second: b, minute: c, hour: d, day: e, month: f, year: g};
+	});
+
+var _fpawel$gobet_front$View_SportTable$columnAway = _evancz$elm_sortable_table$Table$veryCustomColumn(
+	{
+		name: 'В гостях',
+		sorter: _evancz$elm_sortable_table$Table$increasingOrDecreasingBy(
+			function (_p0) {
+				var _p1 = _p0;
+				return A2(
+					_elm_lang$core$Maybe$withDefault,
+					'',
+					A2(
+						_elm_lang$core$Maybe$map,
+						_elm_lang$core$Tuple$second,
+						_fpawel$gobet_front$Aping$eventTeams(_p1.name)));
+			}),
+		viewData: function (_p2) {
+			var _p3 = _p2;
+			var _p4 = _fpawel$gobet_front$Aping$eventTeams(_p3.name);
+			if ((_p4.ctor === 'Just') && (_p4._0.ctor === '_Tuple2')) {
+				return {
+					children: {
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(_p4._0._1),
+						_1: {ctor: '[]'}
+					},
+					attributes: {ctor: '[]'}
+				};
+			} else {
+				return {
+					children: {ctor: '[]'},
+					attributes: {ctor: '[]'}
+				};
+			}
+		}
+	});
+var _fpawel$gobet_front$View_SportTable$columnHome = _evancz$elm_sortable_table$Table$veryCustomColumn(
+	{
+		name: 'Событие',
+		sorter: _evancz$elm_sortable_table$Table$increasingOrDecreasingBy(
+			function (_p5) {
+				var _p6 = _p5;
+				var _p7 = _p6.name;
+				return A2(
+					_elm_lang$core$Maybe$withDefault,
+					_p7,
+					A2(
+						_elm_lang$core$Maybe$map,
+						_elm_lang$core$Tuple$first,
+						_fpawel$gobet_front$Aping$eventTeams(_p7)));
+			}),
+		viewData: function (_p8) {
+			var _p9 = _p8;
+			var _p11 = _p9.name;
+			var _p10 = _fpawel$gobet_front$Aping$eventTeams(_p11);
+			if ((_p10.ctor === 'Just') && (_p10._0.ctor === '_Tuple2')) {
+				return {
+					children: {
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(_p10._0._0),
+						_1: {ctor: '[]'}
+					},
+					attributes: {ctor: '[]'}
+				};
+			} else {
+				return {
+					children: {
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(_p11),
+						_1: {ctor: '[]'}
+					},
+					attributes: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$colspan(2),
+						_1: {ctor: '[]'}
+					}
+				};
+			}
+		}
+	});
+var _fpawel$gobet_front$View_SportTable$columnCountry = _evancz$elm_sortable_table$Table$customColumn(
+	{
+		name: 'Страна',
+		viewData: function (_) {
+			return _.country;
+		},
+		sorter: _evancz$elm_sortable_table$Table$increasingOrDecreasingBy(
+			function (_p12) {
+				var _p13 = _p12;
+				return {
+					ctor: '_Tuple2',
+					_0: _p13.country,
+					_1: _elm_lang$core$Date$toTime(_p13.openDate)
+				};
+			})
+	});
+var _fpawel$gobet_front$View_SportTable$columnOpenDate = _evancz$elm_sortable_table$Table$customColumn(
+	{
+		name: 'Дата открытия',
+		viewData: function (_p14) {
+			return _fpawel$gobet_front$DateUtils$formatDate1(
+				function (_) {
+					return _.openDate;
+				}(_p14));
+		},
+		sorter: _evancz$elm_sortable_table$Table$increasingOrDecreasingBy(
+			function (_p15) {
+				return _elm_lang$core$Date$toTime(
+					function (_) {
+						return _.openDate;
+					}(_p15));
+			})
+	});
+var _fpawel$gobet_front$View_SportTable$config = function (toMsg) {
+	return _evancz$elm_sortable_table$Table$customConfig(
+		{
+			toId: function (_p16) {
+				return _elm_lang$core$Basics$toString(
+					function (_) {
+						return _.id;
+					}(_p16));
+			},
+			toMsg: toMsg,
+			columns: {
+				ctor: '::',
+				_0: _fpawel$gobet_front$View_SportTable$columnOpenDate,
+				_1: {
+					ctor: '::',
+					_0: _fpawel$gobet_front$View_SportTable$columnCountry,
+					_1: {
+						ctor: '::',
+						_0: _fpawel$gobet_front$View_SportTable$columnHome,
+						_1: {
+							ctor: '::',
+							_0: _fpawel$gobet_front$View_SportTable$columnAway,
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			},
+			customizations: _elm_lang$core$Native_Utils.update(
+				_evancz$elm_sortable_table$Table$defaultCustomizations,
+				{
+					tableAttrs: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('table table-condensed'),
+						_1: {ctor: '[]'}
+					}
+				})
+		});
+};
+
+var _fpawel$gobet_front$Sport$now = function (time) {
+	return _fpawel$gobet_front$DateUtils$dateFromDate(
+		_elm_lang$core$Date$fromTime(time));
+};
+var _fpawel$gobet_front$Sport$Model = F6(
+	function (a, b, c, d, e, f) {
+		return {location: a, sport: b, events: c, tableState: d, time: e, error: f};
+	});
+var _fpawel$gobet_front$Sport$Tick = function (a) {
+	return {ctor: 'Tick', _0: a};
+};
+var _fpawel$gobet_front$Sport$subscriptions = function (_p0) {
+	return A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second, _fpawel$gobet_front$Sport$Tick);
+};
+var _fpawel$gobet_front$Sport$SetTableState = function (a) {
+	return {ctor: 'SetTableState', _0: a};
+};
+var _fpawel$gobet_front$Sport$view = function (_p1) {
+	var _p2 = _p1;
+	var _p4 = _p2.events;
+	var _p3 = _p2.error;
+	if (_p3.ctor === 'Nothing') {
+		return _elm_lang$core$List$isEmpty(_p4) ? _fpawel$gobet_front$Help_Component$spinner_text('Подготовка данных...') : A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A3(
+					_evancz$elm_sortable_table$Table$view,
+					_fpawel$gobet_front$View_SportTable$config(_fpawel$gobet_front$Sport$SetTableState),
+					_p2.tableState,
+					_p4),
+				_1: {ctor: '[]'}
+			});
+	} else {
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$p,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(_p3._0),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			});
+	}
+};
+var _fpawel$gobet_front$Sport$NewEvents = function (a) {
+	return {ctor: 'NewEvents', _0: a};
+};
+var _fpawel$gobet_front$Sport$httpRequestEvents = F2(
+	function (location, eventType) {
+		var decoder = A2(
+			_elm_lang$core$Json_Decode$field,
+			'result',
+			_elm_lang$core$Json_Decode$list(_fpawel$gobet_front$Aping_Decoder$event));
+		var eventsURL = A2(
+			_elm_lang$core$Basics_ops['++'],
+			location.protocol,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'//',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					location.host,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'/events/',
+						_elm_lang$core$Basics$toString(eventType.id)))));
+		return A2(
+			_elm_lang$http$Http$send,
+			_fpawel$gobet_front$Sport$NewEvents,
+			A2(_elm_lang$http$Http$get, eventsURL, decoder));
+	});
+var _fpawel$gobet_front$Sport$init = function (_p5) {
+	var _p6 = _p5;
+	var _p8 = _p6.sport;
+	var _p7 = _p6.location;
+	return A2(
+		_elm_lang$core$Platform_Cmd_ops['!'],
+		{
+			location: _p7,
+			sport: _p8,
+			events: {ctor: '[]'},
+			tableState: _evancz$elm_sortable_table$Table$initialSort('Дата'),
+			time: _p6.time,
+			error: _elm_lang$core$Maybe$Nothing
+		},
+		{
+			ctor: '::',
+			_0: A2(_fpawel$gobet_front$Sport$httpRequestEvents, _p7, _p8),
+			_1: {ctor: '[]'}
+		});
+};
+var _fpawel$gobet_front$Sport$update = F2(
+	function (msg, m) {
+		var _p9 = msg;
+		switch (_p9.ctor) {
+			case 'NewEvents':
+				if (_p9._0.ctor === 'Ok') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							m,
+							{events: _p9._0._0}),
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							m,
+							{
+								error: _elm_lang$core$Maybe$Just(
+									_elm_lang$core$Basics$toString(_p9._0._0))
+							}),
+						{
+							ctor: '::',
+							_0: A2(_fpawel$gobet_front$Sport$httpRequestEvents, m.location, m.sport),
+							_1: {ctor: '[]'}
+						});
+				}
+			case 'SetTableState':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						m,
+						{tableState: _p9._0}),
+					{ctor: '[]'});
+			default:
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						m,
+						{time: _p9._0}),
+					{ctor: '[]'});
+		}
+	});
+
+var _fpawel$gobet_front$Msg$UrlChange = function (a) {
+	return {ctor: 'UrlChange', _0: a};
+};
+var _fpawel$gobet_front$Msg$Sport = function (a) {
+	return {ctor: 'Sport', _0: a};
+};
+
+var _fpawel$gobet_front$Routing$Sport = function (a) {
+	return {ctor: 'Sport', _0: a};
+};
+var _fpawel$gobet_front$Routing$parser = _evancz$url_parser$UrlParser$oneOf(
+	{
+		ctor: '::',
+		_0: A2(
+			_evancz$url_parser$UrlParser$map,
+			_fpawel$gobet_front$Routing$Sport,
+			A2(
+				_evancz$url_parser$UrlParser_ops['</>'],
+				_evancz$url_parser$UrlParser$s('sport'),
+				_evancz$url_parser$UrlParser$int)),
+		_1: {ctor: '[]'}
+	});
+
+var _fpawel$gobet_front$View_Sports$linkSport = F2(
+	function (sportID, _p0) {
+		var _p1 = _p0;
+		var _p2 = _p1.id;
+		return A2(
+			_elm_lang$html$Html$li,
+			_elm_lang$core$Native_Utils.eq(sportID, _p2) ? {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('active'),
+				_1: {ctor: '[]'}
+			} : {ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$a,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$href(
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'#sport/',
+								_elm_lang$core$Basics$toString(_p2))),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(_p1.name),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			});
+	});
+var _fpawel$gobet_front$View_Sports$view2 = function (xs) {
+	return A2(
+		_elm_lang$html$Html$li,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('dropdown'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$a,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('dropdown-toggle'),
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-toggle', 'dropdown'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$href('#'),
+							_1: {ctor: '[]'}
+						}
+					}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Другие рынки...    '),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$span,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('caret'),
+								_1: {ctor: '[]'}
+							},
+							{ctor: '[]'}),
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$ul,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('dropdown-menu'),
+						_1: {ctor: '[]'}
+					},
+					A2(
+						_elm_lang$core$List$map,
+						_fpawel$gobet_front$View_Sports$linkSport(0),
+						xs)),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _fpawel$gobet_front$View_Sports$view = function (_p3) {
+	var _p4 = _p3;
+	var _p10 = _p4.sportID;
+	var sports_ = A2(
+		_elm_lang$core$List$sortBy,
+		function (_p5) {
+			var _p6 = _p5;
+			return _p6.market_count * -1;
+		},
+		_p4.sports);
+	var xs = A2(_elm_lang$core$List$drop, 6, sports_);
+	var xs1 = A2(
+		_elm_lang$core$List$map,
+		_fpawel$gobet_front$View_Sports$linkSport(_p10),
+		A2(_elm_lang$core$List$take, 6, sports_));
+	var vx = function () {
+		var _p9 = A2(
+			_elm_lang$core$List$partition,
+			function (_p7) {
+				var _p8 = _p7;
+				return _elm_lang$core$Native_Utils.eq(_p8.id, _p10);
+			},
+			xs);
+		if (_p9._0.ctor === '[]') {
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				xs1,
+				{
+					ctor: '::',
+					_0: _fpawel$gobet_front$View_Sports$view2(_p9._1),
+					_1: {ctor: '[]'}
+				});
+		} else {
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				xs1,
+				{
+					ctor: '::',
+					_0: A2(_fpawel$gobet_front$View_Sports$linkSport, _p10, _p9._0._0),
+					_1: {
+						ctor: '::',
+						_0: _fpawel$gobet_front$View_Sports$view2(_p9._1),
+						_1: {ctor: '[]'}
+					}
+				});
+		}
+	}();
+	return A2(
+		_elm_lang$html$Html$ul,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('nav nav-tabs'),
+			_1: {ctor: '[]'}
+		},
+		vx);
+};
+var _fpawel$gobet_front$View_Sports$Config = F2(
+	function (a, b) {
+		return {sports: a, sportID: b};
+	});
+
+var _fpawel$gobet_front$Content$subscriptions = function (model) {
+	var _p0 = model;
+	return A2(
+		_elm_lang$core$Platform_Sub$map,
+		_fpawel$gobet_front$Msg$Sport,
+		_fpawel$gobet_front$Sport$subscriptions(_p0._0));
+};
+var _fpawel$gobet_front$Content$view = F2(
+	function (sports, model) {
+		var _p1 = model;
+		return {
+			ctor: '::',
+			_0: _fpawel$gobet_front$View_Sports$view(
+				{sports: sports, sportID: _p1._0.sport.id}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$map,
+					_fpawel$gobet_front$Msg$Sport,
+					_fpawel$gobet_front$Sport$view(_p1._0)),
+				_1: {ctor: '[]'}
+			}
+		};
+	});
+var _fpawel$gobet_front$Content$route = function (model) {
+	var _p2 = model;
+	return _fpawel$gobet_front$Routing$Sport(_p2._0.sport.id);
+};
+var _fpawel$gobet_front$Content$Sport = function (a) {
+	return {ctor: 'Sport', _0: a};
+};
+var _fpawel$gobet_front$Content$initSport = function (x) {
+	var _p3 = _fpawel$gobet_front$Sport$init(x);
+	var model_sport = _p3._0;
+	var cmd_sport = _p3._1;
+	return A2(
+		_elm_lang$core$Platform_Cmd_ops['!'],
+		_fpawel$gobet_front$Content$Sport(model_sport),
+		{
+			ctor: '::',
+			_0: A2(_elm_lang$core$Platform_Cmd$map, _fpawel$gobet_front$Msg$Sport, cmd_sport),
+			_1: {ctor: '[]'}
+		});
+};
+var _fpawel$gobet_front$Content$init = F2(
+	function (_p4, route) {
+		var _p5 = _p4;
+		var _p6 = route;
+		var sport = A2(_fpawel$gobet_front$Aping$getSportByID, _p6._0, _p5.sports);
+		var _p7 = _fpawel$gobet_front$Sport$init(
+			{location: _p5.location, sport: sport, time: _p5.time});
+		var model_sport = _p7._0;
+		var cmd_sport = _p7._1;
+		return A2(
+			_elm_lang$core$Platform_Cmd_ops['!'],
+			_fpawel$gobet_front$Content$Sport(model_sport),
+			{
+				ctor: '::',
+				_0: A2(_elm_lang$core$Platform_Cmd$map, _fpawel$gobet_front$Msg$Sport, cmd_sport),
+				_1: {ctor: '[]'}
+			});
+	});
+var _fpawel$gobet_front$Content$update = F2(
+	function (msg, model) {
+		var _p8 = {ctor: '_Tuple2', _0: msg, _1: model};
+		if ((_p8.ctor === '_Tuple2') && (_p8._0.ctor === 'Sport')) {
+			var _p9 = A2(_fpawel$gobet_front$Sport$update, _p8._0._0, _p8._1._0);
+			var updated_sport = _p9._0;
+			var cmd_sport = _p9._1;
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				_fpawel$gobet_front$Content$Sport(updated_sport),
+				{
+					ctor: '::',
+					_0: A2(_elm_lang$core$Platform_Cmd$map, _fpawel$gobet_front$Msg$Sport, cmd_sport),
+					_1: {ctor: '[]'}
+				});
+		} else {
+			return _elm_lang$core$Native_Utils.crashCase(
+				'Content',
+				{
+					start: {line: 69, column: 5},
+					end: {line: 78, column: 67}
+				},
+				_p8)(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'wrong content message: ',
+					_elm_lang$core$Basics$toString(_p8)));
+		}
+	});
+
+var _fpawel$gobet_front$View_Container$dropDown = function (_p0) {
 	var _p1 = _p0;
 	return A2(
 		_elm_lang$html$Html$li,
@@ -11544,12 +12403,21 @@ var _fpawel$gobet_front$Navbar$dropDown = function (_p0) {
 			}
 		});
 };
-var _fpawel$gobet_front$Navbar$dropNav = _elm_lang$core$List$map(
+var _fpawel$gobet_front$View_Container$liNav = _elm_lang$core$List$map(
 	function (_p2) {
 		var _p3 = _p2;
 		return A2(
 			_elm_lang$html$Html$li,
-			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$classList(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'active', _1: _p3.active},
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			},
 			{
 				ctor: '::',
 				_0: A2(
@@ -11568,7 +12436,7 @@ var _fpawel$gobet_front$Navbar$dropNav = _elm_lang$core$List$map(
 				_1: {ctor: '[]'}
 			});
 	});
-var _fpawel$gobet_front$Navbar$navbarHeader = A2(
+var _fpawel$gobet_front$View_Container$header = A2(
 	_elm_lang$html$Html$div,
 	{
 		ctor: '::',
@@ -11651,802 +12519,104 @@ var _fpawel$gobet_front$Navbar$navbarHeader = A2(
 			_1: {ctor: '[]'}
 		}
 	});
-var _fpawel$gobet_front$Navbar$view = function (menu) {
-	var menu_element = A2(
-		_elm_lang$html$Html$ul,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('nav navbar-nav'),
-			_1: {ctor: '[]'}
-		},
-		A2(
+var _fpawel$gobet_front$View_Container$navbar = F2(
+	function (configNav, configDropNav) {
+		var dropnav = A2(
 			_elm_lang$core$List$map,
 			function (_p4) {
 				var _p5 = _p4;
-				return _fpawel$gobet_front$Navbar$dropDown(
+				return _fpawel$gobet_front$View_Container$dropDown(
 					{
 						name: _p5.name,
-						items: _fpawel$gobet_front$Navbar$dropNav(_p5.items)
+						items: _fpawel$gobet_front$View_Container$liNav(_p5.items)
 					});
 			},
-			menu));
-	return A2(
-		_elm_lang$html$Html$nav,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('navbar navbar-default'),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('container-fluid'),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _fpawel$gobet_front$Navbar$navbarHeader,
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$div,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('collapse navbar-collapse'),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: menu_element,
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
-					}
-				}),
-			_1: {ctor: '[]'}
-		});
-};
-
-var _fpawel$gobet_front$Sport$viewEventName = function (s) {
-	var _p0 = A3(
-		_elm_lang$core$Regex$split,
-		_elm_lang$core$Regex$AtMost(1),
-		_elm_lang$core$Regex$regex(' [v@\\-] '),
-		s);
-	if (((_p0.ctor === '::') && (_p0._1.ctor === '::')) && (_p0._1._1.ctor === '[]')) {
-		return {
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$td,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(_p0._0),
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$td,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(_p0._1._0),
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			}
-		};
-	} else {
-		return {
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$td,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$colspan(2),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(s),
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
-		};
-	}
-};
-var _fpawel$gobet_front$Sport$dropNavSports = function (sports) {
-	return A2(
-		_elm_lang$core$List$map,
-		function (x) {
-			return {
-				name: x.name,
-				route: A2(
-					_elm_lang$core$Basics_ops['++'],
-					'sport/',
-					_elm_lang$core$Basics$toString(x.id))
-			};
-		},
-		A2(
-			_elm_lang$core$List$sortBy,
-			function (_p1) {
-				var _p2 = _p1;
-				return _p2.market_count * -1;
-			},
-			sports));
-};
-var _fpawel$gobet_front$Sport$formatDay2 = function (_p3) {
-	var _p4 = _p3;
-	return A2(
-		_elm_lang$core$Basics_ops['++'],
-		_elm_lang$core$Basics$toString(_p4._0),
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			'_',
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				_elm_lang$core$Basics$toString(_p4._1),
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					'_',
-					_elm_lang$core$Basics$toString(_p4._2)))));
-};
-var _fpawel$gobet_front$Sport$formatDay1 = function (_p5) {
-	var _p6 = _p5;
-	return A2(
-		_elm_lang$core$Basics_ops['++'],
-		_elm_lang$core$Basics$toString(_p6._0),
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			' ',
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				_fpawel$gobet_front$Month$format1(_p6._1),
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					' ',
-					_elm_lang$core$Basics$toString(_p6._2)))));
-};
-var _fpawel$gobet_front$Sport$dropNavDays = function (_p7) {
-	var _p8 = _p7;
-	return A2(
-		_elm_lang$core$List$map,
-		function (day) {
-			return {
-				name: _fpawel$gobet_front$Sport$formatDay1(day),
-				route: A2(
-					_elm_lang$core$Basics_ops['++'],
-					'sport/',
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Basics$toString(_p8.sport.id),
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							'_day_',
-							_fpawel$gobet_front$Sport$formatDay2(day))))
-			};
-		},
-		A2(
-			_elm_lang$core$List$sortBy,
-			function (_p9) {
-				var _p10 = _p9;
-				return {ctor: '_Tuple3', _0: _p10._2, _1: _p10._1, _2: _p10._0};
-			},
-			A2(
-				_elm_lang$core$List$map,
-				_elm_lang$core$Tuple$first,
-				_elm_lang$core$Dict$toList(
-					_fpawel$gobet_front$Aping_Events$groupByDays(_p8.events)))));
-};
-var _fpawel$gobet_front$Sport$eventRow = function (_p11) {
-	var _p12 = _p11;
-	return A2(
-		_elm_lang$html$Html$tr,
-		{ctor: '[]'},
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$td,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(
-							_fpawel$gobet_front$Sport$formatDay1(
-								_fpawel$gobet_front$Help_Utils$day_month_year(_p12.openDate))),
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			},
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				_fpawel$gobet_front$Sport$viewEventName(_p12.name),
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$td,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(_p12.country),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				})));
-};
-var _fpawel$gobet_front$Sport$viewEvents = function (_p13) {
-	var _p14 = _p13;
-	var events_ = A2(
-		_elm_lang$core$List$sortBy,
-		function (_p15) {
-			var _p16 = _p15;
-			return _elm_lang$core$Date$toTime(_p16.openDate);
-		},
-		_p14.events);
-	return A2(
-		_elm_lang$html$Html$div,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$table,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('table table-condensed'),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$tbody,
-						{ctor: '[]'},
-						A2(_elm_lang$core$List$map, _fpawel$gobet_front$Sport$eventRow, events_)),
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$p,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$h3,
-							{ctor: '[]'},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text(
-									_elm_lang$core$Basics$toString(_p14.sport.market_count)),
-								_1: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('рынков'),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$h3,
-									{ctor: '[]'},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text(
-											_elm_lang$core$Basics$toString(
-												_elm_lang$core$List$length(events_))),
-										_1: {ctor: '[]'}
-									}),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('событий'),
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}),
-				_1: {ctor: '[]'}
-			}
-		});
-};
-var _fpawel$gobet_front$Sport$view2 = function (model) {
-	var _p17 = model.error;
-	if (_p17.ctor === 'Nothing') {
-		return _elm_lang$core$List$isEmpty(model.events) ? _fpawel$gobet_front$Help_Component$spinner_text('Подготовка данных...') : _fpawel$gobet_front$Sport$viewEvents(model);
-	} else {
+			configDropNav);
+		var navline = _fpawel$gobet_front$View_Container$liNav(configNav);
+		var allnav = A2(_elm_lang$core$Basics_ops['++'], navline, dropnav);
 		return A2(
-			_elm_lang$html$Html$div,
-			{ctor: '[]'},
+			_elm_lang$html$Html$nav,
 			{
 				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$p,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(_p17._0),
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			});
-	}
-};
-var _fpawel$gobet_front$Sport$navbarConfig = function (m) {
-	var mdays = _fpawel$gobet_front$Sport$dropNavDays(m);
-	var strDay = _elm_lang$core$Native_Utils.eq(
-		m.day,
-		{ctor: '_Tuple3', _0: 0, _1: 0, _2: 0}) ? '(выбрать день)' : _fpawel$gobet_front$Sport$formatDay1(m.day);
-	var days = _elm_lang$core$List$isEmpty(mdays) ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(
-		{name: strDay, items: mdays});
-	var dropNavSports = A2(
-		_elm_lang$core$List$map,
-		function (x) {
-			return {
-				name: x.name,
-				route: A2(
-					_elm_lang$core$Basics_ops['++'],
-					'sport/',
-					_elm_lang$core$Basics$toString(x.id))
-			};
-		},
-		A2(
-			_elm_lang$core$List$sortBy,
-			function (_p18) {
-				var _p19 = _p18;
-				return _p19.market_count * -1;
-			},
-			m.sports));
-	var sports = _elm_lang$core$Maybe$Just(
-		{name: m.sport.name, items: dropNavSports});
-	return A2(
-		_elm_lang$core$List$filterMap,
-		_elm_lang$core$Basics$identity,
-		{
-			ctor: '::',
-			_0: sports,
-			_1: {
-				ctor: '::',
-				_0: days,
-				_1: {ctor: '[]'}
-			}
-		});
-};
-var _fpawel$gobet_front$Sport$dropDownSubmenu = function (menuItem) {
-	var _p20 = menuItem;
-	if (_p20.ctor === 'Node') {
-		return A2(
-			_elm_lang$html$Html$li,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('dropdown-submenu'),
+				_0: _elm_lang$html$Html_Attributes$class('navbar navbar-default'),
 				_1: {ctor: '[]'}
 			},
 			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$a,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$href('#'),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(_p20._0),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$ul,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('dropdown-menu'),
-							_1: {ctor: '[]'}
-						},
-						A2(_elm_lang$core$List$map, _fpawel$gobet_front$Sport$dropDownSubmenu, _p20._1)),
-					_1: {ctor: '[]'}
-				}
-			});
-	} else {
-		return A2(
-			_elm_lang$html$Html$li,
-			{ctor: '[]'},
-			_elm_lang$core$List$singleton(
-				A2(
-					_elm_lang$html$Html$a,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$href('#'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(_p20._1),
-							_1: {ctor: '[]'}
-						}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(_p20._0),
-						_1: {ctor: '[]'}
-					})));
-	}
-};
-var _fpawel$gobet_front$Sport$dropNavDateButton = A2(
-	_elm_lang$html$Html$button,
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html_Attributes$class('btn btn-primary dropdown-toggle'),
-		_1: {
-			ctor: '::',
-			_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-toggle', 'dropdown'),
-			_1: {
-				ctor: '::',
-				_0: A2(_elm_lang$html$Html_Attributes$attribute, 'type', 'button'),
-				_1: {ctor: '[]'}
-			}
-		}
-	},
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html$text('Dropdown'),
-		_1: {
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$span,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('caret'),
-					_1: {ctor: '[]'}
-				},
-				{ctor: '[]'}),
-			_1: {ctor: '[]'}
-		}
-	});
-var _fpawel$gobet_front$Sport$today = function (_p21) {
-	var _p22 = _p21;
-	return _fpawel$gobet_front$Help_Utils$day_month_year(
-		_elm_lang$core$Date$fromTime(_p22.time));
-};
-var _fpawel$gobet_front$Sport$Model = F7(
-	function (a, b, c, d, e, f, g) {
-		return {location: a, sports: b, sport: c, events: d, time: e, day: f, error: g};
-	});
-var _fpawel$gobet_front$Sport$NewDay = function (a) {
-	return {ctor: 'NewDay', _0: a};
-};
-var _fpawel$gobet_front$Sport$Tick = function (a) {
-	return {ctor: 'Tick', _0: a};
-};
-var _fpawel$gobet_front$Sport$subscriptions = function (model) {
-	return A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second, _fpawel$gobet_front$Sport$Tick);
-};
-var _fpawel$gobet_front$Sport$NewEvents = function (a) {
-	return {ctor: 'NewEvents', _0: a};
-};
-var _fpawel$gobet_front$Sport$httpRequestEvents = function (_p23) {
-	var _p24 = _p23;
-	var _p25 = _p24.location;
-	var decoder = A2(
-		_elm_lang$core$Json_Decode$field,
-		'result',
-		_elm_lang$core$Json_Decode$list(_fpawel$gobet_front$Aping_Decoder$event));
-	var eventsURL = A2(
-		_elm_lang$core$Basics_ops['++'],
-		_p25.protocol,
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			'//',
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				_p25.host,
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					'/events/',
-					_elm_lang$core$Basics$toString(_p24.sport.id)))));
-	return A2(
-		_elm_lang$http$Http$send,
-		_fpawel$gobet_front$Sport$NewEvents,
-		A2(_elm_lang$http$Http$get, eventsURL, decoder));
-};
-var _fpawel$gobet_front$Sport$init = function (_p26) {
-	var _p27 = _p26;
-	return A2(
-		_elm_lang$core$Platform_Cmd_ops['!'],
-		{
-			location: _p27.location,
-			sport: _p27.sport,
-			sports: _p27.sports,
-			events: {ctor: '[]'},
-			day: {ctor: '_Tuple3', _0: 0, _1: 0, _2: 0},
-			error: _elm_lang$core$Maybe$Nothing,
-			time: 0
-		},
-		{
-			ctor: '::',
-			_0: _fpawel$gobet_front$Sport$httpRequestEvents(_p27),
-			_1: {ctor: '[]'}
-		});
-};
-var _fpawel$gobet_front$Sport$update = F2(
-	function (msg, m) {
-		var _p28 = msg;
-		switch (_p28.ctor) {
-			case 'NewDay':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						m,
-						{day: _p28._0}),
-					{ctor: '[]'});
-			case 'Tick':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						m,
-						{time: _p28._0}),
-					{ctor: '[]'});
-			default:
-				if (_p28._0.ctor === 'Ok') {
-					var _p29 = _p28._0._0;
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						_elm_lang$core$Native_Utils.update(
-							m,
-							{
-								events: _p29,
-								day: A2(
-									_fpawel$gobet_front$Aping_Events$defaultDay,
-									_fpawel$gobet_front$Sport$today(m),
-									_p29)
-							}),
-						{ctor: '[]'});
-				} else {
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						_elm_lang$core$Native_Utils.update(
-							m,
-							{
-								error: _elm_lang$core$Maybe$Just(
-									_elm_lang$core$Basics$toString(_p28._0._0))
-							}),
-						{
-							ctor: '::',
-							_0: _fpawel$gobet_front$Sport$httpRequestEvents(m),
-							_1: {ctor: '[]'}
-						});
-				}
-		}
-	});
-var _fpawel$gobet_front$Sport$Leaf = F2(
-	function (a, b) {
-		return {ctor: 'Leaf', _0: a, _1: b};
-	});
-var _fpawel$gobet_front$Sport$Node = F2(
-	function (a, b) {
-		return {ctor: 'Node', _0: a, _1: b};
-	});
-var _fpawel$gobet_front$Sport$dropNavDate = function (_p30) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('dropdown'),
-			_1: {ctor: '[]'}
-		},
-		A2(
-			F2(
-				function (x, y) {
-					return {ctor: '::', _0: x, _1: y};
-				}),
-			_fpawel$gobet_front$Sport$dropNavDateButton,
-			_elm_lang$core$List$singleton(
-				A2(
-					_elm_lang$html$Html$ul,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('dropdown-menu multi-level'),
-						_1: {
-							ctor: '::',
-							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'role', 'menu'),
-							_1: {
-								ctor: '::',
-								_0: A2(_elm_lang$html$Html_Attributes$attribute, 'aria-labelledby', 'dropdownMenu'),
-								_1: {ctor: '[]'}
-							}
-						}
-					},
-					A2(
-						_elm_lang$core$List$map,
-						_fpawel$gobet_front$Sport$dropDownSubmenu,
-						A2(
-							_elm_lang$core$List$map,
-							function (_p31) {
-								var _p32 = _p31;
-								var _p39 = _p32._0;
-								return A2(
-									_fpawel$gobet_front$Sport$Node,
-									_elm_lang$core$Basics$toString(_p39),
-									A2(
-										_elm_lang$core$List$map,
-										function (_p33) {
-											var _p34 = _p33;
-											var _p38 = _p34._0;
-											return A2(
-												_fpawel$gobet_front$Sport$Node,
-												_elm_lang$core$Basics$toString(_p38),
-												A2(
-													_elm_lang$core$List$map,
-													function (_p35) {
-														var _p36 = _p35;
-														var _p37 = _p36._0;
-														return A2(
-															_fpawel$gobet_front$Sport$Leaf,
-															_elm_lang$core$Basics$toString(_p37),
-															_fpawel$gobet_front$Sport$NewDay(
-																{ctor: '_Tuple3', _0: _p37, _1: _p38, _2: _p39}));
-													},
-													_p34._1));
-										},
-										_p32._1));
-							},
-							_fpawel$gobet_front$Aping_Events$dateTree(
-								function (_) {
-									return _.events;
-								}(_p30))))))));
-};
-var _fpawel$gobet_front$Sport$view = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: _fpawel$gobet_front$Navbar$view(
-				_fpawel$gobet_front$Sport$navbarConfig(model)),
-			_1: {
 				ctor: '::',
 				_0: A2(
 					_elm_lang$html$Html$div,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('container'),
+						_0: _elm_lang$html$Html_Attributes$class('container-fluid'),
 						_1: {ctor: '[]'}
 					},
 					{
 						ctor: '::',
-						_0: _fpawel$gobet_front$Sport$dropNavDate(model),
+						_0: _fpawel$gobet_front$View_Container$header,
 						_1: {
 							ctor: '::',
-							_0: _fpawel$gobet_front$Sport$view2(model),
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class('collapse navbar-collapse'),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$ul,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$class('nav navbar-nav'),
+											_1: {ctor: '[]'}
+										},
+										allnav),
+									_1: {ctor: '[]'}
+								}),
 							_1: {ctor: '[]'}
 						}
 					}),
 				_1: {ctor: '[]'}
-			}
-		});
-};
-
-var _fpawel$gobet_front$Msg$UrlChange = function (a) {
-	return {ctor: 'UrlChange', _0: a};
-};
-var _fpawel$gobet_front$Msg$Sport = function (a) {
-	return {ctor: 'Sport', _0: a};
-};
-
-var _fpawel$gobet_front$Routing$Sport = function (a) {
-	return {ctor: 'Sport', _0: a};
-};
-var _fpawel$gobet_front$Routing$parser = _evancz$url_parser$UrlParser$oneOf(
-	{
-		ctor: '::',
-		_0: A2(
-			_evancz$url_parser$UrlParser$map,
-			_fpawel$gobet_front$Routing$Sport,
-			A2(
-				_evancz$url_parser$UrlParser_ops['</>'],
-				_evancz$url_parser$UrlParser$s('sport'),
-				_evancz$url_parser$UrlParser$int)),
-		_1: {ctor: '[]'}
+			});
 	});
-
-var _fpawel$gobet_front$Content$what = function (x) {
-	var _p0 = x;
-	return _p0._0.sport.name;
-};
-var _fpawel$gobet_front$Content$subscriptions = function (model) {
-	var _p1 = model;
-	return A2(
-		_elm_lang$core$Platform_Sub$map,
-		_fpawel$gobet_front$Msg$Sport,
-		_fpawel$gobet_front$Sport$subscriptions(_p1._0));
-};
-var _fpawel$gobet_front$Content$view = function (model) {
-	var _p2 = model;
-	return A2(
-		_elm_lang$html$Html$map,
-		_fpawel$gobet_front$Msg$Sport,
-		_fpawel$gobet_front$Sport$view(_p2._0));
-};
-var _fpawel$gobet_front$Content$route = function (model) {
-	var _p3 = model;
-	return _fpawel$gobet_front$Routing$Sport(_p3._0.sport.id);
-};
-var _fpawel$gobet_front$Content$Sport = function (a) {
-	return {ctor: 'Sport', _0: a};
-};
-var _fpawel$gobet_front$Content$init = F2(
-	function (_p4, route) {
-		var _p5 = _p4;
-		var _p13 = _p5.sports;
-		var _p6 = route;
-		var _p12 = _p6._0;
-		var _p9 = A2(
-			_elm_lang$core$List$filter,
-			function (_p7) {
-				var _p8 = _p7;
-				return _elm_lang$core$Native_Utils.eq(_p8.id, _p12);
-			},
-			_p13);
-		if (_p9.ctor === '::') {
-			var _p10 = _fpawel$gobet_front$Sport$init(
-				{location: _p5.location, sport: _p9._0, sports: _p13});
-			var model_sport = _p10._0;
-			var cmd_sport = _p10._1;
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_fpawel$gobet_front$Content$Sport(model_sport),
-				{
+var _fpawel$gobet_front$View_Container$view = F3(
+	function (configNav, configDropNav, content) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(_fpawel$gobet_front$View_Container$navbar, configNav, configDropNav),
+				_1: {
 					ctor: '::',
-					_0: A2(_elm_lang$core$Platform_Cmd$map, _fpawel$gobet_front$Msg$Sport, cmd_sport),
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('container'),
+							_1: {ctor: '[]'}
+						},
+						content),
 					_1: {ctor: '[]'}
-				});
-		} else {
-			return _elm_lang$core$Native_Utils.crashCase(
-				'Content',
-				{
-					start: {line: 30, column: 13},
-					end: {line: 43, column: 75}
-				},
-				_p9)(
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					'unknown sport id ',
-					_elm_lang$core$Basics$toString(_p12)));
-		}
-	});
-var _fpawel$gobet_front$Content$update = F2(
-	function (msg, model) {
-		var _p14 = {ctor: '_Tuple2', _0: msg, _1: model};
-		if ((_p14.ctor === '_Tuple2') && (_p14._0.ctor === 'Sport')) {
-			var _p15 = A2(_fpawel$gobet_front$Sport$update, _p14._0._0, _p14._1._0);
-			var updated_sport = _p15._0;
-			var cmd_sport = _p15._1;
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_fpawel$gobet_front$Content$Sport(updated_sport),
-				{
-					ctor: '::',
-					_0: A2(_elm_lang$core$Platform_Cmd$map, _fpawel$gobet_front$Msg$Sport, cmd_sport),
-					_1: {ctor: '[]'}
-				});
-		} else {
-			return _elm_lang$core$Native_Utils.crashCase(
-				'Content',
-				{
-					start: {line: 55, column: 5},
-					end: {line: 64, column: 67}
-				},
-				_p14)(
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					'wrong content message: ',
-					_elm_lang$core$Basics$toString(_p14)));
-		}
+				}
+			});
 	});
 
 var _fpawel$gobet_front$Main$view = function (model) {
-	return _fpawel$gobet_front$Content$view(model.content);
+	return A3(
+		_fpawel$gobet_front$View_Container$view,
+		{
+			ctor: '::',
+			_0: {name: 'Футбол', active: false, route: 'football'},
+			_1: {
+				ctor: '::',
+				_0: {name: 'Обзор рынков', active: true, route: 'sport/1'},
+				_1: {ctor: '[]'}
+			}
+		},
+		{ctor: '[]'},
+		A2(_fpawel$gobet_front$Content$view, model.sports, model.content));
 };
 var _fpawel$gobet_front$Main$subscriptions = function (_p0) {
 	var _p1 = _p0;
@@ -12475,16 +12645,24 @@ var _fpawel$gobet_front$Main$update = F2(
 				_elm_lang$core$Maybe$withDefault,
 				current_route,
 				A2(_evancz$url_parser$UrlParser$parseHash, _fpawel$gobet_front$Routing$parser, _p4._0));
-			return _elm_lang$core$Native_Utils.eq(new_route, current_route) ? A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				model,
-				{ctor: '[]'}) : A2(
-				_fpawel$gobet_front$Main$updateContent,
-				model,
-				A2(
-					_fpawel$gobet_front$Content$init,
-					{location: model.location, sports: model.sports},
-					new_route));
+			if (_elm_lang$core$Native_Utils.eq(new_route, current_route)) {
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					model,
+					{ctor: '[]'});
+			} else {
+				var time = function () {
+					var _p5 = model.content;
+					return _p5._0.time;
+				}();
+				return A2(
+					_fpawel$gobet_front$Main$updateContent,
+					model,
+					A2(
+						_fpawel$gobet_front$Content$init,
+						{location: model.location, sports: model.sports, time: time},
+						new_route));
+			}
 		} else {
 			return A2(
 				_fpawel$gobet_front$Main$updateContent,
@@ -12498,12 +12676,12 @@ var _fpawel$gobet_front$Main$Model = F3(
 	});
 var _fpawel$gobet_front$Main$init = F2(
 	function (sports, location) {
-		var _p5 = A2(
+		var _p6 = A2(
 			_fpawel$gobet_front$Content$init,
-			{location: location, sports: sports},
+			{location: location, sports: sports, time: 0},
 			_fpawel$gobet_front$Routing$Sport(1));
-		var content = _p5._0;
-		var cmd = _p5._1;
+		var content = _p6._0;
+		var cmd = _p6._1;
 		return A2(
 			_elm_lang$core$Platform_Cmd_ops['!'],
 			A3(_fpawel$gobet_front$Main$Model, content, sports, location),

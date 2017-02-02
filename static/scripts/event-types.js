@@ -2,17 +2,17 @@ eventTypes = [
     {
         "id": 1,
         "name": "Футбол ",
-        "market_count": 10986
+        "market_count": 19297
     },
     {
         "id": 2,
         "name": "Теннис ",
-        "market_count": 1490
+        "market_count": 1089
     },
     {
         "id": 3,
         "name": "Гольф ",
-        "market_count": 92
+        "market_count": 84
     },
     {
         "id": 4,
@@ -22,7 +22,7 @@ eventTypes = [
     {
         "id": 5,
         "name": "Регби",
-        "market_count": 110
+        "market_count": 146
     },
     {
         "id": 1477,
@@ -37,7 +37,7 @@ eventTypes = [
     {
         "id": 7,
         "name": "Скачки",
-        "market_count": 870
+        "market_count": 882
     },
     {
         "id": 8,
@@ -47,7 +47,7 @@ eventTypes = [
     {
         "id": 27454571,
         "name": "Киберспорт",
-        "market_count": 24
+        "market_count": 16
     },
     {
         "id": 10,
@@ -57,7 +57,7 @@ eventTypes = [
     {
         "id": 998917,
         "name": "Волейбол",
-        "market_count": 26
+        "market_count": 8
     },
     {
         "id": 11,
@@ -82,7 +82,7 @@ eventTypes = [
     {
         "id": 6422,
         "name": "Снукер",
-        "market_count": 60
+        "market_count": 30
     },
     {
         "id": 6231,
@@ -92,7 +92,7 @@ eventTypes = [
     {
         "id": 6423,
         "name": "Американский футбол",
-        "market_count": 31
+        "market_count": 66
     },
     {
         "id": 7511,
@@ -102,17 +102,17 @@ eventTypes = [
     {
         "id": 451485,
         "name": "Зимние",
-        "market_count": 7
+        "market_count": 11
     },
     {
         "id": 7522,
         "name": "Баскетбол ",
-        "market_count": 316
+        "market_count": 200
     },
     {
         "id": 7524,
         "name": "Хоккей ",
-        "market_count": 67
+        "market_count": 122
     },
     {
         "id": 61420,
@@ -122,12 +122,12 @@ eventTypes = [
     {
         "id": 468328,
         "name": "Гандбол ",
-        "market_count": 14
+        "market_count": 22
     },
     {
         "id": 3503,
         "name": "Дартс",
-        "market_count": 96
+        "market_count": 82
     },
     {
         "id": 26420387,
@@ -137,11 +137,11 @@ eventTypes = [
     {
         "id": 4339,
         "name": "Собачьи бега",
-        "market_count": 341
+        "market_count": 153
     },
     {
         "id": 2378961,
         "name": "Политика",
-        "market_count": 55
+        "market_count": 53
     }
 ]
