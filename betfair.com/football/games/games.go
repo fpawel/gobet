@@ -9,6 +9,9 @@ import (
 
 	"github.com/user/gobet/betfair.com/aping/client"
 	"github.com/user/gobet/betfair.com/aping/client/events"
+	"os"
+	"log"
+	"time"
 )
 
 
@@ -24,7 +27,7 @@ func New () (x *listGames){
 
 	x = new(listGames)
 	x.wsHandler = ws.NewHandler()
-	/*
+
 	go func() {
 		for {
 			x.update()
@@ -34,7 +37,7 @@ func New () (x *listGames){
 			}
 		}
 	}()
-	*/
+
 	return
 }
 

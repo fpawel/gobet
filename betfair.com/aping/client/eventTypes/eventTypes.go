@@ -46,14 +46,14 @@ func init() {
 	for _, x := range xs.R {
 		id, err := strconv.Atoi(x.X.ID)
 		if err != nil {
-			log.Fatalf("wrong eventtype id %v: %v", x, err)
+			log.Fatalf("wrong event type id %v: %v", x, err)
 		}
 		y := client.EventType{ID: id, Name: x.X.Name, MarketCount: x.MarketCount}
 		data = append(data, y)
-		log.Printf("event type: %v\n", y)
+		log.Printf("sport: %v\n", y)
 	}
 
-	filePath := "./static/scripts/event-types.js"
+	filePath := "./static/scripts/sports.js"
 	fs, err := os.Create(filePath)
 	if err != nil {
 		log.Fatalf("%s: %v", filePath, err)
@@ -64,5 +64,5 @@ func init() {
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
-	fmt.Fprintf(fs, "eventTypes = %s", string(bytes))
+	fmt.Fprintf(fs, "sports = %s", string(bytes))
 }

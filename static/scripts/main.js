@@ -6456,6 +6456,137 @@ var _elm_lang$core$Regex$AtMost = function (a) {
 };
 var _elm_lang$core$Regex$All = {ctor: 'All'};
 
+var _elm_lang$core$Set$foldr = F3(
+	function (f, b, _p0) {
+		var _p1 = _p0;
+		return A3(
+			_elm_lang$core$Dict$foldr,
+			F3(
+				function (k, _p2, b) {
+					return A2(f, k, b);
+				}),
+			b,
+			_p1._0);
+	});
+var _elm_lang$core$Set$foldl = F3(
+	function (f, b, _p3) {
+		var _p4 = _p3;
+		return A3(
+			_elm_lang$core$Dict$foldl,
+			F3(
+				function (k, _p5, b) {
+					return A2(f, k, b);
+				}),
+			b,
+			_p4._0);
+	});
+var _elm_lang$core$Set$toList = function (_p6) {
+	var _p7 = _p6;
+	return _elm_lang$core$Dict$keys(_p7._0);
+};
+var _elm_lang$core$Set$size = function (_p8) {
+	var _p9 = _p8;
+	return _elm_lang$core$Dict$size(_p9._0);
+};
+var _elm_lang$core$Set$member = F2(
+	function (k, _p10) {
+		var _p11 = _p10;
+		return A2(_elm_lang$core$Dict$member, k, _p11._0);
+	});
+var _elm_lang$core$Set$isEmpty = function (_p12) {
+	var _p13 = _p12;
+	return _elm_lang$core$Dict$isEmpty(_p13._0);
+};
+var _elm_lang$core$Set$Set_elm_builtin = function (a) {
+	return {ctor: 'Set_elm_builtin', _0: a};
+};
+var _elm_lang$core$Set$empty = _elm_lang$core$Set$Set_elm_builtin(_elm_lang$core$Dict$empty);
+var _elm_lang$core$Set$singleton = function (k) {
+	return _elm_lang$core$Set$Set_elm_builtin(
+		A2(
+			_elm_lang$core$Dict$singleton,
+			k,
+			{ctor: '_Tuple0'}));
+};
+var _elm_lang$core$Set$insert = F2(
+	function (k, _p14) {
+		var _p15 = _p14;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A3(
+				_elm_lang$core$Dict$insert,
+				k,
+				{ctor: '_Tuple0'},
+				_p15._0));
+	});
+var _elm_lang$core$Set$fromList = function (xs) {
+	return A3(_elm_lang$core$List$foldl, _elm_lang$core$Set$insert, _elm_lang$core$Set$empty, xs);
+};
+var _elm_lang$core$Set$map = F2(
+	function (f, s) {
+		return _elm_lang$core$Set$fromList(
+			A2(
+				_elm_lang$core$List$map,
+				f,
+				_elm_lang$core$Set$toList(s)));
+	});
+var _elm_lang$core$Set$remove = F2(
+	function (k, _p16) {
+		var _p17 = _p16;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$remove, k, _p17._0));
+	});
+var _elm_lang$core$Set$union = F2(
+	function (_p19, _p18) {
+		var _p20 = _p19;
+		var _p21 = _p18;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$union, _p20._0, _p21._0));
+	});
+var _elm_lang$core$Set$intersect = F2(
+	function (_p23, _p22) {
+		var _p24 = _p23;
+		var _p25 = _p22;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$intersect, _p24._0, _p25._0));
+	});
+var _elm_lang$core$Set$diff = F2(
+	function (_p27, _p26) {
+		var _p28 = _p27;
+		var _p29 = _p26;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$diff, _p28._0, _p29._0));
+	});
+var _elm_lang$core$Set$filter = F2(
+	function (p, _p30) {
+		var _p31 = _p30;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(
+				_elm_lang$core$Dict$filter,
+				F2(
+					function (k, _p32) {
+						return p(k);
+					}),
+				_p31._0));
+	});
+var _elm_lang$core$Set$partition = F2(
+	function (p, _p33) {
+		var _p34 = _p33;
+		var _p35 = A2(
+			_elm_lang$core$Dict$partition,
+			F2(
+				function (k, _p36) {
+					return p(k);
+				}),
+			_p34._0);
+		var p1 = _p35._0;
+		var p2 = _p35._1;
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Set$Set_elm_builtin(p1),
+			_1: _elm_lang$core$Set$Set_elm_builtin(p2)
+		};
+	});
+
 var _elm_lang$dom$Native_Dom = function() {
 
 var fakeNode = {
@@ -9916,6 +10047,541 @@ var _elm_lang$navigation$Navigation$onEffects = F4(
 	});
 _elm_lang$core$Native_Platform.effectManagers['Navigation'] = {pkg: 'elm-lang/navigation', init: _elm_lang$navigation$Navigation$init, onEffects: _elm_lang$navigation$Navigation$onEffects, onSelfMsg: _elm_lang$navigation$Navigation$onSelfMsg, tag: 'fx', cmdMap: _elm_lang$navigation$Navigation$cmdMap, subMap: _elm_lang$navigation$Navigation$subMap};
 
+var _elm_lang$websocket$Native_WebSocket = function() {
+
+function open(url, settings)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		try
+		{
+			var socket = new WebSocket(url);
+			socket.elm_web_socket = true;
+		}
+		catch(err)
+		{
+			return callback(_elm_lang$core$Native_Scheduler.fail({
+				ctor: err.name === 'SecurityError' ? 'BadSecurity' : 'BadArgs',
+				_0: err.message
+			}));
+		}
+
+		socket.addEventListener("open", function(event) {
+			callback(_elm_lang$core$Native_Scheduler.succeed(socket));
+		});
+
+		socket.addEventListener("message", function(event) {
+			_elm_lang$core$Native_Scheduler.rawSpawn(A2(settings.onMessage, socket, event.data));
+		});
+
+		socket.addEventListener("close", function(event) {
+			_elm_lang$core$Native_Scheduler.rawSpawn(settings.onClose({
+				code: event.code,
+				reason: event.reason,
+				wasClean: event.wasClean
+			}));
+		});
+
+		return function()
+		{
+			if (socket && socket.close)
+			{
+				socket.close();
+			}
+		};
+	});
+}
+
+function send(socket, string)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		var result =
+			socket.readyState === WebSocket.OPEN
+				? _elm_lang$core$Maybe$Nothing
+				: _elm_lang$core$Maybe$Just({ ctor: 'NotOpen' });
+
+		try
+		{
+			socket.send(string);
+		}
+		catch(err)
+		{
+			result = _elm_lang$core$Maybe$Just({ ctor: 'BadString' });
+		}
+
+		callback(_elm_lang$core$Native_Scheduler.succeed(result));
+	});
+}
+
+function close(code, reason, socket)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback) {
+		try
+		{
+			socket.close(code, reason);
+		}
+		catch(err)
+		{
+			return callback(_elm_lang$core$Native_Scheduler.fail(_elm_lang$core$Maybe$Just({
+				ctor: err.name === 'SyntaxError' ? 'BadReason' : 'BadCode'
+			})));
+		}
+		callback(_elm_lang$core$Native_Scheduler.succeed(_elm_lang$core$Maybe$Nothing));
+	});
+}
+
+function bytesQueued(socket)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback) {
+		callback(_elm_lang$core$Native_Scheduler.succeed(socket.bufferedAmount));
+	});
+}
+
+return {
+	open: F2(open),
+	send: F2(send),
+	close: F3(close),
+	bytesQueued: bytesQueued
+};
+
+}();
+
+var _elm_lang$websocket$WebSocket_LowLevel$bytesQueued = _elm_lang$websocket$Native_WebSocket.bytesQueued;
+var _elm_lang$websocket$WebSocket_LowLevel$send = _elm_lang$websocket$Native_WebSocket.send;
+var _elm_lang$websocket$WebSocket_LowLevel$closeWith = _elm_lang$websocket$Native_WebSocket.close;
+var _elm_lang$websocket$WebSocket_LowLevel$close = function (socket) {
+	return A2(
+		_elm_lang$core$Task$map,
+		_elm_lang$core$Basics$always(
+			{ctor: '_Tuple0'}),
+		A3(_elm_lang$websocket$WebSocket_LowLevel$closeWith, 1000, '', socket));
+};
+var _elm_lang$websocket$WebSocket_LowLevel$open = _elm_lang$websocket$Native_WebSocket.open;
+var _elm_lang$websocket$WebSocket_LowLevel$Settings = F2(
+	function (a, b) {
+		return {onMessage: a, onClose: b};
+	});
+var _elm_lang$websocket$WebSocket_LowLevel$WebSocket = {ctor: 'WebSocket'};
+var _elm_lang$websocket$WebSocket_LowLevel$BadArgs = {ctor: 'BadArgs'};
+var _elm_lang$websocket$WebSocket_LowLevel$BadSecurity = {ctor: 'BadSecurity'};
+var _elm_lang$websocket$WebSocket_LowLevel$BadReason = {ctor: 'BadReason'};
+var _elm_lang$websocket$WebSocket_LowLevel$BadCode = {ctor: 'BadCode'};
+var _elm_lang$websocket$WebSocket_LowLevel$BadString = {ctor: 'BadString'};
+var _elm_lang$websocket$WebSocket_LowLevel$NotOpen = {ctor: 'NotOpen'};
+
+var _elm_lang$websocket$WebSocket$closeConnection = function (connection) {
+	var _p0 = connection;
+	if (_p0.ctor === 'Opening') {
+		return _elm_lang$core$Process$kill(_p0._1);
+	} else {
+		return _elm_lang$websocket$WebSocket_LowLevel$close(_p0._0);
+	}
+};
+var _elm_lang$websocket$WebSocket$after = function (backoff) {
+	return (_elm_lang$core$Native_Utils.cmp(backoff, 1) < 0) ? _elm_lang$core$Task$succeed(
+		{ctor: '_Tuple0'}) : _elm_lang$core$Process$sleep(
+		_elm_lang$core$Basics$toFloat(
+			10 * Math.pow(2, backoff)));
+};
+var _elm_lang$websocket$WebSocket$removeQueue = F2(
+	function (name, state) {
+		return _elm_lang$core$Native_Utils.update(
+			state,
+			{
+				queues: A2(_elm_lang$core$Dict$remove, name, state.queues)
+			});
+	});
+var _elm_lang$websocket$WebSocket$updateSocket = F3(
+	function (name, connection, state) {
+		return _elm_lang$core$Native_Utils.update(
+			state,
+			{
+				sockets: A3(_elm_lang$core$Dict$insert, name, connection, state.sockets)
+			});
+	});
+var _elm_lang$websocket$WebSocket$add = F2(
+	function (value, maybeList) {
+		var _p1 = maybeList;
+		if (_p1.ctor === 'Nothing') {
+			return _elm_lang$core$Maybe$Just(
+				{
+					ctor: '::',
+					_0: value,
+					_1: {ctor: '[]'}
+				});
+		} else {
+			return _elm_lang$core$Maybe$Just(
+				{ctor: '::', _0: value, _1: _p1._0});
+		}
+	});
+var _elm_lang$websocket$WebSocket$buildSubDict = F2(
+	function (subs, dict) {
+		buildSubDict:
+		while (true) {
+			var _p2 = subs;
+			if (_p2.ctor === '[]') {
+				return dict;
+			} else {
+				if (_p2._0.ctor === 'Listen') {
+					var _v3 = _p2._1,
+						_v4 = A3(
+						_elm_lang$core$Dict$update,
+						_p2._0._0,
+						_elm_lang$websocket$WebSocket$add(_p2._0._1),
+						dict);
+					subs = _v3;
+					dict = _v4;
+					continue buildSubDict;
+				} else {
+					var _v5 = _p2._1,
+						_v6 = A3(
+						_elm_lang$core$Dict$update,
+						_p2._0._0,
+						function (_p3) {
+							return _elm_lang$core$Maybe$Just(
+								A2(
+									_elm_lang$core$Maybe$withDefault,
+									{ctor: '[]'},
+									_p3));
+						},
+						dict);
+					subs = _v5;
+					dict = _v6;
+					continue buildSubDict;
+				}
+			}
+		}
+	});
+var _elm_lang$websocket$WebSocket_ops = _elm_lang$websocket$WebSocket_ops || {};
+_elm_lang$websocket$WebSocket_ops['&>'] = F2(
+	function (t1, t2) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (_p4) {
+				return t2;
+			},
+			t1);
+	});
+var _elm_lang$websocket$WebSocket$sendMessagesHelp = F3(
+	function (cmds, socketsDict, queuesDict) {
+		sendMessagesHelp:
+		while (true) {
+			var _p5 = cmds;
+			if (_p5.ctor === '[]') {
+				return _elm_lang$core$Task$succeed(queuesDict);
+			} else {
+				var _p9 = _p5._1;
+				var _p8 = _p5._0._0;
+				var _p7 = _p5._0._1;
+				var _p6 = A2(_elm_lang$core$Dict$get, _p8, socketsDict);
+				if ((_p6.ctor === 'Just') && (_p6._0.ctor === 'Connected')) {
+					return A2(
+						_elm_lang$websocket$WebSocket_ops['&>'],
+						A2(_elm_lang$websocket$WebSocket_LowLevel$send, _p6._0._0, _p7),
+						A3(_elm_lang$websocket$WebSocket$sendMessagesHelp, _p9, socketsDict, queuesDict));
+				} else {
+					var _v9 = _p9,
+						_v10 = socketsDict,
+						_v11 = A3(
+						_elm_lang$core$Dict$update,
+						_p8,
+						_elm_lang$websocket$WebSocket$add(_p7),
+						queuesDict);
+					cmds = _v9;
+					socketsDict = _v10;
+					queuesDict = _v11;
+					continue sendMessagesHelp;
+				}
+			}
+		}
+	});
+var _elm_lang$websocket$WebSocket$subscription = _elm_lang$core$Native_Platform.leaf('WebSocket');
+var _elm_lang$websocket$WebSocket$command = _elm_lang$core$Native_Platform.leaf('WebSocket');
+var _elm_lang$websocket$WebSocket$State = F3(
+	function (a, b, c) {
+		return {sockets: a, queues: b, subs: c};
+	});
+var _elm_lang$websocket$WebSocket$init = _elm_lang$core$Task$succeed(
+	A3(_elm_lang$websocket$WebSocket$State, _elm_lang$core$Dict$empty, _elm_lang$core$Dict$empty, _elm_lang$core$Dict$empty));
+var _elm_lang$websocket$WebSocket$Send = F2(
+	function (a, b) {
+		return {ctor: 'Send', _0: a, _1: b};
+	});
+var _elm_lang$websocket$WebSocket$send = F2(
+	function (url, message) {
+		return _elm_lang$websocket$WebSocket$command(
+			A2(_elm_lang$websocket$WebSocket$Send, url, message));
+	});
+var _elm_lang$websocket$WebSocket$cmdMap = F2(
+	function (_p11, _p10) {
+		var _p12 = _p10;
+		return A2(_elm_lang$websocket$WebSocket$Send, _p12._0, _p12._1);
+	});
+var _elm_lang$websocket$WebSocket$KeepAlive = function (a) {
+	return {ctor: 'KeepAlive', _0: a};
+};
+var _elm_lang$websocket$WebSocket$keepAlive = function (url) {
+	return _elm_lang$websocket$WebSocket$subscription(
+		_elm_lang$websocket$WebSocket$KeepAlive(url));
+};
+var _elm_lang$websocket$WebSocket$Listen = F2(
+	function (a, b) {
+		return {ctor: 'Listen', _0: a, _1: b};
+	});
+var _elm_lang$websocket$WebSocket$listen = F2(
+	function (url, tagger) {
+		return _elm_lang$websocket$WebSocket$subscription(
+			A2(_elm_lang$websocket$WebSocket$Listen, url, tagger));
+	});
+var _elm_lang$websocket$WebSocket$subMap = F2(
+	function (func, sub) {
+		var _p13 = sub;
+		if (_p13.ctor === 'Listen') {
+			return A2(
+				_elm_lang$websocket$WebSocket$Listen,
+				_p13._0,
+				function (_p14) {
+					return func(
+						_p13._1(_p14));
+				});
+		} else {
+			return _elm_lang$websocket$WebSocket$KeepAlive(_p13._0);
+		}
+	});
+var _elm_lang$websocket$WebSocket$Connected = function (a) {
+	return {ctor: 'Connected', _0: a};
+};
+var _elm_lang$websocket$WebSocket$Opening = F2(
+	function (a, b) {
+		return {ctor: 'Opening', _0: a, _1: b};
+	});
+var _elm_lang$websocket$WebSocket$BadOpen = function (a) {
+	return {ctor: 'BadOpen', _0: a};
+};
+var _elm_lang$websocket$WebSocket$GoodOpen = F2(
+	function (a, b) {
+		return {ctor: 'GoodOpen', _0: a, _1: b};
+	});
+var _elm_lang$websocket$WebSocket$Die = function (a) {
+	return {ctor: 'Die', _0: a};
+};
+var _elm_lang$websocket$WebSocket$Receive = F2(
+	function (a, b) {
+		return {ctor: 'Receive', _0: a, _1: b};
+	});
+var _elm_lang$websocket$WebSocket$open = F2(
+	function (name, router) {
+		return A2(
+			_elm_lang$websocket$WebSocket_LowLevel$open,
+			name,
+			{
+				onMessage: F2(
+					function (_p15, msg) {
+						return A2(
+							_elm_lang$core$Platform$sendToSelf,
+							router,
+							A2(_elm_lang$websocket$WebSocket$Receive, name, msg));
+					}),
+				onClose: function (details) {
+					return A2(
+						_elm_lang$core$Platform$sendToSelf,
+						router,
+						_elm_lang$websocket$WebSocket$Die(name));
+				}
+			});
+	});
+var _elm_lang$websocket$WebSocket$attemptOpen = F3(
+	function (router, backoff, name) {
+		var badOpen = function (_p16) {
+			return A2(
+				_elm_lang$core$Platform$sendToSelf,
+				router,
+				_elm_lang$websocket$WebSocket$BadOpen(name));
+		};
+		var goodOpen = function (ws) {
+			return A2(
+				_elm_lang$core$Platform$sendToSelf,
+				router,
+				A2(_elm_lang$websocket$WebSocket$GoodOpen, name, ws));
+		};
+		var actuallyAttemptOpen = A2(
+			_elm_lang$core$Task$onError,
+			badOpen,
+			A2(
+				_elm_lang$core$Task$andThen,
+				goodOpen,
+				A2(_elm_lang$websocket$WebSocket$open, name, router)));
+		return _elm_lang$core$Process$spawn(
+			A2(
+				_elm_lang$websocket$WebSocket_ops['&>'],
+				_elm_lang$websocket$WebSocket$after(backoff),
+				actuallyAttemptOpen));
+	});
+var _elm_lang$websocket$WebSocket$onEffects = F4(
+	function (router, cmds, subs, state) {
+		var newSubs = A2(_elm_lang$websocket$WebSocket$buildSubDict, subs, _elm_lang$core$Dict$empty);
+		var cleanup = function (newQueues) {
+			var rightStep = F3(
+				function (name, connection, getNewSockets) {
+					return A2(
+						_elm_lang$websocket$WebSocket_ops['&>'],
+						_elm_lang$websocket$WebSocket$closeConnection(connection),
+						getNewSockets);
+				});
+			var bothStep = F4(
+				function (name, _p17, connection, getNewSockets) {
+					return A2(
+						_elm_lang$core$Task$map,
+						A2(_elm_lang$core$Dict$insert, name, connection),
+						getNewSockets);
+				});
+			var leftStep = F3(
+				function (name, _p18, getNewSockets) {
+					return A2(
+						_elm_lang$core$Task$andThen,
+						function (newSockets) {
+							return A2(
+								_elm_lang$core$Task$andThen,
+								function (pid) {
+									return _elm_lang$core$Task$succeed(
+										A3(
+											_elm_lang$core$Dict$insert,
+											name,
+											A2(_elm_lang$websocket$WebSocket$Opening, 0, pid),
+											newSockets));
+								},
+								A3(_elm_lang$websocket$WebSocket$attemptOpen, router, 0, name));
+						},
+						getNewSockets);
+				});
+			var newEntries = A2(
+				_elm_lang$core$Dict$union,
+				newQueues,
+				A2(
+					_elm_lang$core$Dict$map,
+					F2(
+						function (k, v) {
+							return {ctor: '[]'};
+						}),
+					newSubs));
+			var collectNewSockets = A6(
+				_elm_lang$core$Dict$merge,
+				leftStep,
+				bothStep,
+				rightStep,
+				newEntries,
+				state.sockets,
+				_elm_lang$core$Task$succeed(_elm_lang$core$Dict$empty));
+			return A2(
+				_elm_lang$core$Task$andThen,
+				function (newSockets) {
+					return _elm_lang$core$Task$succeed(
+						A3(_elm_lang$websocket$WebSocket$State, newSockets, newQueues, newSubs));
+				},
+				collectNewSockets);
+		};
+		var sendMessagesGetNewQueues = A3(_elm_lang$websocket$WebSocket$sendMessagesHelp, cmds, state.sockets, state.queues);
+		return A2(_elm_lang$core$Task$andThen, cleanup, sendMessagesGetNewQueues);
+	});
+var _elm_lang$websocket$WebSocket$onSelfMsg = F3(
+	function (router, selfMsg, state) {
+		var _p19 = selfMsg;
+		switch (_p19.ctor) {
+			case 'Receive':
+				var sends = A2(
+					_elm_lang$core$List$map,
+					function (tagger) {
+						return A2(
+							_elm_lang$core$Platform$sendToApp,
+							router,
+							tagger(_p19._1));
+					},
+					A2(
+						_elm_lang$core$Maybe$withDefault,
+						{ctor: '[]'},
+						A2(_elm_lang$core$Dict$get, _p19._0, state.subs)));
+				return A2(
+					_elm_lang$websocket$WebSocket_ops['&>'],
+					_elm_lang$core$Task$sequence(sends),
+					_elm_lang$core$Task$succeed(state));
+			case 'Die':
+				var _p21 = _p19._0;
+				var _p20 = A2(_elm_lang$core$Dict$get, _p21, state.sockets);
+				if (_p20.ctor === 'Nothing') {
+					return _elm_lang$core$Task$succeed(state);
+				} else {
+					return A2(
+						_elm_lang$core$Task$andThen,
+						function (pid) {
+							return _elm_lang$core$Task$succeed(
+								A3(
+									_elm_lang$websocket$WebSocket$updateSocket,
+									_p21,
+									A2(_elm_lang$websocket$WebSocket$Opening, 0, pid),
+									state));
+						},
+						A3(_elm_lang$websocket$WebSocket$attemptOpen, router, 0, _p21));
+				}
+			case 'GoodOpen':
+				var _p24 = _p19._1;
+				var _p23 = _p19._0;
+				var _p22 = A2(_elm_lang$core$Dict$get, _p23, state.queues);
+				if (_p22.ctor === 'Nothing') {
+					return _elm_lang$core$Task$succeed(
+						A3(
+							_elm_lang$websocket$WebSocket$updateSocket,
+							_p23,
+							_elm_lang$websocket$WebSocket$Connected(_p24),
+							state));
+				} else {
+					return A3(
+						_elm_lang$core$List$foldl,
+						F2(
+							function (msg, task) {
+								return A2(
+									_elm_lang$websocket$WebSocket_ops['&>'],
+									A2(_elm_lang$websocket$WebSocket_LowLevel$send, _p24, msg),
+									task);
+							}),
+						_elm_lang$core$Task$succeed(
+							A2(
+								_elm_lang$websocket$WebSocket$removeQueue,
+								_p23,
+								A3(
+									_elm_lang$websocket$WebSocket$updateSocket,
+									_p23,
+									_elm_lang$websocket$WebSocket$Connected(_p24),
+									state))),
+						_p22._0);
+				}
+			default:
+				var _p27 = _p19._0;
+				var _p25 = A2(_elm_lang$core$Dict$get, _p27, state.sockets);
+				if (_p25.ctor === 'Nothing') {
+					return _elm_lang$core$Task$succeed(state);
+				} else {
+					if (_p25._0.ctor === 'Opening') {
+						var _p26 = _p25._0._0;
+						return A2(
+							_elm_lang$core$Task$andThen,
+							function (pid) {
+								return _elm_lang$core$Task$succeed(
+									A3(
+										_elm_lang$websocket$WebSocket$updateSocket,
+										_p27,
+										A2(_elm_lang$websocket$WebSocket$Opening, _p26 + 1, pid),
+										state));
+							},
+							A3(_elm_lang$websocket$WebSocket$attemptOpen, router, _p26 + 1, _p27));
+					} else {
+						return _elm_lang$core$Task$succeed(state);
+					}
+				}
+		}
+	});
+_elm_lang$core$Native_Platform.effectManagers['WebSocket'] = {pkg: 'elm-lang/websocket', init: _elm_lang$websocket$WebSocket$init, onEffects: _elm_lang$websocket$WebSocket$onEffects, onSelfMsg: _elm_lang$websocket$WebSocket$onSelfMsg, tag: 'fx', cmdMap: _elm_lang$websocket$WebSocket$cmdMap, subMap: _elm_lang$websocket$WebSocket$subMap};
+
 var _evancz$elm_sortable_table$Table$findSorter = F2(
 	function (selectedColumn, columnData) {
 		findSorter:
@@ -11311,6 +11977,134 @@ var _fpawel$gobet_front$Aping_Decoder$event = A4(
 						_elm_lang$core$Json_Decode$int,
 						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Aping$Event)))))));
 
+var _fpawel$gobet_front$Help_Utils$listGoupBy = F2(
+	function (fk, lst) {
+		return A3(
+			_elm_lang$core$List$foldr,
+			F2(
+				function (x, acc) {
+					var k = fk(x);
+					var xs = A2(
+						F2(
+							function (x, y) {
+								return {ctor: '::', _0: x, _1: y};
+							}),
+						x,
+						A2(
+							_elm_lang$core$Maybe$withDefault,
+							{ctor: '[]'},
+							A2(_elm_lang$core$Dict$get, k, acc)));
+					return A3(_elm_lang$core$Dict$insert, k, xs, acc);
+				}),
+			_elm_lang$core$Dict$empty,
+			lst);
+	});
+var _fpawel$gobet_front$Help_Utils$list_window1 = F3(
+	function (acc, m, xs) {
+		list_window1:
+		while (true) {
+			var _p0 = A2(
+				_elm_lang$core$List$partition,
+				function (_p1) {
+					var _p2 = _p1;
+					return _elm_lang$core$Native_Utils.cmp(_p2._0, m) < 0;
+				},
+				A2(
+					_elm_lang$core$List$indexedMap,
+					F2(
+						function (n, x) {
+							return {ctor: '_Tuple2', _0: n, _1: x};
+						}),
+					xs));
+			var xs1_ = _p0._0;
+			var xs2_ = _p0._1;
+			var xs1 = A2(_elm_lang$core$List$map, _elm_lang$core$Tuple$second, xs1_);
+			var xs2 = A2(_elm_lang$core$List$map, _elm_lang$core$Tuple$second, xs2_);
+			if (_elm_lang$core$List$isEmpty(xs1)) {
+				return acc;
+			} else {
+				var _v1 = {ctor: '::', _0: xs1, _1: acc},
+					_v2 = m,
+					_v3 = xs2;
+				acc = _v1;
+				m = _v2;
+				xs = _v3;
+				continue list_window1;
+			}
+		}
+	});
+var _fpawel$gobet_front$Help_Utils$list_window = F2(
+	function (n, xs) {
+		return _elm_lang$core$List$reverse(
+			A3(
+				_fpawel$gobet_front$Help_Utils$list_window1,
+				{ctor: '[]'},
+				n,
+				xs));
+	});
+var _fpawel$gobet_front$Help_Utils$list_parts_n = F2(
+	function (n, xs) {
+		var len = _elm_lang$core$List$length(xs);
+		var a = (len / n) | 0;
+		var b = A2(_elm_lang$core$Basics$rem, len, n);
+		var c = _elm_lang$core$Native_Utils.eq(b, 0) ? a : (a + 1);
+		return A2(_fpawel$gobet_front$Help_Utils$list_window, c, xs);
+	});
+var _fpawel$gobet_front$Help_Utils$websocketURL = function (_p3) {
+	var _p4 = _p3;
+	var _p5 = _p4.protocol;
+	return (!A2(_elm_lang$core$String$startsWith, 'http', _p5)) ? _elm_lang$core$Native_Utils.crash(
+		'Help.Utils',
+		{
+			start: {line: 37, column: 16},
+			end: {line: 37, column: 27}
+		})(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'wrong protocol `',
+			A2(_elm_lang$core$Basics_ops['++'], _p5, 'wrong name of the protocol - expected a string that starts with `http`'))) : A2(
+		_elm_lang$core$Basics_ops['++'],
+		'ws',
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			A2(_elm_lang$core$String$dropLeft, 4, _p5),
+			A2(_elm_lang$core$Basics_ops['++'], '//', _p4.host)));
+};
+var _fpawel$gobet_front$Help_Utils$isNothing = function (_p6) {
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		true,
+		A2(
+			_elm_lang$core$Maybe$map,
+			function (_p7) {
+				return false;
+			},
+			_p6));
+};
+var _fpawel$gobet_front$Help_Utils$isJust = function (_p8) {
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		false,
+		A2(
+			_elm_lang$core$Maybe$map,
+			function (_p9) {
+				return true;
+			},
+			_p8));
+};
+var _fpawel$gobet_front$Help_Utils$compareInvert = F2(
+	function (n1, n2) {
+		var _p10 = A2(_elm_lang$core$Basics$compare, n1, n2);
+		switch (_p10.ctor) {
+			case 'LT':
+				return _elm_lang$core$Basics$GT;
+			case 'EQ':
+				return _elm_lang$core$Basics$EQ;
+			default:
+				return _elm_lang$core$Basics$LT;
+		}
+	});
+
 var _fpawel$gobet_front$Help_Component$mainMenuItem = F2(
 	function (title, items) {
 		return A2(
@@ -11423,6 +12217,755 @@ var _fpawel$gobet_front$Help_Component$spinner_text = function (text) {
 				_0: _elm_lang$html$Html$text(text),
 				_1: {ctor: '[]'}
 			}
+		});
+};
+
+var _fpawel$gobet_front$Styles$bounceInUp = 'bounceInUp';
+var _fpawel$gobet_front$Styles$pulse = 'pulse';
+var _fpawel$gobet_front$Styles$flash = 'flash';
+var _fpawel$gobet_front$Styles$jello = 'jello';
+var _fpawel$gobet_front$Styles$animated = 'animated';
+var _fpawel$gobet_front$Styles$animated_jello_2s = {
+	ctor: '::',
+	_0: _elm_lang$html$Html_Attributes$class(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			_fpawel$gobet_front$Styles$animated,
+			A2(_elm_lang$core$Basics_ops['++'], ' ', _fpawel$gobet_front$Styles$jello))),
+	_1: {
+		ctor: '::',
+		_0: _elm_lang$html$Html_Attributes$style(
+			{
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: '-webkit-animation-duration', _1: '2s'},
+				_1: {ctor: '[]'}
+			}),
+		_1: {ctor: '[]'}
+	}
+};
+var _fpawel$gobet_front$Styles$animated_flash_2s = {
+	ctor: '::',
+	_0: _elm_lang$html$Html_Attributes$class(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			_fpawel$gobet_front$Styles$animated,
+			A2(_elm_lang$core$Basics_ops['++'], ' ', _fpawel$gobet_front$Styles$flash))),
+	_1: {
+		ctor: '::',
+		_0: _elm_lang$html$Html_Attributes$style(
+			{
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: '-webkit-animation-duration', _1: '2s'},
+				_1: {ctor: '[]'}
+			}),
+		_1: {ctor: '[]'}
+	}
+};
+var _fpawel$gobet_front$Styles$animated_bounceInUp_2s = {
+	ctor: '::',
+	_0: _elm_lang$html$Html_Attributes$class(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			_fpawel$gobet_front$Styles$animated,
+			A2(_elm_lang$core$Basics_ops['++'], ' ', _fpawel$gobet_front$Styles$bounceInUp))),
+	_1: {
+		ctor: '::',
+		_0: _elm_lang$html$Html_Attributes$style(
+			{
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: '-webkit-animation-duration', _1: '2s'},
+				_1: {ctor: '[]'}
+			}),
+		_1: {ctor: '[]'}
+	}
+};
+
+var _fpawel$gobet_front$Football$viewGame = function (x) {
+	var odd = function (y) {
+		return A2(
+			_elm_lang$html$Html$td,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(
+					A2(
+						_elm_lang$core$Maybe$withDefault,
+						'',
+						A2(_elm_lang$core$Maybe$map, _elm_lang$core$Basics$toString, y))),
+				_1: {ctor: '[]'}
+			});
+	};
+	var bounceInUp_2s_attrs = function (f) {
+		return f ? _fpawel$gobet_front$Styles$animated_bounceInUp_2s : {ctor: '[]'};
+	};
+	var jello_2s_attrs = function (f) {
+		return f ? _fpawel$gobet_front$Styles$animated_jello_2s : {ctor: '[]'};
+	};
+	var td_ = F2(
+		function (anim, s) {
+			return A2(
+				_elm_lang$html$Html$td,
+				jello_2s_attrs(anim),
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(s),
+					_1: {ctor: '[]'}
+				});
+		});
+	return A2(
+		_elm_lang$html$Html$tr,
+		bounceInUp_2s_attrs(x.inplay),
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$td,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(x.page + 1),
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'.',
+								_elm_lang$core$Basics$toString(x.order + 1)))),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$td,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(x.event.country),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$td,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('home-team'),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(x.home),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(td_, x.uresult, x.result),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$td,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class('away-team'),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(x.away),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(td_, x.utime, x.time),
+								_1: {
+									ctor: '::',
+									_0: odd(x.win1),
+									_1: {
+										ctor: '::',
+										_0: odd(x.win2),
+										_1: {
+											ctor: '::',
+											_0: odd(x.draw1),
+											_1: {
+												ctor: '::',
+												_0: odd(x.draw2),
+												_1: {
+													ctor: '::',
+													_0: odd(x.lose1),
+													_1: {
+														ctor: '::',
+														_0: odd(x.lose2),
+														_1: {ctor: '[]'}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		});
+};
+var _fpawel$gobet_front$Football$viewGamesList = function (games) {
+	var thead = A2(
+		_elm_lang$html$Html$tr,
+		{ctor: '[]'},
+		A2(
+			_elm_lang$core$List$map,
+			function (x) {
+				return A2(
+					_elm_lang$html$Html$th,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(x),
+						_1: {ctor: '[]'}
+					});
+			},
+			{
+				ctor: '::',
+				_0: 'п/п',
+				_1: {
+					ctor: '::',
+					_0: 'Страна',
+					_1: {
+						ctor: '::',
+						_0: 'Дома',
+						_1: {
+							ctor: '::',
+							_0: 'Счёт',
+							_1: {
+								ctor: '::',
+								_0: 'В гостях',
+								_1: {
+									ctor: '::',
+									_0: 'Время',
+									_1: {
+										ctor: '::',
+										_0: 'П1+',
+										_1: {
+											ctor: '::',
+											_0: 'П1-',
+											_1: {
+												ctor: '::',
+												_0: 'Н+',
+												_1: {
+													ctor: '::',
+													_0: 'Н-',
+													_1: {
+														ctor: '::',
+														_0: 'П2+',
+														_1: {
+															ctor: '::',
+															_0: 'П2-',
+															_1: {ctor: '[]'}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}));
+	var trs = A2(
+		_elm_lang$core$List$map,
+		_fpawel$gobet_front$Football$viewGame,
+		A2(
+			_elm_lang$core$List$sortBy,
+			function (_p0) {
+				var _p1 = _p0;
+				return {ctor: '_Tuple2', _0: _p1.page, _1: _p1.order};
+			},
+			games));
+	return A2(
+		_elm_lang$html$Html$table,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('table table-condensed table-football'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$thead,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: thead,
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$tbody,
+					{ctor: '[]'},
+					trs),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _fpawel$gobet_front$Football$view = function (_p2) {
+	var _p3 = _p2;
+	var _p5 = _p3._0.games;
+	var _p4 = _p5;
+	if (_p4.ctor === '[]') {
+		return _fpawel$gobet_front$Help_Component$spinner_text('Подготовка данных...');
+	} else {
+		return _fpawel$gobet_front$Football$viewGamesList(_p5);
+	}
+};
+var _fpawel$gobet_front$Football$encodeGame = function (x) {
+	var encodedOdds = A2(
+		_elm_lang$core$List$filterMap,
+		function (_p6) {
+			var _p7 = _p6;
+			return A2(
+				_elm_lang$core$Maybe$map,
+				function (v) {
+					return {
+						ctor: '_Tuple2',
+						_0: _p7._0,
+						_1: _elm_lang$core$Json_Encode$float(v)
+					};
+				},
+				_p7._1);
+		},
+		{
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'win1', _1: x.win1},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'win2', _1: x.win2},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'draw1', _1: x.draw1},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'draw2', _1: x.draw2},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'lose1', _1: x.lose1},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'lose2', _1: x.lose2},
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			}
+		});
+	return _elm_lang$core$Json_Encode$object(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'event_id',
+					_1: _elm_lang$core$Json_Encode$int(x.eventID)
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'page',
+						_1: _elm_lang$core$Json_Encode$int(x.page)
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'order',
+							_1: _elm_lang$core$Json_Encode$int(x.order)
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'time',
+								_1: _elm_lang$core$Json_Encode$string(x.time)
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: 'result',
+									_1: _elm_lang$core$Json_Encode$string(x.result)
+								},
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			},
+			encodedOdds));
+};
+var _fpawel$gobet_front$Football$decoderMaybeFloat = _elm_lang$core$Json_Decode$maybe(
+	_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$float));
+var _fpawel$gobet_front$Football$websocketURL = function (_p8) {
+	var _p9 = _p8;
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		_fpawel$gobet_front$Help_Utils$websocketURL(_p9.location),
+		'/football');
+};
+var _fpawel$gobet_front$Football$updateGame = F2(
+	function (x, _p10) {
+		var _p11 = _p10;
+		var _p13 = _p11.time;
+		var _p12 = _p11.result;
+		return _elm_lang$core$Native_Utils.update(
+			x,
+			{
+				page: A2(_elm_lang$core$Maybe$withDefault, x.page, _p11.page),
+				order: A2(_elm_lang$core$Maybe$withDefault, x.order, _p11.order),
+				time: A2(_elm_lang$core$Maybe$withDefault, x.time, _p13),
+				result: A2(_elm_lang$core$Maybe$withDefault, x.result, _p12),
+				win1: A2(_elm_lang$core$Maybe$withDefault, x.win1, _p11.win1),
+				win2: A2(_elm_lang$core$Maybe$withDefault, x.win2, _p11.win2),
+				draw1: A2(_elm_lang$core$Maybe$withDefault, x.draw1, _p11.draw1),
+				draw2: A2(_elm_lang$core$Maybe$withDefault, x.draw2, _p11.draw2),
+				lose1: A2(_elm_lang$core$Maybe$withDefault, x.lose1, _p11.lose1),
+				lose2: A2(_elm_lang$core$Maybe$withDefault, x.lose2, _p11.lose2),
+				utime: _fpawel$gobet_front$Help_Utils$isJust(_p13),
+				uresult: _fpawel$gobet_front$Help_Utils$isJust(_p12)
+			});
+	});
+var _fpawel$gobet_front$Football$updateGamesList = F2(
+	function (_p14, games) {
+		var _p15 = _p14;
+		var _p21 = _p15.inplay;
+		var isJust = function (_p16) {
+			return A2(
+				_elm_lang$core$Maybe$withDefault,
+				false,
+				A2(
+					_elm_lang$core$Maybe$map,
+					function (_p17) {
+						return true;
+					},
+					_p16));
+		};
+		var changesMap = _elm_lang$core$Dict$fromList(
+			A2(
+				_elm_lang$core$List$map,
+				function (x) {
+					return {ctor: '_Tuple2', _0: x.eventID, _1: x};
+				},
+				_p15.changes));
+		var inplaySet = _elm_lang$core$Set$fromList(
+			A2(
+				_elm_lang$core$List$map,
+				function (x) {
+					return x.eventID;
+				},
+				_p21));
+		var outplaySet = _elm_lang$core$Set$fromList(_p15.outplay);
+		var play = A2(
+			_elm_lang$core$List$map,
+			function (x) {
+				return A2(
+					_elm_lang$core$Maybe$withDefault,
+					x,
+					A2(
+						_elm_lang$core$Maybe$map,
+						_fpawel$gobet_front$Football$updateGame(x),
+						A2(_elm_lang$core$Dict$get, x.eventID, changesMap)));
+			},
+			A2(
+				_elm_lang$core$List$filter,
+				function (_p18) {
+					var _p19 = _p18;
+					var _p20 = _p19.eventID;
+					return (!A2(_elm_lang$core$Set$member, _p20, outplaySet)) && (!A2(_elm_lang$core$Set$member, _p20, inplaySet));
+				},
+				games));
+		return A2(_elm_lang$core$Basics_ops['++'], _p21, play);
+	});
+var _fpawel$gobet_front$Football$Game = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return function (k) {
+											return function (l) {
+												return function (m) {
+													return function (n) {
+														return function (o) {
+															return function (p) {
+																return function (q) {
+																	return function (r) {
+																		return {eventID: a, marketID: b, home: c, away: d, event: e, page: f, order: g, result: h, time: i, win1: j, win2: k, draw1: l, draw2: m, lose1: n, lose2: o, inplay: p, utime: q, uresult: r};
+																	};
+																};
+															};
+														};
+													};
+												};
+											};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var _fpawel$gobet_front$Football$decoderGame = A2(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$hardcoded,
+	false,
+	A2(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$hardcoded,
+		false,
+		A2(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$hardcoded,
+			true,
+			A4(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+				'lose2',
+				_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$float),
+				_elm_lang$core$Maybe$Nothing,
+				A4(
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+					'lose1',
+					_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$float),
+					_elm_lang$core$Maybe$Nothing,
+					A4(
+						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+						'draw2',
+						_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$float),
+						_elm_lang$core$Maybe$Nothing,
+						A4(
+							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+							'draw1',
+							_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$float),
+							_elm_lang$core$Maybe$Nothing,
+							A4(
+								_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+								'win2',
+								_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$float),
+								_elm_lang$core$Maybe$Nothing,
+								A4(
+									_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+									'win1',
+									_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$float),
+									_elm_lang$core$Maybe$Nothing,
+									A3(
+										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+										'time',
+										_elm_lang$core$Json_Decode$string,
+										A4(
+											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+											'result',
+											_elm_lang$core$Json_Decode$string,
+											'',
+											A3(
+												_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+												'order',
+												_elm_lang$core$Json_Decode$int,
+												A3(
+													_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+													'page',
+													_elm_lang$core$Json_Decode$int,
+													A3(
+														_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+														'event',
+														_fpawel$gobet_front$Aping_Decoder$event,
+														A3(
+															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+															'away',
+															_elm_lang$core$Json_Decode$string,
+															A3(
+																_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																'home',
+																_elm_lang$core$Json_Decode$string,
+																A3(
+																	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																	'market_id',
+																	_elm_lang$core$Json_Decode$int,
+																	A3(
+																		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																		'event_id',
+																		_elm_lang$core$Json_Decode$int,
+																		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Football$Game)))))))))))))))))));
+var _fpawel$gobet_front$Football$GameCahnges = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return function (k) {
+											return {eventID: a, page: b, order: c, time: d, result: e, win1: f, win2: g, draw1: h, draw2: i, lose1: j, lose2: k};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var _fpawel$gobet_front$Football$decoderGameCahnges = A4(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+	'lose2',
+	_fpawel$gobet_front$Football$decoderMaybeFloat,
+	_elm_lang$core$Maybe$Nothing,
+	A4(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+		'lose1',
+		_fpawel$gobet_front$Football$decoderMaybeFloat,
+		_elm_lang$core$Maybe$Nothing,
+		A4(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+			'draw2',
+			_fpawel$gobet_front$Football$decoderMaybeFloat,
+			_elm_lang$core$Maybe$Nothing,
+			A4(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+				'draw1',
+				_fpawel$gobet_front$Football$decoderMaybeFloat,
+				_elm_lang$core$Maybe$Nothing,
+				A4(
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+					'win2',
+					_fpawel$gobet_front$Football$decoderMaybeFloat,
+					_elm_lang$core$Maybe$Nothing,
+					A4(
+						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+						'win1',
+						_fpawel$gobet_front$Football$decoderMaybeFloat,
+						_elm_lang$core$Maybe$Nothing,
+						A4(
+							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+							'result',
+							_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$string),
+							_elm_lang$core$Maybe$Nothing,
+							A4(
+								_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+								'time',
+								_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$string),
+								_elm_lang$core$Maybe$Nothing,
+								A4(
+									_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+									'order',
+									_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$int),
+									_elm_lang$core$Maybe$Nothing,
+									A4(
+										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+										'page',
+										_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$int),
+										_elm_lang$core$Maybe$Nothing,
+										A3(
+											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+											'event_id',
+											_elm_lang$core$Json_Decode$int,
+											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Football$GameCahnges))))))))))));
+var _fpawel$gobet_front$Football$ReplyFromServer = F4(
+	function (a, b, c, d) {
+		return {inplay: a, outplay: b, changes: c, hashCode: d};
+	});
+var _fpawel$gobet_front$Football$decoderReplyFromServer = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'hash_code',
+	_elm_lang$core$Json_Decode$string,
+	A4(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+		'game_changes',
+		_elm_lang$core$Json_Decode$list(_fpawel$gobet_front$Football$decoderGameCahnges),
+		{ctor: '[]'},
+		A4(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+			'outplay',
+			_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$int),
+			{ctor: '[]'},
+			A4(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+				'inplay',
+				_elm_lang$core$Json_Decode$list(_fpawel$gobet_front$Football$decoderGame),
+				{ctor: '[]'},
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Football$ReplyFromServer)))));
+var _fpawel$gobet_front$Football$Model = function (a) {
+	return {ctor: 'Model', _0: a};
+};
+var _fpawel$gobet_front$Football$init = function (location) {
+	return _fpawel$gobet_front$Football$Model(
+		{
+			games: {ctor: '[]'},
+			location: location
+		});
+};
+var _fpawel$gobet_front$Football$update = F2(
+	function (msg, _p22) {
+		var _p23 = _p22;
+		var _p26 = _p23._0;
+		var _p24 = msg;
+		var _p25 = _p24._0;
+		var answer = A2(
+			_elm_lang$websocket$WebSocket$send,
+			_fpawel$gobet_front$Football$websocketURL(_p26),
+			_p25.hashCode);
+		var games = A2(_fpawel$gobet_front$Football$updateGamesList, _p25, _p26.games);
+		return A2(
+			_elm_lang$core$Platform_Cmd_ops['!'],
+			_fpawel$gobet_front$Football$Model(
+				_elm_lang$core$Native_Utils.update(
+					_p26,
+					{games: games})),
+			{
+				ctor: '::',
+				_0: answer,
+				_1: {ctor: '[]'}
+			});
+	});
+var _fpawel$gobet_front$Football$MsgReplyFromServer = function (a) {
+	return {ctor: 'MsgReplyFromServer', _0: a};
+};
+var _fpawel$gobet_front$Football$decodeReplyFromServer = function (str) {
+	var _p27 = A2(_elm_lang$core$Json_Decode$decodeString, _fpawel$gobet_front$Football$decoderReplyFromServer, str);
+	if (_p27.ctor === 'Ok') {
+		return _fpawel$gobet_front$Football$MsgReplyFromServer(_p27._0);
+	} else {
+		return _elm_lang$core$Native_Utils.crashCase(
+			'Football',
+			{
+				start: {line: 240, column: 5},
+				end: {line: 245, column: 74}
+			},
+			_p27)(
+			A2(_elm_lang$core$Basics_ops['++'], 'error decoding `Football` message : ', _p27._0));
+	}
+};
+var _fpawel$gobet_front$Football$subscriptions = function (_p29) {
+	var _p30 = _p29;
+	return _elm_lang$core$Platform_Sub$batch(
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$websocket$WebSocket$listen,
+				_fpawel$gobet_front$Football$websocketURL(_p30._0),
+				_fpawel$gobet_front$Football$decodeReplyFromServer),
+			_1: {ctor: '[]'}
 		});
 };
 
@@ -12081,13 +13624,20 @@ var _fpawel$gobet_front$Sport$update = F2(
 		}
 	});
 
+var _fpawel$gobet_front$Msg$Tick = function (a) {
+	return {ctor: 'Tick', _0: a};
+};
 var _fpawel$gobet_front$Msg$UrlChange = function (a) {
 	return {ctor: 'UrlChange', _0: a};
+};
+var _fpawel$gobet_front$Msg$Football = function (a) {
+	return {ctor: 'Football', _0: a};
 };
 var _fpawel$gobet_front$Msg$Sport = function (a) {
 	return {ctor: 'Sport', _0: a};
 };
 
+var _fpawel$gobet_front$Routing$Football = {ctor: 'Football'};
 var _fpawel$gobet_front$Routing$Sport = function (a) {
 	return {ctor: 'Sport', _0: a};
 };
@@ -12101,7 +13651,14 @@ var _fpawel$gobet_front$Routing$parser = _evancz$url_parser$UrlParser$oneOf(
 				_evancz$url_parser$UrlParser_ops['</>'],
 				_evancz$url_parser$UrlParser$s('sport'),
 				_evancz$url_parser$UrlParser$int)),
-		_1: {ctor: '[]'}
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_evancz$url_parser$UrlParser$map,
+				_fpawel$gobet_front$Routing$Football,
+				_evancz$url_parser$UrlParser$s('football')),
+			_1: {ctor: '[]'}
+		}
 	});
 
 var _fpawel$gobet_front$View_Sports$linkSport = F2(
@@ -12257,36 +13814,62 @@ var _fpawel$gobet_front$View_Sports$Config = F2(
 
 var _fpawel$gobet_front$Content$subscriptions = function (model) {
 	var _p0 = model;
-	return A2(
-		_elm_lang$core$Platform_Sub$map,
-		_fpawel$gobet_front$Msg$Sport,
-		_fpawel$gobet_front$Sport$subscriptions(_p0._0));
+	if (_p0.ctor === 'Sport') {
+		return A2(
+			_elm_lang$core$Platform_Sub$map,
+			_fpawel$gobet_front$Msg$Sport,
+			_fpawel$gobet_front$Sport$subscriptions(_p0._0));
+	} else {
+		return A2(
+			_elm_lang$core$Platform_Sub$map,
+			_fpawel$gobet_front$Msg$Football,
+			_fpawel$gobet_front$Football$subscriptions(_p0._0));
+	}
 };
 var _fpawel$gobet_front$Content$view = F2(
 	function (sports, model) {
 		var _p1 = model;
-		return {
-			ctor: '::',
-			_0: _fpawel$gobet_front$View_Sports$view(
-				{sports: sports, sportID: _p1._0.sport.id}),
-			_1: {
+		if (_p1.ctor === 'Sport') {
+			return {
 				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$map,
-					_fpawel$gobet_front$Msg$Sport,
-					_fpawel$gobet_front$Sport$view(_p1._0)),
+				_0: _fpawel$gobet_front$View_Sports$view(
+					{sports: sports, sportID: _p1._0.sport.id}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$map,
+						_fpawel$gobet_front$Msg$Sport,
+						_fpawel$gobet_front$Sport$view(_p1._0)),
+					_1: {ctor: '[]'}
+				}
+			};
+		} else {
+			return {
+				ctor: '::',
+				_0: _fpawel$gobet_front$Football$view(_p1._0),
 				_1: {ctor: '[]'}
-			}
-		};
+			};
+		}
 	});
 var _fpawel$gobet_front$Content$route = function (model) {
 	var _p2 = model;
-	return _fpawel$gobet_front$Routing$Sport(_p2._0.sport.id);
+	if (_p2.ctor === 'Sport') {
+		return _fpawel$gobet_front$Routing$Sport(_p2._0.sport.id);
+	} else {
+		return _fpawel$gobet_front$Routing$Football;
+	}
+};
+var _fpawel$gobet_front$Content$Football = function (a) {
+	return {ctor: 'Football', _0: a};
+};
+var _fpawel$gobet_front$Content$football = function (location) {
+	return _fpawel$gobet_front$Content$Football(
+		_fpawel$gobet_front$Football$init(location));
 };
 var _fpawel$gobet_front$Content$Sport = function (a) {
 	return {ctor: 'Sport', _0: a};
 };
-var _fpawel$gobet_front$Content$initSport = function (x) {
+var _fpawel$gobet_front$Content$sport = function (x) {
 	var _p3 = _fpawel$gobet_front$Sport$init(x);
 	var model_sport = _p3._0;
 	var cmd_sport = _p3._1;
@@ -12299,52 +13882,60 @@ var _fpawel$gobet_front$Content$initSport = function (x) {
 			_1: {ctor: '[]'}
 		});
 };
-var _fpawel$gobet_front$Content$init = F2(
-	function (_p4, route) {
-		var _p5 = _p4;
-		var _p6 = route;
-		var sport = A2(_fpawel$gobet_front$Aping$getSportByID, _p6._0, _p5.sports);
-		var _p7 = _fpawel$gobet_front$Sport$init(
-			{location: _p5.location, sport: sport, time: _p5.time});
-		var model_sport = _p7._0;
-		var cmd_sport = _p7._1;
-		return A2(
-			_elm_lang$core$Platform_Cmd_ops['!'],
-			_fpawel$gobet_front$Content$Sport(model_sport),
-			{
-				ctor: '::',
-				_0: A2(_elm_lang$core$Platform_Cmd$map, _fpawel$gobet_front$Msg$Sport, cmd_sport),
-				_1: {ctor: '[]'}
-			});
-	});
 var _fpawel$gobet_front$Content$update = F2(
 	function (msg, model) {
-		var _p8 = {ctor: '_Tuple2', _0: msg, _1: model};
-		if ((_p8.ctor === '_Tuple2') && (_p8._0.ctor === 'Sport')) {
-			var _p9 = A2(_fpawel$gobet_front$Sport$update, _p8._0._0, _p8._1._0);
-			var updated_sport = _p9._0;
-			var cmd_sport = _p9._1;
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_fpawel$gobet_front$Content$Sport(updated_sport),
-				{
-					ctor: '::',
-					_0: A2(_elm_lang$core$Platform_Cmd$map, _fpawel$gobet_front$Msg$Sport, cmd_sport),
-					_1: {ctor: '[]'}
-				});
-		} else {
-			return _elm_lang$core$Native_Utils.crashCase(
-				'Content',
-				{
-					start: {line: 69, column: 5},
-					end: {line: 78, column: 67}
-				},
-				_p8)(
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					'wrong content message: ',
-					_elm_lang$core$Basics$toString(_p8)));
-		}
+		var _p4 = {ctor: '_Tuple2', _0: msg, _1: model};
+		_v3_2:
+		do {
+			if (_p4.ctor === '_Tuple2') {
+				if (_p4._1.ctor === 'Sport') {
+					if (_p4._0.ctor === 'Sport') {
+						var _p5 = A2(_fpawel$gobet_front$Sport$update, _p4._0._0, _p4._1._0);
+						var um = _p5._0;
+						var cmd = _p5._1;
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							_fpawel$gobet_front$Content$Sport(um),
+							{
+								ctor: '::',
+								_0: A2(_elm_lang$core$Platform_Cmd$map, _fpawel$gobet_front$Msg$Sport, cmd),
+								_1: {ctor: '[]'}
+							});
+					} else {
+						break _v3_2;
+					}
+				} else {
+					if (_p4._0.ctor === 'Football') {
+						var _p6 = A2(_fpawel$gobet_front$Football$update, _p4._0._0, _p4._1._0);
+						var um = _p6._0;
+						var cmd = _p6._1;
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							_fpawel$gobet_front$Content$Football(um),
+							{
+								ctor: '::',
+								_0: A2(_elm_lang$core$Platform_Cmd$map, _fpawel$gobet_front$Msg$Football, cmd),
+								_1: {ctor: '[]'}
+							});
+					} else {
+						break _v3_2;
+					}
+				}
+			} else {
+				break _v3_2;
+			}
+		} while(false);
+		return _elm_lang$core$Native_Utils.crashCase(
+			'Content',
+			{
+				start: {line: 51, column: 5},
+				end: {line: 67, column: 67}
+			},
+			_p4)(
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'wrong content message: ',
+				_elm_lang$core$Basics$toString(_p4)));
 	});
 
 var _fpawel$gobet_front$View_Container$dropDown = function (_p0) {
@@ -12603,116 +14194,162 @@ var _fpawel$gobet_front$View_Container$view = F3(
 			});
 	});
 
-var _fpawel$gobet_front$Main$view = function (model) {
+var _fpawel$gobet_front$Main$view = function (_p0) {
+	var _p1 = _p0;
+	var _p3 = _p1.content;
 	return A3(
 		_fpawel$gobet_front$View_Container$view,
 		{
 			ctor: '::',
-			_0: {name: 'Футбол', active: false, route: 'football'},
+			_0: {
+				name: 'Футбол',
+				active: _elm_lang$core$Native_Utils.eq(
+					_fpawel$gobet_front$Content$route(_p3),
+					_fpawel$gobet_front$Routing$Football),
+				route: 'football'
+			},
 			_1: {
 				ctor: '::',
-				_0: {name: 'Обзор рынков', active: true, route: 'sport/1'},
+				_0: {
+					name: 'Обзор рынков',
+					active: function () {
+						var _p2 = _fpawel$gobet_front$Content$route(_p3);
+						if (_p2.ctor === 'Sport') {
+							return true;
+						} else {
+							return false;
+						}
+					}(),
+					route: 'sport/1'
+				},
 				_1: {ctor: '[]'}
 			}
 		},
 		{ctor: '[]'},
-		A2(_fpawel$gobet_front$Content$view, model.sports, model.content));
+		A2(_fpawel$gobet_front$Content$view, _p1.sports, _p3));
 };
-var _fpawel$gobet_front$Main$subscriptions = function (_p0) {
-	var _p1 = _p0;
-	return _fpawel$gobet_front$Content$subscriptions(_p1.content);
+var _fpawel$gobet_front$Main$subscriptions = function (_p4) {
+	var _p5 = _p4;
+	return _fpawel$gobet_front$Content$subscriptions(_p5.content);
 };
 var _fpawel$gobet_front$Main$updateContent = F2(
-	function (model, _p2) {
-		var _p3 = _p2;
+	function (model, _p6) {
+		var _p7 = _p6;
 		return A2(
 			_elm_lang$core$Platform_Cmd_ops['!'],
 			_elm_lang$core$Native_Utils.update(
 				model,
-				{content: _p3._0}),
+				{content: _p7._0}),
 			{
 				ctor: '::',
-				_0: _p3._1,
+				_0: _p7._1,
 				_1: {ctor: '[]'}
 			});
 	});
 var _fpawel$gobet_front$Main$update = F2(
 	function (msg, model) {
-		var _p4 = msg;
-		if (_p4.ctor === 'UrlChange') {
-			var current_route = _fpawel$gobet_front$Content$route(model.content);
-			var new_route = A2(
+		var _p8 = msg;
+		if (_p8.ctor === 'UrlChange') {
+			var currentRoute = _fpawel$gobet_front$Content$route(model.content);
+			var newRoute = A2(
 				_elm_lang$core$Maybe$withDefault,
-				current_route,
-				A2(_evancz$url_parser$UrlParser$parseHash, _fpawel$gobet_front$Routing$parser, _p4._0));
-			if (_elm_lang$core$Native_Utils.eq(new_route, current_route)) {
+				currentRoute,
+				A2(_evancz$url_parser$UrlParser$parseHash, _fpawel$gobet_front$Routing$parser, _p8._0));
+			if (_elm_lang$core$Native_Utils.eq(newRoute, currentRoute)) {
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					model,
 					{ctor: '[]'});
 			} else {
-				var time = function () {
-					var _p5 = model.content;
-					return _p5._0.time;
+				var _p9 = function () {
+					var _p10 = newRoute;
+					if (_p10.ctor === 'Football') {
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							_fpawel$gobet_front$Content$football(model.location),
+							{ctor: '[]'});
+					} else {
+						return _fpawel$gobet_front$Content$sport(
+							{
+								location: model.location,
+								sport: A2(_fpawel$gobet_front$Aping$getSportByID, _p10._0, model.sports),
+								time: model.time
+							});
+					}
 				}();
+				var content = _p9._0;
+				var cmd = _p9._1;
 				return A2(
-					_fpawel$gobet_front$Main$updateContent,
-					model,
-					A2(
-						_fpawel$gobet_front$Content$init,
-						{location: model.location, sports: model.sports, time: time},
-						new_route));
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{content: content}),
+					{
+						ctor: '::',
+						_0: cmd,
+						_1: {ctor: '[]'}
+					});
 			}
 		} else {
 			return A2(
 				_fpawel$gobet_front$Main$updateContent,
 				model,
-				A2(_fpawel$gobet_front$Content$update, _p4, model.content));
+				A2(_fpawel$gobet_front$Content$update, _p8, model.content));
 		}
 	});
-var _fpawel$gobet_front$Main$Model = F3(
-	function (a, b, c) {
-		return {content: a, sports: b, location: c};
-	});
 var _fpawel$gobet_front$Main$init = F2(
-	function (sports, location) {
-		var _p6 = A2(
-			_fpawel$gobet_front$Content$init,
-			{location: location, sports: sports, time: 0},
-			_fpawel$gobet_front$Routing$Sport(1));
-		var content = _p6._0;
-		var cmd = _p6._1;
+	function (_p11, location) {
+		var _p12 = _p11;
 		return A2(
 			_elm_lang$core$Platform_Cmd_ops['!'],
-			A3(_fpawel$gobet_front$Main$Model, content, sports, location),
 			{
-				ctor: '::',
-				_0: cmd,
-				_1: {ctor: '[]'}
-			});
+				content: _fpawel$gobet_front$Content$football(location),
+				sports: _p12.sports,
+				location: location,
+				time: _p12.time
+			},
+			{ctor: '[]'});
 	});
 var _fpawel$gobet_front$Main$main = A2(
 	_elm_lang$navigation$Navigation$programWithFlags,
 	_fpawel$gobet_front$Msg$UrlChange,
 	{init: _fpawel$gobet_front$Main$init, view: _fpawel$gobet_front$Main$view, update: _fpawel$gobet_front$Main$update, subscriptions: _fpawel$gobet_front$Main$subscriptions})(
-	_elm_lang$core$Json_Decode$list(
+	A2(
+		_elm_lang$core$Json_Decode$andThen,
+		function (sports) {
+			return A2(
+				_elm_lang$core$Json_Decode$andThen,
+				function (time) {
+					return _elm_lang$core$Json_Decode$succeed(
+						{sports: sports, time: time});
+				},
+				A2(_elm_lang$core$Json_Decode$field, 'time', _elm_lang$core$Json_Decode$float));
+		},
 		A2(
-			_elm_lang$core$Json_Decode$andThen,
-			function (id) {
-				return A2(
+			_elm_lang$core$Json_Decode$field,
+			'sports',
+			_elm_lang$core$Json_Decode$list(
+				A2(
 					_elm_lang$core$Json_Decode$andThen,
-					function (market_count) {
+					function (id) {
 						return A2(
 							_elm_lang$core$Json_Decode$andThen,
-							function (name) {
-								return _elm_lang$core$Json_Decode$succeed(
-									{id: id, market_count: market_count, name: name});
+							function (market_count) {
+								return A2(
+									_elm_lang$core$Json_Decode$andThen,
+									function (name) {
+										return _elm_lang$core$Json_Decode$succeed(
+											{id: id, market_count: market_count, name: name});
+									},
+									A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string));
 							},
-							A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string));
+							A2(_elm_lang$core$Json_Decode$field, 'market_count', _elm_lang$core$Json_Decode$int));
 					},
-					A2(_elm_lang$core$Json_Decode$field, 'market_count', _elm_lang$core$Json_Decode$int));
-			},
-			A2(_elm_lang$core$Json_Decode$field, 'id', _elm_lang$core$Json_Decode$int))));
+					A2(_elm_lang$core$Json_Decode$field, 'id', _elm_lang$core$Json_Decode$int))))));
+var _fpawel$gobet_front$Main$Model = F4(
+	function (a, b, c, d) {
+		return {content: a, sports: b, location: c, time: d};
+	});
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};

@@ -121,20 +121,20 @@ func setCompressedJSON(c *gin.Context, data interface{}){
 
 func getPort() (port string) {
 	port = os.Getenv("PORT")
-	if len(os.Args) == 2 {
+	if len(os.Args) >= 2 {
 		switch strings.ToLower(os.Args[1]) {
 		case "localhost":
-			port = "8081"
+			port = "8083"
 			os.Setenv(LOCALHOST_KEY, "true")
 		case "mobileinet":
-			port = "8081"
+			port = "8083"
 			os.Setenv(LOCALHOST_KEY, "true")
 			os.Setenv("MYMOBILEINET", "true")
 		default:
 			log.Fatalf("wrong argument: %v", os.Args[1])
 		}
-
 	}
+
 	log.Printf("port: %s, localhost: %s, mymobileinet: %s",
 		port, os.Getenv(LOCALHOST_KEY), os.Getenv("MYMOBILEINET"))
 	if port == "" {
