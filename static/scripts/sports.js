@@ -2,27 +2,27 @@ sports = [
     {
         "id": 1,
         "name": "Футбол ",
-        "market_count": 18916
+        "market_count": 19199
     },
     {
         "id": 2,
         "name": "Теннис ",
-        "market_count": 995
+        "market_count": 1134
     },
     {
         "id": 3,
         "name": "Гольф ",
-        "market_count": 70
+        "market_count": 60
     },
     {
         "id": 4,
         "name": "Крикет",
-        "market_count": 189
+        "market_count": 169
     },
     {
         "id": 5,
         "name": "Регби",
-        "market_count": 169
+        "market_count": 170
     },
     {
         "id": 1477,
@@ -32,12 +32,12 @@ sports = [
     {
         "id": 6,
         "name": "Бокс",
-        "market_count": 31
+        "market_count": 27
     },
     {
         "id": 7,
         "name": "Скачки",
-        "market_count": 1080
+        "market_count": 1088
     },
     {
         "id": 8,
@@ -57,7 +57,7 @@ sports = [
     {
         "id": 998917,
         "name": "Волейбол",
-        "market_count": 5
+        "market_count": 4
     },
     {
         "id": 11,
@@ -82,7 +82,7 @@ sports = [
     {
         "id": 6422,
         "name": "Снукер",
-        "market_count": 27
+        "market_count": 34
     },
     {
         "id": 6231,
@@ -102,22 +102,22 @@ sports = [
     {
         "id": 451485,
         "name": "Зимние",
-        "market_count": 11
+        "market_count": 7
     },
     {
         "id": 7522,
         "name": "Баскетбол ",
-        "market_count": 233
+        "market_count": 234
     },
     {
         "id": 7524,
         "name": "Хоккей ",
-        "market_count": 141
+        "market_count": 135
     },
     {
         "id": 61420,
         "name": "Австралийский футбол",
-        "market_count": 28
+        "market_count": 26
     },
     {
         "id": 468328,
@@ -132,12 +132,12 @@ sports = [
     {
         "id": 26420387,
         "name": "ММА",
-        "market_count": 16
+        "market_count": 63
     },
     {
         "id": 4339,
         "name": "Собачьи бега",
-        "market_count": 505
+        "market_count": 338
     },
     {
         "id": 2378961,

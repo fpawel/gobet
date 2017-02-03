@@ -31,3 +31,29 @@ type Event struct {
 	// Count of markets associated with this event
 	MarketCount int `json:"marketCount,omitempty"`
 }
+
+type MarketBase struct {
+
+	//  The name of the market
+	Name string `json:"marketName"`
+
+	// The total amount of money matched on the market
+	TotalMatched float64 `json:"totalMatched,omitempty"`
+
+	// The runners (selections) contained in the market
+	Runners []struct {
+		// The unique id for the selection
+		ID int `json:"selectionId"`
+		// The name of the runner
+		Name string `json:"runnerName"`
+	} `json:"runners,omitempty"`
+	// The competition the market is contained within. Usually only applies to Football competitions
+	Competition string `json:"competition,omitempty"`
+}
+
+type Market struct {
+	MarketBase
+
+	// The unique identifier for the market. MarketId's are prefixed with '1.' or '2.' 1. = UK Exchange 2. = AUS Exchange."
+	ID int `json:"marketId"`
+}

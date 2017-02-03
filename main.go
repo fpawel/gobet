@@ -20,6 +20,7 @@ import (
 
 	"strconv"
 	"github.com/user/gobet/betfair.com/aping/client/events"
+	"github.com/user/gobet/betfair.com/aping/client/markets"
 )
 
 const (
@@ -66,10 +67,33 @@ func main() {
 		ch := make( chan events.Result )
 		events.Get(eventTypeID, ch)
 		result := <- ch
+		close(ch)
 		setCompressedJSON(c, &result)
 	})
 
-	//router.LoadHTMLGlob("templates/*.tmpl.html")
+	router.GET("markets/:ID/:needRunners", func(c *gin.Context){
+
+		eventID, convError := strconv.Atoi(c.Param("ID"))
+		if convError!=nil {
+			c.String(http.StatusBadRequest, "bad request")
+			return
+		}
+		if c.Param("needRunners") != "true" &&
+			c.Param("needRunners") != "false" {
+			c.String(http.StatusBadRequest, `bad [needRunners] value`)
+			return
+		}
+		needRunners := c.Param("needRunners") == "true"
+
+		ch := make( chan markets.Result )
+		markets.Get(eventID, needRunners, ch)
+		result := <- ch
+		close(ch)
+
+		setCompressedJSON(c, &result)
+	})
+
+
 
 	router.StaticFile("/", "static/index.html")
 	router.StaticFile("/index.html", "static/index.html")
