@@ -12556,6 +12556,95 @@ var _fpawel$gobet_front$Styles$animated_bounceInUp_2s = {
 	}
 };
 
+var _fpawel$gobet_front$Football$encodeGame = function (x) {
+	var encodedOdds = A2(
+		_elm_lang$core$List$filterMap,
+		function (_p0) {
+			var _p1 = _p0;
+			return A2(
+				_elm_lang$core$Maybe$map,
+				function (v) {
+					return {
+						ctor: '_Tuple2',
+						_0: _p1._0,
+						_1: _elm_lang$core$Json_Encode$float(v)
+					};
+				},
+				_p1._1);
+		},
+		{
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'win1', _1: x.win1},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'win2', _1: x.win2},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'draw1', _1: x.draw1},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'draw2', _1: x.draw2},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'lose1', _1: x.lose1},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'lose2', _1: x.lose2},
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			}
+		});
+	return _elm_lang$core$Json_Encode$object(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'event_id',
+					_1: _elm_lang$core$Json_Encode$int(x.eventID)
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'page',
+						_1: _elm_lang$core$Json_Encode$int(x.page)
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'order',
+							_1: _elm_lang$core$Json_Encode$int(x.order)
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'time',
+								_1: _elm_lang$core$Json_Encode$string(x.time)
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: 'result',
+									_1: _elm_lang$core$Json_Encode$string(x.result)
+								},
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			},
+			encodedOdds));
+};
+var _fpawel$gobet_front$Football$decoderMaybeFloat = _elm_lang$core$Json_Decode$maybe(
+	_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$float));
 var _fpawel$gobet_front$Football$viewGame = function (x) {
 	var odd = function (y) {
 		return A2(
@@ -12754,9 +12843,9 @@ var _fpawel$gobet_front$Football$viewGamesList = function (games) {
 		_fpawel$gobet_front$Football$viewGame,
 		A2(
 			_elm_lang$core$List$sortBy,
-			function (_p0) {
-				var _p1 = _p0;
-				return {ctor: '_Tuple2', _0: _p1.page, _1: _p1.order};
+			function (_p2) {
+				var _p3 = _p2;
+				return {ctor: '_Tuple2', _0: _p3.page, _1: _p3.order};
 			},
 			games));
 	return A2(
@@ -12786,148 +12875,71 @@ var _fpawel$gobet_front$Football$viewGamesList = function (games) {
 			}
 		});
 };
-var _fpawel$gobet_front$Football$view = function (_p2) {
-	var _p3 = _p2;
-	var _p5 = _p3._0.games;
-	var _p4 = _p5;
-	if (_p4.ctor === '[]') {
-		return _fpawel$gobet_front$Help_Component$spinner_text('Подготовка данных...');
-	} else {
-		return _fpawel$gobet_front$Football$viewGamesList(_p5);
-	}
-};
-var _fpawel$gobet_front$Football$encodeGame = function (x) {
-	var encodedOdds = A2(
-		_elm_lang$core$List$filterMap,
-		function (_p6) {
-			var _p7 = _p6;
-			return A2(
-				_elm_lang$core$Maybe$map,
-				function (v) {
-					return {
-						ctor: '_Tuple2',
-						_0: _p7._0,
-						_1: _elm_lang$core$Json_Encode$float(v)
-					};
-				},
-				_p7._1);
-		},
-		{
-			ctor: '::',
-			_0: {ctor: '_Tuple2', _0: 'win1', _1: x.win1},
-			_1: {
-				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: 'win2', _1: x.win2},
-				_1: {
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'draw1', _1: x.draw1},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'draw2', _1: x.draw2},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'lose1', _1: x.lose1},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'lose2', _1: x.lose2},
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}
-			}
-		});
-	return _elm_lang$core$Json_Encode$object(
-		A2(
-			_elm_lang$core$Basics_ops['++'],
+var _fpawel$gobet_front$Football$view = function (_p4) {
+	var _p5 = _p4;
+	var _p8 = _p5.games;
+	var _p6 = _p5.error;
+	if (_p6.ctor === 'Just') {
+		return A2(
+			_elm_lang$html$Html$h2,
+			{ctor: '[]'},
 			{
 				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'event_id',
-					_1: _elm_lang$core$Json_Encode$int(x.eventID)
-				},
-				_1: {
-					ctor: '::',
-					_0: {
-						ctor: '_Tuple2',
-						_0: 'page',
-						_1: _elm_lang$core$Json_Encode$int(x.page)
-					},
-					_1: {
-						ctor: '::',
-						_0: {
-							ctor: '_Tuple2',
-							_0: 'order',
-							_1: _elm_lang$core$Json_Encode$int(x.order)
-						},
-						_1: {
-							ctor: '::',
-							_0: {
-								ctor: '_Tuple2',
-								_0: 'time',
-								_1: _elm_lang$core$Json_Encode$string(x.time)
-							},
-							_1: {
-								ctor: '::',
-								_0: {
-									ctor: '_Tuple2',
-									_0: 'result',
-									_1: _elm_lang$core$Json_Encode$string(x.result)
-								},
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}
-			},
-			encodedOdds));
+				_0: _elm_lang$html$Html$text('Что-то пошло не так (:'),
+				_1: {ctor: '[]'}
+			});
+	} else {
+		var _p7 = _p8;
+		if (_p7.ctor === '[]') {
+			return _fpawel$gobet_front$Help_Component$spinner_text('Подготовка данных...');
+		} else {
+			return _fpawel$gobet_front$Football$viewGamesList(_p8);
+		}
+	}
 };
-var _fpawel$gobet_front$Football$decoderMaybeFloat = _elm_lang$core$Json_Decode$maybe(
-	_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$float));
-var _fpawel$gobet_front$Football$websocketURL = function (_p8) {
-	var _p9 = _p8;
+var _fpawel$gobet_front$Football$websocketURL = function (_p9) {
+	var _p10 = _p9;
 	return A2(
 		_elm_lang$core$Basics_ops['++'],
-		_fpawel$gobet_front$Help_Utils$websocketURL(_p9.location),
+		_fpawel$gobet_front$Help_Utils$websocketURL(_p10.location),
 		'/football');
 };
 var _fpawel$gobet_front$Football$updateGame = F2(
-	function (x, _p10) {
-		var _p11 = _p10;
-		var _p13 = _p11.time;
-		var _p12 = _p11.result;
+	function (x, _p11) {
+		var _p12 = _p11;
+		var _p14 = _p12.time;
+		var _p13 = _p12.result;
 		return _elm_lang$core$Native_Utils.update(
 			x,
 			{
-				page: A2(_elm_lang$core$Maybe$withDefault, x.page, _p11.page),
-				order: A2(_elm_lang$core$Maybe$withDefault, x.order, _p11.order),
-				time: A2(_elm_lang$core$Maybe$withDefault, x.time, _p13),
-				result: A2(_elm_lang$core$Maybe$withDefault, x.result, _p12),
-				win1: A2(_elm_lang$core$Maybe$withDefault, x.win1, _p11.win1),
-				win2: A2(_elm_lang$core$Maybe$withDefault, x.win2, _p11.win2),
-				draw1: A2(_elm_lang$core$Maybe$withDefault, x.draw1, _p11.draw1),
-				draw2: A2(_elm_lang$core$Maybe$withDefault, x.draw2, _p11.draw2),
-				lose1: A2(_elm_lang$core$Maybe$withDefault, x.lose1, _p11.lose1),
-				lose2: A2(_elm_lang$core$Maybe$withDefault, x.lose2, _p11.lose2),
-				utime: _fpawel$gobet_front$Help_Utils$isJust(_p13),
-				uresult: _fpawel$gobet_front$Help_Utils$isJust(_p12)
+				page: A2(_elm_lang$core$Maybe$withDefault, x.page, _p12.page),
+				order: A2(_elm_lang$core$Maybe$withDefault, x.order, _p12.order),
+				time: A2(_elm_lang$core$Maybe$withDefault, x.time, _p14),
+				result: A2(_elm_lang$core$Maybe$withDefault, x.result, _p13),
+				win1: A2(_elm_lang$core$Maybe$withDefault, x.win1, _p12.win1),
+				win2: A2(_elm_lang$core$Maybe$withDefault, x.win2, _p12.win2),
+				draw1: A2(_elm_lang$core$Maybe$withDefault, x.draw1, _p12.draw1),
+				draw2: A2(_elm_lang$core$Maybe$withDefault, x.draw2, _p12.draw2),
+				lose1: A2(_elm_lang$core$Maybe$withDefault, x.lose1, _p12.lose1),
+				lose2: A2(_elm_lang$core$Maybe$withDefault, x.lose2, _p12.lose2),
+				utime: _fpawel$gobet_front$Help_Utils$isJust(_p14),
+				uresult: _fpawel$gobet_front$Help_Utils$isJust(_p13)
 			});
 	});
 var _fpawel$gobet_front$Football$updateGamesList = F2(
-	function (_p14, games) {
-		var _p15 = _p14;
-		var _p21 = _p15.inplay;
-		var isJust = function (_p16) {
+	function (_p15, games) {
+		var _p16 = _p15;
+		var _p22 = _p16.inplay;
+		var isJust = function (_p17) {
 			return A2(
 				_elm_lang$core$Maybe$withDefault,
 				false,
 				A2(
 					_elm_lang$core$Maybe$map,
-					function (_p17) {
+					function (_p18) {
 						return true;
 					},
-					_p16));
+					_p17));
 		};
 		var changesMap = _elm_lang$core$Dict$fromList(
 			A2(
@@ -12935,15 +12947,15 @@ var _fpawel$gobet_front$Football$updateGamesList = F2(
 				function (x) {
 					return {ctor: '_Tuple2', _0: x.eventID, _1: x};
 				},
-				_p15.changes));
+				_p16.changes));
 		var inplaySet = _elm_lang$core$Set$fromList(
 			A2(
 				_elm_lang$core$List$map,
 				function (x) {
 					return x.eventID;
 				},
-				_p21));
-		var outplaySet = _elm_lang$core$Set$fromList(_p15.outplay);
+				_p22));
+		var outplaySet = _elm_lang$core$Set$fromList(_p16.outplay);
 		var play = A2(
 			_elm_lang$core$List$map,
 			function (x) {
@@ -12957,13 +12969,57 @@ var _fpawel$gobet_front$Football$updateGamesList = F2(
 			},
 			A2(
 				_elm_lang$core$List$filter,
-				function (_p18) {
-					var _p19 = _p18;
-					var _p20 = _p19.eventID;
-					return (!A2(_elm_lang$core$Set$member, _p20, outplaySet)) && (!A2(_elm_lang$core$Set$member, _p20, inplaySet));
+				function (_p19) {
+					var _p20 = _p19;
+					var _p21 = _p20.eventID;
+					return (!A2(_elm_lang$core$Set$member, _p21, outplaySet)) && (!A2(_elm_lang$core$Set$member, _p21, inplaySet));
 				},
 				games));
-		return A2(_elm_lang$core$Basics_ops['++'], _p21, play);
+		return A2(_elm_lang$core$Basics_ops['++'], _p22, play);
+	});
+var _fpawel$gobet_front$Football$update = F2(
+	function (msg, model) {
+		var _p23 = msg;
+		if (_p23.ctor === 'NetworkError') {
+			var _p25 = _p23._0;
+			var _p24 = A2(_elm_lang$core$Debug$log, 'internal error', _p25);
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				_elm_lang$core$Native_Utils.update(
+					model,
+					{
+						error: _elm_lang$core$Maybe$Just(_p25)
+					}),
+				{ctor: '[]'});
+		} else {
+			var _p26 = _p23._0;
+			var answer = A2(
+				_elm_lang$websocket$WebSocket$send,
+				_fpawel$gobet_front$Football$websocketURL(model),
+				_p26.hashCode);
+			var games = A2(_fpawel$gobet_front$Football$updateGamesList, _p26, model.games);
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				_elm_lang$core$Native_Utils.update(
+					model,
+					{games: games, error: _elm_lang$core$Maybe$Nothing}),
+				{
+					ctor: '::',
+					_0: answer,
+					_1: {ctor: '[]'}
+				});
+		}
+	});
+var _fpawel$gobet_front$Football$init = function (location) {
+	return {
+		games: {ctor: '[]'},
+		location: location,
+		error: _elm_lang$core$Maybe$Nothing
+	};
+};
+var _fpawel$gobet_front$Football$Model = F3(
+	function (a, b, c) {
+		return {games: a, location: b, error: c};
 	});
 var _fpawel$gobet_front$Football$Game = function (a) {
 	return function (b) {
@@ -13157,92 +13213,49 @@ var _fpawel$gobet_front$Football$decoderGameCahnges = A4(
 											'event_id',
 											_elm_lang$core$Json_Decode$int,
 											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Football$GameCahnges))))))))))));
-var _fpawel$gobet_front$Football$ReplyFromServer = F4(
+var _fpawel$gobet_front$Football$UpgradeGamesList = F4(
 	function (a, b, c, d) {
 		return {inplay: a, outplay: b, changes: c, hashCode: d};
 	});
-var _fpawel$gobet_front$Football$decoderReplyFromServer = A3(
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'hash_code',
-	_elm_lang$core$Json_Decode$string,
-	A4(
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-		'game_changes',
-		_elm_lang$core$Json_Decode$list(_fpawel$gobet_front$Football$decoderGameCahnges),
-		{ctor: '[]'},
+var _fpawel$gobet_front$Football$NetworkError = function (a) {
+	return {ctor: 'NetworkError', _0: a};
+};
+var _fpawel$gobet_front$Football$NewGames = function (a) {
+	return {ctor: 'NewGames', _0: a};
+};
+var _fpawel$gobet_front$Football$subscriptions = function (model) {
+	var decoderWebsocket = A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'hash_code',
+		_elm_lang$core$Json_Decode$string,
 		A4(
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-			'outplay',
-			_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$int),
+			'game_changes',
+			_elm_lang$core$Json_Decode$list(_fpawel$gobet_front$Football$decoderGameCahnges),
 			{ctor: '[]'},
 			A4(
 				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-				'inplay',
-				_elm_lang$core$Json_Decode$list(_fpawel$gobet_front$Football$decoderGame),
+				'outplay',
+				_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$int),
 				{ctor: '[]'},
-				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Football$ReplyFromServer)))));
-var _fpawel$gobet_front$Football$Model = function (a) {
-	return {ctor: 'Model', _0: a};
-};
-var _fpawel$gobet_front$Football$init = function (location) {
-	return _fpawel$gobet_front$Football$Model(
-		{
-			games: {ctor: '[]'},
-			location: location
-		});
-};
-var _fpawel$gobet_front$Football$update = F2(
-	function (msg, _p22) {
-		var _p23 = _p22;
-		var _p26 = _p23._0;
-		var _p24 = msg;
-		var _p25 = _p24._0;
-		var answer = A2(
-			_elm_lang$websocket$WebSocket$send,
-			_fpawel$gobet_front$Football$websocketURL(_p26),
-			_p25.hashCode);
-		var games = A2(_fpawel$gobet_front$Football$updateGamesList, _p25, _p26.games);
-		return A2(
-			_elm_lang$core$Platform_Cmd_ops['!'],
-			_fpawel$gobet_front$Football$Model(
-				_elm_lang$core$Native_Utils.update(
-					_p26,
-					{games: games})),
-			{
-				ctor: '::',
-				_0: answer,
-				_1: {ctor: '[]'}
-			});
-	});
-var _fpawel$gobet_front$Football$MsgReplyFromServer = function (a) {
-	return {ctor: 'MsgReplyFromServer', _0: a};
-};
-var _fpawel$gobet_front$Football$decodeReplyFromServer = function (str) {
-	var _p27 = A2(_elm_lang$core$Json_Decode$decodeString, _fpawel$gobet_front$Football$decoderReplyFromServer, str);
-	if (_p27.ctor === 'Ok') {
-		return _fpawel$gobet_front$Football$MsgReplyFromServer(_p27._0);
-	} else {
-		return _elm_lang$core$Native_Utils.crashCase(
-			'Football',
-			{
-				start: {line: 240, column: 5},
-				end: {line: 245, column: 74}
-			},
-			_p27)(
-			A2(_elm_lang$core$Basics_ops['++'], 'error decoding `Football` message : ', _p27._0));
-	}
-};
-var _fpawel$gobet_front$Football$subscriptions = function (_p29) {
-	var _p30 = _p29;
-	return _elm_lang$core$Platform_Sub$batch(
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$websocket$WebSocket$listen,
-				_fpawel$gobet_front$Football$websocketURL(_p30._0),
-				_fpawel$gobet_front$Football$decodeReplyFromServer),
-			_1: {ctor: '[]'}
-		});
+				A4(
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+					'inplay',
+					_elm_lang$core$Json_Decode$list(_fpawel$gobet_front$Football$decoderGame),
+					{ctor: '[]'},
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Football$UpgradeGamesList)))));
+	var decodeWebsocket = function (str) {
+		var _p27 = A2(_elm_lang$core$Json_Decode$decodeString, decoderWebsocket, str);
+		if (_p27.ctor === 'Ok') {
+			return _fpawel$gobet_front$Football$NewGames(_p27._0);
+		} else {
+			return _fpawel$gobet_front$Football$NetworkError(_p27._0);
+		}
+	};
+	return A2(
+		_elm_lang$websocket$WebSocket$listen,
+		_fpawel$gobet_front$Football$websocketURL(model),
+		decodeWebsocket);
 };
 
 var _fpawel$gobet_front$DateUtils$formatDayMonth = function (_p0) {
@@ -13738,7 +13751,7 @@ var _fpawel$gobet_front$Sport$init = function (_p14) {
 			location: _p16,
 			sport: _p17,
 			events: {ctor: '[]'},
-			tableState: _evancz$elm_sortable_table$Table$initialSort('Дата'),
+			tableState: _evancz$elm_sortable_table$Table$initialSort('Дата открытия'),
 			time: _p15.time,
 			error: _elm_lang$core$Maybe$Nothing
 		},

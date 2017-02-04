@@ -8,11 +8,9 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	//"github.com/gin-gonic/contrib/gzip"
 	"compress/gzip"
 	"github.com/gorilla/websocket"
 
-	"github.com/user/gobet/betfair.com/aping/client/appkey"
 	_ "github.com/user/gobet/betfair.com/aping/client/eventTypes"
 	"github.com/user/gobet/proxi"
 	"github.com/user/gobet/betfair.com/football/games"
@@ -31,7 +29,10 @@ var footbalGames = games.New()
 var websocketUpgrader = websocket.Upgrader{} // use default options
 
 func main() {
+	setupRouter( getPort())
+}
 
+func setupRouter( port string){
 	router := gin.Default()
 	//router.Use(gzip.Gzip(gzip.DefaultCompression))
 	//router.Use(gin.Logger())
@@ -57,6 +58,15 @@ func main() {
 		setCompressedJSON(c, games)
 	})
 
+	setupRouterEvents(router)
+	setupRouteMarkets(router )
+
+	setupRouteStatic(router )
+
+	router.Run(":" + port)
+}
+
+func setupRouterEvents(router *gin.Engine){
 	router.GET("events/*id", func(c *gin.Context){
 		url, urlParsed := utils.QueryUnescape(c.Param("id"))
 		eventTypeID, convError := strconv.Atoi(url)
@@ -70,6 +80,8 @@ func main() {
 		close(ch)
 		setCompressedJSON(c, &result)
 	})
+}
+func setupRouteMarkets(router *gin.Engine){
 
 	router.GET("markets/:ID/:needRunners", func(c *gin.Context){
 
@@ -92,9 +104,9 @@ func main() {
 
 		setCompressedJSON(c, &result)
 	})
+}
 
-
-
+func setupRouteStatic(router *gin.Engine){
 	router.StaticFile("/", "static/index.html")
 	router.StaticFile("/index.html", "static/index.html")
 	router.Static("/css", "static/css")
@@ -103,22 +115,6 @@ func main() {
 	// тестовые маршруты
 	router.StaticFile("test/proxi", "static/proxitest.html")
 	router.StaticFile("test/ws", "static/wstest.html")
-
-	router.GET("/wsecho", func(c *gin.Context) {
-		doWebSocket(c, handleWSEcho)
-	})
-
-	router.GET("test/appkey", func(c *gin.Context) {
-		var x struct {
-			AppKey string `json:"app_key"`
-		}
-		x.AppKey = appkey.Get()
-		jsonBytes, _ := json.Marshal(&x)
-		c.Data(http.StatusOK, "application/json", jsonBytes)
-	})
-
-	router.Run(":" + getPort())
-
 }
 
 func setCompressedJSON(c *gin.Context, data interface{}){
@@ -154,6 +150,10 @@ func getPort() (port string) {
 			port = "8083"
 			os.Setenv(LOCALHOST_KEY, "true")
 			os.Setenv("MYMOBILEINET", "true")
+
+		case "8083":
+			port = "8083"
+
 		default:
 			log.Fatalf("wrong argument: %v", os.Args[1])
 		}
@@ -173,39 +173,7 @@ func returnInternalServerError(c *gin.Context, err error) {
 	c.String(http.StatusInternalServerError, err.Error())
 }
 
-func doWebSocket(c *gin.Context, f func(*websocket.Conn) error) {
-	conn, err := websocketUpgrader.Upgrade(c.Writer, c.Request, nil)
-	if err != nil {
-		returnInternalServerError(c, err)
-		return
-	}
-	conn.EnableWriteCompression(true)
-	defer conn.Close()
 
-	err = f(conn)
-	if err != nil {
-		returnInternalServerError(c, err)
-	}
-}
 
-func handleWSEcho(conn *websocket.Conn) error {
-	for {
-		mt, message, err := conn.ReadMessage()
-		if err != nil {
-			log.Println("read:", err)
-			break
-		}
-		log.Printf("recv: %s", message)
-
-		answer := []byte("I tell you: " + string(message[:]))
-
-		err = conn.WriteMessage(mt, answer)
-		if err != nil {
-			log.Println("write:", err)
-			break
-		}
-	}
-	return nil
-}
 
 

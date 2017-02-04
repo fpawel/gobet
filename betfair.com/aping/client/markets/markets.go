@@ -11,6 +11,7 @@ import (
 	"log"
 	"fmt"
 	"strings"
+	"errors"
 )
 
 func Get(eventID int, needRunners bool, ch chan<- Result){
@@ -202,7 +203,7 @@ func (reader *reader) directRead(eventID int) (markets []client.Market, err erro
 	}
 	err = json.Unmarshal(responseBody, &xs)
 	if err != nil {
-		return
+		return nil, errors.New(fmt.Sprintf("%q, %q", err, string(responseBody)))
 	}
 	for _, x := range xs.R {
 		var market client.Market
@@ -211,9 +212,11 @@ func (reader *reader) directRead(eventID int) (markets []client.Market, err erro
 		if err != nil {
 			return
 		}
+
 		markets = append(markets, market)
 	}
 	return
 }
+
 
 

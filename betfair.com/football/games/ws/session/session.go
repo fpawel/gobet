@@ -43,11 +43,7 @@ func (x *handle) What() string {
 	return x.websocketConn.RemoteAddr().String()
 }
 
-func (x *handle) write(i interface{}) error {
-	x.mu.Lock()
-	defer x.mu.Unlock()
-	return x.websocketConn.WriteJSON(i)
-}
+
 
 func (x *handle) read() (messageType int, recivedBytes []byte, err error) {
 	x.mu.Lock()
@@ -56,16 +52,18 @@ func (x *handle) read() (messageType int, recivedBytes []byte, err error) {
 	return
 }
 
-func (x *handle) NotifyInternalError(gamesError error) {
-	if gamesError == nil {
-		return
-	}
-	errorInfo := &struct{ error error } {error : gamesError}
-	err := x.write(errorInfo)
+func (x *handle) NotifyInternalError(internalError error) {
+	x.mu.Lock()
+	err := x.websocketConn.WriteJSON( struct{
+		Error string `json:"error"`
+	} {internalError.Error() })
+	x.mu.Unlock()
+
 	if err != nil {
 		log.Printf("write error conn=%v: %v", x.What(), err)
 	}
-	x.Close( gamesError )
+	time.Sleep(10 * time.Second)
+	x.Close(  internalError )
 }
 
 func (x *handle) Update(games []football.Game) {
@@ -92,7 +90,11 @@ func (x *handle) doUpdate(games []football.Game) (err error) {
 	if x.GetIsClosed(){
 		return
 	}
-	err = x.write(changes)
+
+	x.mu.Lock()
+	err = x.websocketConn.WriteJSON(changes)
+	x.mu.Unlock()
+
 	if err != nil {
 		return
 	}

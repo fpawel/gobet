@@ -53,7 +53,7 @@ func (x *listGames) setError(e error) {
 	x.muErr.Lock()
 	x.err = e
 	x.muErr.Unlock()
-	if e!=nil{
+	if e!=nil {
 		x.wsHandler.NotifyError(e)
 	}
 }
