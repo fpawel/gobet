@@ -34,7 +34,10 @@ func New () (x *listGames){
 			if os.Getenv("MYMOBILEINET") == "true" {
 				log.Println("MYMOBILEINET: sleep one minute")
 				time.Sleep(time.Minute)
+			} else if x.err != nil {
+				time.Sleep(10 * time.Second)
 			}
+
 		}
 	}()
 

@@ -8,6 +8,8 @@ import (
 	"runtime"
 	"strings"
 	"time"
+	"errors"
+	"path/filepath"
 )
 
 // QueryUnescape извлекает URL адрес из строки, переданной в поле http запроса
@@ -50,19 +52,24 @@ func FuncFileLine() string {
 // путь к исходному файлу  и номер строки в исходном файле
 func ErrorWithInfo(err error) error {
 	if err == nil {
-		panic("ExtError nil")
+		panic("ErrorWithInfo nil")
 	}
-	pc, fileName, fileLine, _ := runtime.Caller(1)
-	funcName := runtime.FuncForPC(pc).Name()
-	return fmt.Errorf("%s[%s:%d], %v", funcName, fileName, fileLine, err)
+	_, fileName, fileLine, _ := runtime.Caller(1)
+
+	text := fmt.Sprintf("[%s:%d]:%v",
+		filepath.Base(fileName), fileLine, err)
+
+	return errors.New( text )
 }
 
 // NewErrorWithInfo - создать объект Error, включающий имя функции,
 // путь к исходному файлу  и номер строки в исходном файле
 func NewErrorWithInfo(str string) error {
-	pc, fileName, fileLine, _ := runtime.Caller(1)
-	funcName := runtime.FuncForPC(pc).Name()
-	return fmt.Errorf("%s[%s:%d], %s", funcName, fileName, fileLine, str)
+	_, fileName, fileLine, _ := runtime.Caller(1)
+
+	text := fmt.Sprintf("[%s:%d], %s",
+		filepath.Base( fileName), fileLine, str)
+	return errors.New( text )
 }
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")

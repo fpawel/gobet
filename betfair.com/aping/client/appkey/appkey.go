@@ -2,9 +2,10 @@ package appkey
 
 import (
 	"encoding/json"
-	"fmt"
-	"github.com/nu7hatch/gouuid"
+	"errors"
 	"log"
+
+	"github.com/nu7hatch/gouuid"
 
 	"github.com/user/gobet/betfair.com/aping/client/endpoint"
 	"github.com/user/gobet/betfair.com/aping/client/request"
@@ -85,7 +86,7 @@ func getAppKey() (appKey string, err error) {
 	}
 	if !extractApplicationKey2(responseBody, &appKey) {
 		log.Printf("createDeveloperAppKeys: %v\n", string(responseBody))
-		err = fmt.Errorf("%s", "required fields missing")
+		err = errors.New("required fields missing")
 	}
 
 	return

@@ -10,17 +10,17 @@ import (
 
 type Handler struct {
 	mu             *sync.RWMutex
-	openedSessions []session.Handle
+	openedSessions []*session.Handle
 }
 
 func NewHandler() (x *Handler) {
 	x = new(Handler)
 	x.mu = new(sync.RWMutex)
-	x.openedSessions = []session.Handle{}
+	x.openedSessions = []*session.Handle{}
 	return
 }
 
-func (x *Handler) getSession(hsession session.Handle) (n int, ok bool) {
+func (x *Handler) getSession(hsession *session.Handle) (n int, ok bool) {
 	n = -1
 	for i, p := range x.openedSessions {
 		if p == hsession {
@@ -34,7 +34,7 @@ func (x *Handler) getSession(hsession session.Handle) (n int, ok bool) {
 
 func (x *Handler) NewSession(conn *websocket.Conn) {
 
-	session := session.Open(conn, func(hsession session.Handle, reason error) {
+	session := session.Open(conn, func(hsession *session.Handle, reason error) {
 		x.mu.Lock()
 		n, ok := x.getSession(hsession)
 		x.mu.Unlock()
@@ -61,7 +61,7 @@ func (x *Handler) NewSession(conn *websocket.Conn) {
 
 }
 
-func (x *Handler) getOpenedSessions() (openedSessions []session.Handle) {
+func (x *Handler) getOpenedSessions() (openedSessions []*session.Handle) {
 
 	x.mu.RLock()
 	for _, session := range x.openedSessions {

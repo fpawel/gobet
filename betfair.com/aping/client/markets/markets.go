@@ -2,48 +2,48 @@ package markets
 
 import (
 	"encoding/json"
-	"github.com/user/gobet/betfair.com/aping/client"
-	"github.com/user/gobet/betfair.com/aping/client/endpoint"
-	"github.com/user/gobet/betfair.com/aping/client/appkey"
+	"errors"
+	"fmt"
+	"log"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
-	"log"
-	"fmt"
-	"strings"
-	"errors"
+
+	"github.com/user/gobet/betfair.com/aping/client"
+	"github.com/user/gobet/betfair.com/aping/client/appkey"
+	"github.com/user/gobet/betfair.com/aping/client/endpoint"
 )
 
-func Get(eventID int, needRunners bool, ch chan<- Result){
+func Get(eventID int, needRunners bool, ch chan<- Result) {
 	if needRunners {
-		runnerReader.get(eventID,ch)
+		runnerReader.get(eventID, ch)
 		return
 	}
 	xs := runnerReader.getFromCache(eventID)
-	if xs != nil{
-		r := Result{xs,nil}
-		go func(){
+	if xs != nil {
+		r := Result{xs, nil}
+		go func() {
 			ch <- r.copy(false)
 		}()
 		return
 	}
-	withoutRunnerReader.get(eventID,ch)
+	withoutRunnerReader.get(eventID, ch)
 }
 
 var runnerReader = newReader(true)
 var withoutRunnerReader = newReader(false)
 
-type reader struct{
-	muAwaiters *sync.RWMutex
-	awaiters map[int][]chan<- Result
-	muCache *sync.RWMutex
-	cache map[int]listMarketsTime
+type reader struct {
+	muAwaiters  *sync.RWMutex
+	awaiters    map[int][]chan<- Result
+	muCache     *sync.RWMutex
+	cache       map[int]listMarketsTime
 	needRunners bool
-
 }
 
-func newReader(needRunners bool) (x *reader){
-	x = new (reader)
+func newReader(needRunners bool) (x *reader) {
+	x = new(reader)
 	x.muAwaiters = new(sync.RWMutex)
 	x.awaiters = make(map[int][]chan<- Result)
 	x.cache = make(map[int]listMarketsTime)
@@ -52,20 +52,19 @@ func newReader(needRunners bool) (x *reader){
 	return
 }
 
-type listMarketsTime struct{
+type listMarketsTime struct {
 	markets []client.Market
 	time    time.Time
 }
 
-
 type Result struct {
 	Markets []client.Market `json:"result,omitempty"`
-	Error   error  `json:"error,omitempty"`
+	Error   error           `json:"error,omitempty"`
 }
 
-func (x *Result) copy(needRunners bool) (y Result){
+func (x *Result) copy(needRunners bool) (y Result) {
 	y.Error = x.Error
-	for _,m := range x.Markets {
+	for _, m := range x.Markets {
 		var m_ client.Market
 		m_ = m
 		if !needRunners {
@@ -79,10 +78,10 @@ func (x *Result) copy(needRunners bool) (y Result){
 }
 
 // получить список рынков из cache
-func (reader *reader) getFromCache(eventID int) (markets []client.Market){
+func (reader *reader) getFromCache(eventID int) (markets []client.Market) {
 	reader.muCache.RLock()
 	defer reader.muCache.RUnlock()
-	if eventData, f := reader.cache[eventID]; f && time.Since(eventData.time) <  time.Minute  {
+	if eventData, f := reader.cache[eventID]; f && time.Since(eventData.time) < time.Minute {
 		markets = append(eventData.markets[:])
 	}
 	return
@@ -119,7 +118,7 @@ func (reader *reader) doDirectRead(eventID int) {
 
 }
 
-func (reader *reader) clear(eventID int){
+func (reader *reader) clear(eventID int) {
 	reader.muCache.Lock()
 	defer reader.muCache.Unlock()
 	delete(reader.cache, eventID)
@@ -128,9 +127,9 @@ func (reader *reader) clear(eventID int){
 func (reader *reader) get(eventID int, ch chan<- Result) {
 
 	// если удалось получить список рынков из cache, записать список рынков в канал
-	if cacheMarkets := reader.getFromCache(eventID); cacheMarkets != nil  {
+	if cacheMarkets := reader.getFromCache(eventID); cacheMarkets != nil {
 		go func() {
-			ch <- Result{cacheMarkets,nil}
+			ch <- Result{cacheMarkets, nil}
 		}()
 		return
 	}
@@ -158,12 +157,12 @@ func (reader *reader) get(eventID int, ch chan<- Result) {
 	return
 }
 
-func extractMarketID(s string) (id int, err error){
+func extractMarketID(s string) (id int, err error) {
 	xs := strings.Split(s, "1.")
 	if len(xs) == 2 {
-		id,err = strconv.Atoi(xs[1])
-	} else{
-		err = fmt.Errorf("%q is not valid market id", s)
+		id, err = strconv.Atoi(xs[1])
+	} else {
+		err = fmt.Errorf("%v is not valid market id", s)
 	}
 	return
 
@@ -171,9 +170,9 @@ func extractMarketID(s string) (id int, err error){
 
 func (reader *reader) directRead(eventID int) (markets []client.Market, err error) {
 	var reqParams struct {
-		Locale string `json:"locale"`
+		Locale           string   `json:"locale"`
 		MarketProjection []string `json:"marketProjection"`
-		Filter struct {
+		Filter           struct {
 			EventIDs []int `json:"eventIds"`
 		} `json:"filter"`
 		MaxResults int `json:"maxResults"`
@@ -183,12 +182,11 @@ func (reader *reader) directRead(eventID int) (markets []client.Market, err erro
 	reqParams.Filter.EventIDs = []int{eventID}
 
 	if reader.needRunners {
-		reqParams.MarketProjection = []string{ "RUNNER_DESCRIPTION" }
+		reqParams.MarketProjection = []string{"RUNNER_DESCRIPTION"}
 	} else {
-		reqParams.MarketProjection = []string{ }
+		reqParams.MarketProjection = []string{}
 	}
 	reqParams.MaxResults = 1000
-
 
 	ep := endpoint.BettingAPI("listMarketCatalogue")
 	responseBody, err := appkey.GetResponse(ep, &reqParams)
@@ -196,10 +194,10 @@ func (reader *reader) directRead(eventID int) (markets []client.Market, err erro
 		return
 	}
 	var xs struct {
-		 R []struct {
-			 client.MarketBase
-			 ID string `json:"marketId"`
-		 } `json:"result"`
+		R []struct {
+			client.MarketBase
+			ID string `json:"marketId"`
+		} `json:"result"`
 	}
 	err = json.Unmarshal(responseBody, &xs)
 	if err != nil {
@@ -217,6 +215,3 @@ func (reader *reader) directRead(eventID int) (markets []client.Market, err erro
 	}
 	return
 }
-
-
-
