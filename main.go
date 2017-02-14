@@ -18,7 +18,10 @@ import (
 
 	"strconv"
 	"github.com/user/gobet/betfair.com/aping/client/events"
-	"github.com/user/gobet/betfair.com/aping/client/markets"
+	"github.com/user/gobet/betfair.com/aping/client/event"
+	"github.com/user/gobet/betfair.com/aping/client/eventTypes"
+
+	"github.com/user/gobet/betfair.com/aping/client/prices"
 )
 
 const (
@@ -49,21 +52,27 @@ func setupRouter( port string){
 	})
 
 	router.GET("football/games", func (c *gin.Context) {
-
 		games, err := footbalGames.Get()
-		if err != nil {
-			c.String(http.StatusInternalServerError, err.Error())
-			return
-		}
-		setCompressedJSON(c, games)
+		jsonResult(c, games, err)
 	})
 
+	setupRouterSports(router)
 	setupRouterEvents(router)
 	setupRouteMarkets(router )
-
+	setupRoutePrices(router )
 	setupRouteStatic(router )
-
 	router.Run(":" + port)
+}
+
+
+func setupRouterSports(router *gin.Engine){
+	router.GET("sports", func(c *gin.Context){
+		ch := make( chan eventTypes.Result )
+		eventTypes.Get(ch)
+		x := <- ch
+		close(ch)
+		jsonResult(c, x.EventTypes, x.Error)
+	})
 }
 
 func setupRouterEvents(router *gin.Engine){
@@ -76,33 +85,53 @@ func setupRouterEvents(router *gin.Engine){
 		}
 		ch := make( chan events.Result )
 		events.Get(eventTypeID, ch)
-		result := <- ch
+		x := <- ch
 		close(ch)
-		setCompressedJSON(c, &result)
+		jsonResult(c, x.Events, x.Error)
 	})
 }
+
 func setupRouteMarkets(router *gin.Engine){
 
-	router.GET("markets/:ID/:needRunners", func(c *gin.Context){
+	router.GET("event/:ID", func(c *gin.Context){
 
-		eventID, convError := strconv.Atoi(c.Param("ID"))
-		if convError!=nil {
-			c.String(http.StatusBadRequest, "bad request")
+		eventID, err := strconv.Atoi(c.Param("ID"))
+		if err!=nil {
+			c.String(http.StatusBadRequest, "bad request: %v, %v", c.Param("ID"), err)
 			return
 		}
-		if c.Param("needRunners") != "true" &&
-			c.Param("needRunners") != "false" {
-			c.String(http.StatusBadRequest, `bad [needRunners] value`)
-			return
-		}
-		needRunners := c.Param("needRunners") == "true"
 
-		ch := make( chan markets.Result )
-		markets.Get(eventID, needRunners, ch)
-		result := <- ch
+		ch := make( chan event.Result )
+		event.Get(eventID, ch)
+		x := <- ch
 		close(ch)
+		jsonResult(c, x.Event, x.Error)
+	})
+}
 
-		setCompressedJSON(c, &result)
+func setupRoutePrices(router *gin.Engine){
+
+	router.GET("prices/:EVENT_ID/*MARKET_IDS", func(c *gin.Context){
+
+		strEventID := c.Param("EVENT_ID")
+		eventID, err := strconv.Atoi(strEventID)
+		if err!=nil {
+			c.String(http.StatusBadRequest, "bad request: EVENT_ID:%v, %v", strEventID, err.Error())
+			return
+		}
+
+		marketIDs := strings.Split(strings.Trim(c.Param("MARKET_IDS"), "/ "), "/")
+
+		if len(marketIDs) == 0{
+			c.String(http.StatusBadRequest, "bad request: %s, no markets requested", c.Param("MARKET_IDS"))
+			return
+		}
+
+		ch := make( chan prices.Result )
+		prices.Get(eventID, marketIDs, ch)
+		x := <- ch
+		close(ch)
+		jsonResult(c, x.Markets, x.Error)
 	})
 }
 
@@ -115,6 +144,25 @@ func setupRouteStatic(router *gin.Engine){
 	// тестовые маршруты
 	router.StaticFile("test/proxi", "static/proxitest.html")
 	router.StaticFile("test/ws", "static/wstest.html")
+}
+
+func jsonResult(c *gin.Context, data interface{}, err error){
+
+	if err != nil {
+		var y struct {
+			Error string           	`json:"error"`
+		}
+		y.Error = err.Error()
+		setCompressedJSON(c, &y)
+		return
+	}
+
+	var y struct {
+		Ok interface{}		`json:"ok"`
+	}
+	y.Ok = data
+	setCompressedJSON(c, &y)
+
 }
 
 func setCompressedJSON(c *gin.Context, data interface{}){
