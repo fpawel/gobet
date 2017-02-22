@@ -158,6 +158,7 @@ func readEvents(eventTypeID int) (events Events, err error) {
 		y.MarketCount = x.MarketCount
 		events = append(events, y)
 	}
+	log.Printf("readede events %d", eventTypeID)
 	return
 }
 

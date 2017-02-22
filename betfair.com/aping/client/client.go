@@ -36,25 +36,6 @@ type Event struct {
 	Markets []Market `json:"markets,omitempty"`
 }
 
-/*
-type Market struct {
-
-	// The unique identifier for the market. MarketId's are prefixed with '1.' or '2.' 1. = UK Exchange 2. = AUS Exchange."
-	ID string `json:"marketId"`
-
-	//  The name of the market
-	Name string `json:"marketName"`
-
-	// The total amount of money matched on the market
-	TotalMatched float64 `json:"totalMatched,omitempty"`
-
-	// The runners (selections) contained in the market
-	Runners []Runner `json:"runners,omitempty"`
-
-	// The competition the market is contained within. Usually only applies to Football competitions
-	Competition string `json:"competition,omitempty"`
-}
-*/
 
 type Market struct {
 

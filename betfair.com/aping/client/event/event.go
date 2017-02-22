@@ -123,19 +123,6 @@ func (reader *reader) get(eventID int, ch chan<- Result) {
 	return
 }
 
-/*
-func extractMarketID(s string) (id int, err error) {
-	xs := strings.Split(s, "1.")
-	if len(xs) == 2 {
-		id, err = strconv.Atoi(xs[1])
-	} else {
-		err = fmt.Errorf("%v is not valid market id", s)
-	}
-	return
-
-}
-*/
-
 func readMarkets(eventID int) (markets []client.Market, err error) {
 	var reqParams struct {
 		Locale           string   `json:"locale"`
