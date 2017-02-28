@@ -51,7 +51,7 @@ func (session *Session) internalError(internalError error) {
 	} {internalError.Error() })
 
 	if err != nil {
-		log.Printf("write error conn=%v: %v", x.What(), err)
+		log.Printf("write error conn=%v: %v", session.whatConn(), err)
 	}
 	time.Sleep(10 * time.Second)
 }
