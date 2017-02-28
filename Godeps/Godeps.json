@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/user/gobet",
-	"GoVersion": "go1.7",
+	"GoVersion": "go1.8",
 	"GodepVersion": "v74",
 	"Packages": [
 		"./..."
@@ -14,10 +14,6 @@
 		{
 			"ImportPath": "github.com/andybalholm/cascadia",
 			"Rev": "3ad29d1ad1c4f2023e355603324348cf1f4b2d48"
-		},
-		{
-			"ImportPath": "github.com/gin-gonic/contrib/gzip",
-			"Rev": "4d2dccc9a4541014fec054e483cc76609b97fb16"
 		},
 		{
 			"ImportPath": "github.com/gin-gonic/gin",

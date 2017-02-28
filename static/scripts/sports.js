@@ -2,42 +2,42 @@ sports = [
     {
         "id": 1,
         "name": "Футбол ",
-        "market_count": 8494
+        "market_count": 10372
     },
     {
         "id": 2,
         "name": "Теннис ",
-        "market_count": 2850
+        "market_count": 3828
     },
     {
         "id": 3,
         "name": "Гольф ",
-        "market_count": 71
+        "market_count": 22
     },
     {
         "id": 4,
         "name": "Крикет",
-        "market_count": 142
+        "market_count": 185
     },
     {
         "id": 5,
         "name": "Регби",
-        "market_count": 162
+        "market_count": 148
     },
     {
         "id": 1477,
         "name": "Регби-13",
-        "market_count": 42
+        "market_count": 75
     },
     {
         "id": 6,
         "name": "Бокс",
-        "market_count": 42
+        "market_count": 39
     },
     {
         "id": 7,
         "name": "Скачки",
-        "market_count": 917
+        "market_count": 647
     },
     {
         "id": 8,
@@ -47,22 +47,22 @@ sports = [
     {
         "id": 27454571,
         "name": "Киберспорт",
-        "market_count": 16
+        "market_count": 31
     },
     {
         "id": 10,
         "name": "Специальные ставки",
-        "market_count": 47
+        "market_count": 23
     },
     {
         "id": 998917,
         "name": "Волейбол",
-        "market_count": 26
+        "market_count": 37
     },
     {
         "id": 11,
         "name": "Велоспорт ",
-        "market_count": 11
+        "market_count": 5
     },
     {
         "id": 136332,
@@ -72,7 +72,7 @@ sports = [
     {
         "id": 2152880,
         "name": "Гэльские игры",
-        "market_count": 32
+        "market_count": 34
     },
     {
         "id": 3988,
@@ -82,7 +82,7 @@ sports = [
     {
         "id": 6422,
         "name": "Снукер",
-        "market_count": 71
+        "market_count": 10
     },
     {
         "id": 6231,
@@ -112,41 +112,41 @@ sports = [
     {
         "id": 7522,
         "name": "Баскетбол ",
-        "market_count": 279
+        "market_count": 170
     },
     {
         "id": 7524,
         "name": "Хоккей ",
-        "market_count": 85
+        "market_count": 187
     },
     {
         "id": 61420,
         "name": "Австралийский футбол",
-        "market_count": 34
+        "market_count": 37
     },
     {
         "id": 468328,
         "name": "Гандбол ",
-        "market_count": 19
+        "market_count": 23
     },
     {
         "id": 3503,
         "name": "Дартс",
-        "market_count": 98
+        "market_count": 53
     },
     {
         "id": 26420387,
         "name": "ММА",
-        "market_count": 11
+        "market_count": 57
     },
     {
         "id": 4339,
         "name": "Собачьи бега",
-        "market_count": 325
+        "market_count": 457
     },
     {
         "id": 2378961,
         "name": "Политика",
-        "market_count": 62
+        "market_count": 58
     }
 ]
