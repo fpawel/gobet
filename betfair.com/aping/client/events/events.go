@@ -18,11 +18,11 @@ type Events []client.Event
 var muAwaiters sync.RWMutex
 var awaiters map[int][]chan<- Result = make(map[int][]chan<- Result)
 
-
-type listEventsTime struct{
+type listEventsTime struct {
 	listEvents Events
-	time time.Time
+	time       time.Time
 }
+
 var muCache sync.RWMutex
 var cache map[int]listEventsTime = make(map[int]listEventsTime)
 
@@ -32,10 +32,10 @@ type Result struct {
 }
 
 // получить список событий из cache
-func getEventsFromCache(eventTypeID int) (events Events){
+func getEventsFromCache(eventTypeID int) (events Events) {
 	muCache.RLock()
 	defer muCache.RUnlock()
-	if x, f := cache[eventTypeID]; f && time.Since(x.time) < 10 * time.Minute  {
+	if x, f := cache[eventTypeID]; f && time.Since(x.time) < 10*time.Minute {
 		events = append(x.listEvents[:])
 	}
 	return
@@ -73,7 +73,7 @@ func doReadEvents(eventTypeID int) {
 
 }
 
-func ClearCache(eventTypeID int){
+func ClearCache(eventTypeID int) {
 	muCache.Lock()
 	defer muCache.Unlock()
 	delete(cache, eventTypeID)
@@ -84,7 +84,7 @@ func Get(eventTypeID int, ch chan<- Result) {
 	// если удалось получить список событий из cache, записать список событий в канал
 	if inCache := getEventsFromCache(eventTypeID); inCache != nil {
 		go func() {
-			ch <- Result{inCache,nil}
+			ch <- Result{inCache, nil}
 		}()
 		return
 	}
@@ -161,4 +161,3 @@ func readEvents(eventTypeID int) (events Events, err error) {
 	log.Printf("readede events %d", eventTypeID)
 	return
 }
-

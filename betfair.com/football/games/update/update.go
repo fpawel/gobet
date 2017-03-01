@@ -5,7 +5,6 @@ import (
 	"github.com/user/gobet/betfair.com/football"
 	"hash/fnv"
 	"log"
-	"strconv"
 )
 
 // Game содержит изменения в данных футбольной игры на стороне сервера,
@@ -28,10 +27,9 @@ type Game struct {
 // GameListUpgrade содержит данные об изменения в списке игр на стороне сервера,
 // расчитанных по списку игр на стороне клиента
 type Games struct {
-	Inplay   []football.Game `json:"inplay,omitempty"`
-	Outplay  []int           `json:"outplay,omitempty"`
-	Changes  []Game          `json:"game_changes,omitempty"`
-	HashCode string          `json:"hash_code"`
+	Inplay  []football.Game `json:"inplay,omitempty"`
+	Outplay []int           `json:"outplay,omitempty"`
+	Changes []Game          `json:"game_changes,omitempty"`
 }
 
 func (x *Games) isEmpty() bool {
@@ -91,11 +89,8 @@ func New(prev []football.Game, next []football.Game) *Games {
 	if x.isEmpty() {
 		return nil
 	}
-	x.HashCode = getHashCode(&x)
 	return &x
 }
-
-
 
 func difference(x *football.Live, y *football.Live) *Game {
 
@@ -127,15 +122,4 @@ func difference(x *football.Live, y *football.Live) *Game {
 		return &r
 	}
 	return nil
-}
-
-func getHashCode(src interface{}) string {
-	fnv32a := fnv.New64a()
-	bytes, err := json.Marshal(src)
-	if err != nil {
-		log.Fatal("HashCode.update json marshal error")
-	}
-	fnv32a.Write(bytes)
-	return strconv.FormatUint(fnv32a.Sum64(), 32)
-
 }

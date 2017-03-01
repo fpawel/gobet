@@ -4,26 +4,25 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/user/gobet/betfair.com/football"
 	"github.com/user/gobet/betfair.com/football/games/ws"
-	"sync"
 	"github.com/user/gobet/betfair.com/football/webclient"
+	"sync"
 
 	"github.com/user/gobet/betfair.com/aping/client"
 	"github.com/user/gobet/betfair.com/aping/client/events"
-	"os"
 	"log"
+	"os"
 	"time"
 )
 
-
 type listGames struct {
-	mu    sync.RWMutex
-	xs    []football.Game
-	muErr sync.RWMutex
-	err   error
-	wsHandler 	  *ws.Handler
+	mu        sync.RWMutex
+	xs        []football.Game
+	muErr     sync.RWMutex
+	err       error
+	wsHandler *ws.Handler
 }
 
-func New () (x *listGames){
+func New() (x *listGames) {
 
 	x = new(listGames)
 	x.wsHandler = ws.NewHandler()
@@ -56,7 +55,7 @@ func (x *listGames) setError(e error) {
 	x.muErr.Lock()
 	x.err = e
 	x.muErr.Unlock()
-	if e!=nil {
+	if e != nil {
 		x.wsHandler.NotifyError(e)
 	}
 }
@@ -81,10 +80,10 @@ func (x *listGames) Get() (r []football.Game, err error) {
 func (x *listGames) OpenWebSocketSession(conn *websocket.Conn) {
 
 	x.wsHandler.NewSession(conn)
-	games,err := x.Get()
+	games, err := x.Get()
 	if err == nil {
 		x.wsHandler.NotifyNewGames(games)
-	} else{
+	} else {
 		x.wsHandler.NotifyError(err)
 	}
 }
@@ -116,7 +115,7 @@ func (x *listGames) update() {
 
 		for _, game := range gamesPage {
 			game.Live.Page = page
-			if event,ok := mevents[game.EventID] ; ok {
+			if event, ok := mevents[game.EventID]; ok {
 				game.Event = &event
 				readedGames = append(readedGames, game)
 			} else {
@@ -136,7 +135,7 @@ func getEvents() (mevents map[int]client.Event, err error) {
 	ch := make(chan events.Result)
 	events.Get(1, ch)
 	r := <-ch
-	err  = r.Error
+	err = r.Error
 	if r.Error != nil {
 		return
 	}

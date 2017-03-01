@@ -2,42 +2,42 @@ sports = [
     {
         "id": 1,
         "name": "Футбол ",
-        "market_count": 10372
+        "market_count": 9872
     },
     {
         "id": 2,
         "name": "Теннис ",
-        "market_count": 3828
+        "market_count": 2777
     },
     {
         "id": 3,
         "name": "Гольф ",
-        "market_count": 22
+        "market_count": 93
     },
     {
         "id": 4,
         "name": "Крикет",
-        "market_count": 185
+        "market_count": 175
     },
     {
         "id": 5,
         "name": "Регби",
-        "market_count": 148
+        "market_count": 151
     },
     {
         "id": 1477,
         "name": "Регби-13",
-        "market_count": 75
+        "market_count": 104
     },
     {
         "id": 6,
         "name": "Бокс",
-        "market_count": 39
+        "market_count": 41
     },
     {
         "id": 7,
         "name": "Скачки",
-        "market_count": 647
+        "market_count": 831
     },
     {
         "id": 8,
@@ -57,7 +57,7 @@ sports = [
     {
         "id": 998917,
         "name": "Волейбол",
-        "market_count": 37
+        "market_count": 40
     },
     {
         "id": 11,
@@ -72,7 +72,7 @@ sports = [
     {
         "id": 2152880,
         "name": "Гэльские игры",
-        "market_count": 34
+        "market_count": 44
     },
     {
         "id": 3988,
@@ -82,7 +82,7 @@ sports = [
     {
         "id": 6422,
         "name": "Снукер",
-        "market_count": 10
+        "market_count": 11
     },
     {
         "id": 6231,
@@ -102,22 +102,22 @@ sports = [
     {
         "id": 606611,
         "name": "Нетбол",
-        "market_count": 1
+        "market_count": 5
     },
     {
         "id": 451485,
         "name": "Зимние",
-        "market_count": 17
+        "market_count": 15
     },
     {
         "id": 7522,
         "name": "Баскетбол ",
-        "market_count": 170
+        "market_count": 326
     },
     {
         "id": 7524,
         "name": "Хоккей ",
-        "market_count": 187
+        "market_count": 68
     },
     {
         "id": 61420,
@@ -127,12 +127,12 @@ sports = [
     {
         "id": 468328,
         "name": "Гандбол ",
-        "market_count": 23
+        "market_count": 44
     },
     {
         "id": 3503,
         "name": "Дартс",
-        "market_count": 53
+        "market_count": 140
     },
     {
         "id": 26420387,
@@ -142,11 +142,11 @@ sports = [
     {
         "id": 4339,
         "name": "Собачьи бега",
-        "market_count": 457
+        "market_count": 477
     },
     {
         "id": 2378961,
         "name": "Политика",
-        "market_count": 58
+        "market_count": 59
     }
 ]

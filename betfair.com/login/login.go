@@ -8,8 +8,6 @@ import (
 	"regexp"
 )
 
-
-
 // Login выполняет вход на betfair.com, возвращает строку сессии
 func Login(user string, pass string) (sessionToken string, err error) {
 	const URL = `https://identitysso.betfair.com/api/login?username=%s&password=%s&login=true&redirectMethod=POST&product=home.betfair.int&url=https://www.betfair.com/`

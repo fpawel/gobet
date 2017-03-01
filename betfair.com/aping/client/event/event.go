@@ -145,7 +145,7 @@ func readMarkets(eventID int) (markets []client.Market, err error) {
 		return
 	}
 	var responseData struct {
-		Result [] client.Market `json:"result"`
+		Result []client.Market `json:"result"`
 	}
 	err = json.Unmarshal(responseBody, &responseData)
 	if err != nil {
@@ -184,8 +184,8 @@ func readMarketEvent(event *client.Event) error {
 	var xs struct {
 		R []struct {
 			EventType struct {
-				ID          string `json:"id"`
-				Name        string `json:"name"`
+				ID   string `json:"id"`
+				Name string `json:"name"`
 			} `json:"eventType,omitempty"`
 			Event struct {
 				ID          string `json:"id"`
@@ -213,8 +213,8 @@ func readMarketEvent(event *client.Event) error {
 	}
 
 	event.EventType = &client.EventType{
-		ID:          eventTypeID,
-		Name:        strings.Trim(x.EventType.Name, " ") }
+		ID:   eventTypeID,
+		Name: strings.Trim(x.EventType.Name, " ")}
 
 	e := x.Event
 

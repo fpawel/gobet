@@ -5,10 +5,10 @@ import "github.com/user/gobet/betfair.com/aping/client"
 // Game - данные футбольной игры
 type Game struct {
 	Live
-	EventID  int          `json:"event_id"`
-	MarketID int          `json:"market_id"`
-	Home     string       `json:"home"`
-	Away     string       `json:"away"`
+	EventID  int           `json:"event_id"`
+	MarketID int           `json:"market_id"`
+	Home     string        `json:"home"`
+	Away     string        `json:"away"`
 	Event    *client.Event `json:"event"`
 }
 

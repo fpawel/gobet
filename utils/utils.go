@@ -1,15 +1,19 @@
 package utils
 
 import (
+	"bytes"
+	"encoding/gob"
+	"errors"
 	"fmt"
+	"hash/fnv"
+	"log"
 	"math/rand"
 	"net/url"
+	"path/filepath"
 	"regexp"
 	"runtime"
 	"strings"
 	"time"
-	"errors"
-	"path/filepath"
 )
 
 // QueryUnescape извлекает URL адрес из строки, переданной в поле http запроса
@@ -59,7 +63,7 @@ func ErrorWithInfo(err error) error {
 	text := fmt.Sprintf("[%s:%d]:%v",
 		filepath.Base(fileName), fileLine, err)
 
-	return errors.New( text )
+	return errors.New(text)
 }
 
 // NewErrorWithInfo - создать объект Error, включающий имя функции,
@@ -68,8 +72,8 @@ func NewErrorWithInfo(str string) error {
 	_, fileName, fileLine, _ := runtime.Caller(1)
 
 	text := fmt.Sprintf("[%s:%d], %s",
-		filepath.Base( fileName), fileLine, str)
-	return errors.New( text )
+		filepath.Base(fileName), fileLine, str)
+	return errors.New(text)
 }
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
@@ -81,6 +85,26 @@ func RandStringRunes(n int) string {
 		b[i] = letterRunes[rand.Intn(len(letterRunes))]
 	}
 	return string(b)
+}
+
+func GetBytesOfObject(data interface{}) ([]byte, error) {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	err := enc.Encode(data)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func GetHashCodeOfObject(data interface{}) uint64 {
+	fnv32a := fnv.New64a()
+	bytes, err := GetBytesOfObject(data)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	fnv32a.Write(bytes)
+	return fnv32a.Sum64()
 }
 
 func init() {

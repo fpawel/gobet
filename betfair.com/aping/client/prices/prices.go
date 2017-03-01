@@ -1,14 +1,14 @@
 package prices
 
 import (
-	"sync"
-	"github.com/user/gobet/betfair.com/aping/client"
-	"time"
-	"fmt"
-	"log"
-	"github.com/user/gobet/betfair.com/aping/client/endpoint"
-	"github.com/user/gobet/betfair.com/aping/client/appkey"
 	"encoding/json"
+	"fmt"
+	"github.com/user/gobet/betfair.com/aping/client"
+	"github.com/user/gobet/betfair.com/aping/client/appkey"
+	"github.com/user/gobet/betfair.com/aping/client/endpoint"
+	"log"
+	"sync"
+	"time"
 )
 
 type reader struct {
@@ -20,12 +20,12 @@ type reader struct {
 
 type Result struct {
 	Markets []client.Market
-	Error error
+	Error   error
 }
 
 type cacheItemType struct {
 	markets []client.Market
-	time  time.Time
+	time    time.Time
 }
 
 func Get(eventID int, marketIDs []string, ch chan<- Result) {
@@ -46,7 +46,7 @@ func newReader() (x *reader) {
 func (reader *reader) getFromCache(eventID int) (result []client.Market) {
 	reader.muCache.RLock()
 	defer reader.muCache.RUnlock()
-	if incache, ok := reader.cache[eventID]; ok && time.Since(incache.time) < 2 * time.Second {
+	if incache, ok := reader.cache[eventID]; ok && time.Since(incache.time) < 2*time.Second {
 		result = incache.markets
 	}
 	return
@@ -114,11 +114,11 @@ func (reader *reader) get(eventID int, marketIDs []string, ch chan<- Result) {
 func readMarkets(eventID int, marketIDs []string) (markets []client.Market, err error) {
 
 	var reqParams struct {
-		Locale           string   `json:"locale"`
-		Markets [] string `json:"marketIds"`
-		PriceProjection struct{
-			PriceData []string `json:"priceData"`
-			Virtualise bool `json:"virtualise"`
+		Locale          string   `json:"locale"`
+		Markets         []string `json:"marketIds"`
+		PriceProjection struct {
+			PriceData  []string `json:"priceData"`
+			Virtualise bool     `json:"virtualise"`
 		} `json:"priceProjection"`
 	}
 
@@ -134,7 +134,7 @@ func readMarkets(eventID int, marketIDs []string) (markets []client.Market, err 
 		return
 	}
 	var responseData struct {
-		Result [] client.Market `json:"result"`
+		Result []client.Market `json:"result"`
 	}
 	err = json.Unmarshal(responseBody, &responseData)
 	if err != nil {

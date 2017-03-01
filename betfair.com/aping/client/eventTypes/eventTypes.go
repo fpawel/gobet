@@ -14,7 +14,7 @@ import (
 
 type Result struct {
 	EventTypes []client.EventType
-	Error error
+	Error      error
 }
 
 func Get(ch chan<- Result) {
@@ -27,7 +27,7 @@ type reader struct {
 	muAwaiters *sync.RWMutex
 	awaiters   []chan<- Result
 	muCache    *sync.RWMutex
-	data      []client.EventType
+	data       []client.EventType
 }
 
 func newReader() (x *reader) {
@@ -40,7 +40,6 @@ func newReader() (x *reader) {
 }
 
 func (reader *reader) get(ch chan<- Result) {
-
 
 	// если список ожидающих каналов awaiters[eventID] не пуст,
 	reader.muAwaiters.RLock()
@@ -75,13 +74,11 @@ func (reader *reader) performRead() {
 	reader.awaiters = nil
 	reader.muAwaiters.Unlock()
 	for _, ch := range awaiters {
-		ch <- Result{EventTypes : xs, Error:err}
+		ch <- Result{EventTypes: xs, Error: err}
 	}
 }
 
-
-
-func read() (eventTypes []client.EventType ,err error ) {
+func read() (eventTypes []client.EventType, err error) {
 
 	var reqParams struct {
 		Locale string   `json:"locale"`
@@ -122,10 +119,9 @@ func read() (eventTypes []client.EventType ,err error ) {
 	return
 }
 
-
 func init() {
 
-	xs,err := read()
+	xs, err := read()
 
 	filePath := "./static/scripts/sports.js"
 	fs, err := os.Create(filePath)

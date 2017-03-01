@@ -36,7 +36,6 @@ type Event struct {
 	Markets []Market `json:"markets,omitempty"`
 }
 
-
 type Market struct {
 
 	//The unique identifier for the market. MarketId's are prefixed with '1.' or '2.' 1. = UK Exchange 2. = AUS Exchange.
@@ -147,6 +146,7 @@ type ExchangePrices struct {
 	AvailableToLay  []Odd `json:"availableToLay"`
 	TradedVolume    []Odd `json:"tradedVolume"`
 }
+
 
 type Odd struct {
 	Price float64 `json:"price"`
