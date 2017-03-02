@@ -11936,10 +11936,11 @@ var _fpawel$gobet_front$Help_CountryCode$countryName = function (k) {
 	return A2(_elm_lang$core$Dict$get, k, _fpawel$gobet_front$Help_CountryCode$codes);
 };
 
-var _fpawel$gobet_front$Aping_Decoder$runner = A3(
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+var _fpawel$gobet_front$Aping_Decoder$runner = A4(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
 	'runnerName',
 	_elm_lang$core$Json_Decode$string,
+	'',
 	A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 		'selectionId',
@@ -11960,10 +11961,11 @@ var _fpawel$gobet_front$Aping_Decoder$market = A4(
 			'totalMatched',
 			_elm_lang$core$Json_Decode$float,
 			0,
-			A3(
-				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+			A4(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
 				'marketName',
 				_elm_lang$core$Json_Decode$string,
+				'',
 				A3(
 					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 					'marketId',
@@ -13936,6 +13938,9 @@ var _fpawel$gobet_front$Event$WebsocketBatch = F2(
 	function (a, b) {
 		return {data: a, hashCode: b};
 	});
+var _fpawel$gobet_front$Event$NoOp = function (a) {
+	return {ctor: 'NoOp', _0: a};
+};
 var _fpawel$gobet_front$Event$MsgMarket = F2(
 	function (a, b) {
 		return {ctor: 'MsgMarket', _0: a, _1: b};
@@ -13943,150 +13948,156 @@ var _fpawel$gobet_front$Event$MsgMarket = F2(
 var _fpawel$gobet_front$Event$update = F2(
 	function (msg, m) {
 		var _p7 = msg;
-		if (_p7.ctor === 'MsgMarket') {
-			var _p11 = _p7._1;
-			var _p8 = _elm_lang$core$List$unzip(
-				A2(
-					_elm_lang$core$List$map,
-					function (mmarket) {
-						var _p9 = _elm_lang$core$Native_Utils.eq(mmarket.market.id, _p7._0) ? A2(_fpawel$gobet_front$Market$update, _p11, mmarket) : A2(
-							_elm_lang$core$Platform_Cmd_ops['!'],
-							mmarket,
-							{ctor: '[]'});
-						var mmarket_ = _p9._0;
-						var cmd = _p9._1;
-						return A2(
-							_elm_lang$core$Platform_Cmd_ops['!'],
-							mmarket_,
-							{
-								ctor: '::',
-								_0: A2(
-									_elm_lang$core$Platform_Cmd$map,
-									_fpawel$gobet_front$Event$MsgMarket(mmarket.market.id),
-									cmd),
-								_1: {ctor: '[]'}
-							});
-					},
-					m.markets));
-			var markets = _p8._0;
-			var cmds_markets = _p8._1;
-			var cmds = function () {
-				var _p10 = _p11;
-				var url = A2(
-					_elm_lang$core$Basics_ops['++'],
-					_fpawel$gobet_front$Help_Utils$websocketURL(m.location),
-					A2(_elm_lang$core$Basics_ops['++'], '/wsprices-markets/', m.sessionID));
-				var cmd = A2(
-					_elm_lang$websocket$WebSocket$send,
-					url,
+		switch (_p7.ctor) {
+			case 'MsgMarket':
+				var _p11 = _p7._1;
+				var _p8 = _elm_lang$core$List$unzip(
 					A2(
-						_elm_lang$core$Json_Encode$encode,
-						0,
-						_elm_lang$core$Json_Encode$object(
-							{
-								ctor: '::',
-								_0: {
-									ctor: '_Tuple2',
-									_0: 'market_id',
-									_1: _elm_lang$core$Json_Encode$string(_p10._0)
-								},
-								_1: {
+						_elm_lang$core$List$map,
+						function (mmarket) {
+							var _p9 = _elm_lang$core$Native_Utils.eq(mmarket.market.id, _p7._0) ? A2(_fpawel$gobet_front$Market$update, _p11, mmarket) : A2(
+								_elm_lang$core$Platform_Cmd_ops['!'],
+								mmarket,
+								{ctor: '[]'});
+							var mmarket_ = _p9._0;
+							var cmd = _p9._1;
+							return A2(
+								_elm_lang$core$Platform_Cmd_ops['!'],
+								mmarket_,
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$core$Platform_Cmd$map,
+										_fpawel$gobet_front$Event$MsgMarket(mmarket.market.id),
+										cmd),
+									_1: {ctor: '[]'}
+								});
+						},
+						m.markets));
+				var markets = _p8._0;
+				var cmds_markets = _p8._1;
+				var cmds = function () {
+					var _p10 = _p11;
+					var url = A2(
+						_elm_lang$core$Basics_ops['++'],
+						_fpawel$gobet_front$Help_Utils$websocketURL(m.location),
+						A2(_elm_lang$core$Basics_ops['++'], '/wsprices-markets/', m.sessionID));
+					var cmd = A2(
+						_elm_lang$websocket$WebSocket$send,
+						url,
+						A2(
+							_elm_lang$core$Json_Encode$encode,
+							0,
+							_elm_lang$core$Json_Encode$object(
+								{
 									ctor: '::',
 									_0: {
 										ctor: '_Tuple2',
-										_0: 'include',
-										_1: _elm_lang$core$Json_Encode$bool(_p10._1)
+										_0: 'market_id',
+										_1: _elm_lang$core$Json_Encode$string(_p10._0)
 									},
-									_1: {ctor: '[]'}
-								}
-							})));
-				return {ctor: '::', _0: cmd, _1: cmds_markets};
-			}();
-			return A2(
-				_elm_lang$core$Platform_Cmd_ops['!'],
-				_elm_lang$core$Native_Utils.update(
-					m,
-					{markets: markets}),
-				cmds);
-		} else {
-			if (_p7._0.ctor === 'Ok') {
-				var _p16 = _p7._0._0.hashCode;
-				var _p12 = _p7._0._0.data;
-				switch (_p12.ctor) {
-					case 'WebsocketEvent':
-						var _p15 = _p12._0;
-						var _p13 = _elm_lang$core$List$unzip(
-							A2(
-								_elm_lang$core$List$map,
-								function (market) {
-									var _p14 = A2(_fpawel$gobet_front$Market$init, m.location, market);
-									var mmarket_ = _p14._0;
-									var cmd = _p14._1;
-									return A2(
-										_elm_lang$core$Platform_Cmd_ops['!'],
-										mmarket_,
-										{
-											ctor: '::',
-											_0: A2(
-												_elm_lang$core$Platform_Cmd$map,
-												_fpawel$gobet_front$Event$MsgMarket(market.id),
-												cmd),
-											_1: {ctor: '[]'}
-										});
-								},
-								_fpawel$gobet_front$Event$chooseMarkets(_p15.markets)));
-						var markets_ = _p13._0;
-						var cmds = _p13._1;
-						return A2(
-							_elm_lang$core$Platform_Cmd_ops['!'],
-							_elm_lang$core$Native_Utils.update(
+									_1: {
+										ctor: '::',
+										_0: {
+											ctor: '_Tuple2',
+											_0: 'include',
+											_1: _elm_lang$core$Json_Encode$bool(_p10._1)
+										},
+										_1: {ctor: '[]'}
+									}
+								})));
+					return {ctor: '::', _0: cmd, _1: cmds_markets};
+				}();
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						m,
+						{markets: markets}),
+					cmds);
+			case 'MsgWebsocket':
+				if (_p7._0.ctor === 'Ok') {
+					var _p16 = _p7._0._0.hashCode;
+					var _p12 = _p7._0._0.data;
+					switch (_p12.ctor) {
+						case 'WebsocketEvent':
+							var _p15 = _p12._0;
+							var _p13 = _elm_lang$core$List$unzip(
+								A2(
+									_elm_lang$core$List$map,
+									function (market) {
+										var _p14 = A2(_fpawel$gobet_front$Market$init, m.location, market);
+										var mmarket_ = _p14._0;
+										var cmd = _p14._1;
+										return A2(
+											_elm_lang$core$Platform_Cmd_ops['!'],
+											mmarket_,
+											{
+												ctor: '::',
+												_0: A2(
+													_elm_lang$core$Platform_Cmd$map,
+													_fpawel$gobet_front$Event$MsgMarket(market.id),
+													cmd),
+												_1: {ctor: '[]'}
+											});
+									},
+									_fpawel$gobet_front$Event$chooseMarkets(_p15.markets)));
+							var markets_ = _p13._0;
+							var cmds = _p13._1;
+							return A2(
+								_elm_lang$core$Platform_Cmd_ops['!'],
+								_elm_lang$core$Native_Utils.update(
+									m,
+									{
+										event: _elm_lang$core$Maybe$Just(_p15),
+										markets: markets_
+									}),
+								{
+									ctor: '::',
+									_0: A2(_fpawel$gobet_front$Event$answerHashcode, _p16, m),
+									_1: cmds
+								});
+						case 'WebsocketMarket':
+							return A2(
+								_elm_lang$core$Platform_Cmd_ops['!'],
 								m,
 								{
-									event: _elm_lang$core$Maybe$Just(_p15),
-									markets: markets_
-								}),
-							{
-								ctor: '::',
-								_0: A2(_fpawel$gobet_front$Event$answerHashcode, _p16, m),
-								_1: cmds
-							});
-					case 'WebsocketPrices':
-						return A2(
-							_elm_lang$core$Platform_Cmd_ops['!'],
-							m,
-							{
-								ctor: '::',
-								_0: A2(_fpawel$gobet_front$Event$answerHashcode, _p16, m),
-								_1: {ctor: '[]'}
-							});
-					default:
-						return A2(
-							_elm_lang$core$Platform_Cmd_ops['!'],
-							_elm_lang$core$Native_Utils.update(
-								m,
-								{sessionID: _p12._0}),
-							{
-								ctor: '::',
-								_0: A2(_fpawel$gobet_front$Event$answerHashcode, _p16, m),
-								_1: {ctor: '[]'}
-							});
-				}
-			} else {
-				var _p17 = A2(
-					_elm_lang$core$Debug$log,
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						'EVENT ',
+									ctor: '::',
+									_0: A2(_fpawel$gobet_front$Event$answerHashcode, _p16, m),
+									_1: {ctor: '[]'}
+								});
+						default:
+							return A2(
+								_elm_lang$core$Platform_Cmd_ops['!'],
+								_elm_lang$core$Native_Utils.update(
+									m,
+									{sessionID: _p12._0}),
+								{
+									ctor: '::',
+									_0: A2(_fpawel$gobet_front$Event$answerHashcode, _p16, m),
+									_1: {ctor: '[]'}
+								});
+					}
+				} else {
+					var _p17 = A2(
+						_elm_lang$core$Debug$log,
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(m.eventID),
-							' error')),
-					_p7._0._0);
+							'EVENT ',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								_elm_lang$core$Basics$toString(m.eventID),
+								' error')),
+						_p7._0._0);
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						m,
+						{ctor: '[]'});
+				}
+			default:
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					m,
 					{ctor: '[]'});
-			}
 		}
 	});
 var _fpawel$gobet_front$Event$view1 = F2(
@@ -14237,14 +14248,14 @@ var _fpawel$gobet_front$Event$decoderWebsocketSessionID = A3(
 	'session_id',
 	_elm_lang$core$Json_Decode$string,
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Event$WebsocketSessionID));
-var _fpawel$gobet_front$Event$WebsocketPrices = function (a) {
-	return {ctor: 'WebsocketPrices', _0: a};
+var _fpawel$gobet_front$Event$WebsocketMarket = function (a) {
+	return {ctor: 'WebsocketMarket', _0: a};
 };
-var _fpawel$gobet_front$Event$decoderWebsocketPrices = A3(
+var _fpawel$gobet_front$Event$decoderWebsocketMarket = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'markets',
-	_elm_lang$core$Json_Decode$list(_fpawel$gobet_front$Aping_Decoder$market),
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Event$WebsocketPrices));
+	'market',
+	_fpawel$gobet_front$Aping_Decoder$market,
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Event$WebsocketMarket));
 var _fpawel$gobet_front$Event$WebsocketEvent = function (a) {
 	return {ctor: 'WebsocketEvent', _0: a};
 };
@@ -14266,7 +14277,7 @@ var _fpawel$gobet_front$Event$decoderWebsocket = A3(
 				_0: _fpawel$gobet_front$Event$decoderWebsocketEvent,
 				_1: {
 					ctor: '::',
-					_0: _fpawel$gobet_front$Event$decoderWebsocketPrices,
+					_0: _fpawel$gobet_front$Event$decoderWebsocketMarket,
 					_1: {
 						ctor: '::',
 						_0: _fpawel$gobet_front$Event$decoderWebsocketSessionID,
@@ -14277,13 +14288,35 @@ var _fpawel$gobet_front$Event$decoderWebsocket = A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Event$WebsocketBatch)));
 var _fpawel$gobet_front$Event$subscriptions = function (_p23) {
 	var _p24 = _p23;
-	return A2(
+	var _p26 = _p24.sessionID;
+	var _p25 = _p24.location;
+	var wsprices = A2(
 		_elm_lang$core$Platform_Sub$map,
 		_fpawel$gobet_front$Event$MsgWebsocket,
 		A2(
 			_elm_lang$websocket$WebSocket$listen,
-			A2(_fpawel$gobet_front$Event$websocketURLPrices, _p24.location, _p24.eventID),
+			A2(_fpawel$gobet_front$Event$websocketURLPrices, _p25, _p24.eventID),
 			_elm_lang$core$Json_Decode$decodeString(_fpawel$gobet_front$Event$decoderWebsocket)));
+	var subs = _elm_lang$core$Native_Utils.eq(_p26, '') ? {
+		ctor: '::',
+		_0: wsprices,
+		_1: {ctor: '[]'}
+	} : {
+		ctor: '::',
+		_0: wsprices,
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_lang$websocket$WebSocket$listen,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_fpawel$gobet_front$Help_Utils$websocketURL(_p25),
+					A2(_elm_lang$core$Basics_ops['++'], '/wsprices-markets/', _p26)),
+				_fpawel$gobet_front$Event$NoOp),
+			_1: {ctor: '[]'}
+		}
+	};
+	return _elm_lang$core$Platform_Sub$batch(subs);
 };
 
 var _fpawel$gobet_front$Sports$update = F2(

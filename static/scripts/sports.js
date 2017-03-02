@@ -2,22 +2,22 @@ sports = [
     {
         "id": 1,
         "name": "Футбол ",
-        "market_count": 16650
+        "market_count": 19027
     },
     {
         "id": 2,
         "name": "Теннис ",
-        "market_count": 1617
+        "market_count": 1576
     },
     {
         "id": 3,
         "name": "Гольф ",
-        "market_count": 103
+        "market_count": 95
     },
     {
         "id": 4,
         "name": "Крикет",
-        "market_count": 182
+        "market_count": 186
     },
     {
         "id": 5,
@@ -27,7 +27,7 @@ sports = [
     {
         "id": 1477,
         "name": "Регби-13",
-        "market_count": 123
+        "market_count": 132
     },
     {
         "id": 6,
@@ -37,7 +37,7 @@ sports = [
     {
         "id": 7,
         "name": "Скачки",
-        "market_count": 1205
+        "market_count": 1121
     },
     {
         "id": 8,
@@ -47,12 +47,12 @@ sports = [
     {
         "id": 27454571,
         "name": "Киберспорт",
-        "market_count": 12
+        "market_count": 8
     },
     {
         "id": 998918,
         "name": "Боулз",
-        "market_count": 4
+        "market_count": 5
     },
     {
         "id": 10,
@@ -67,7 +67,7 @@ sports = [
     {
         "id": 11,
         "name": "Велоспорт ",
-        "market_count": 5
+        "market_count": 7
     },
     {
         "id": 136332,
@@ -87,7 +87,7 @@ sports = [
     {
         "id": 6422,
         "name": "Снукер",
-        "market_count": 9
+        "market_count": 5
     },
     {
         "id": 6231,
@@ -112,17 +112,17 @@ sports = [
     {
         "id": 451485,
         "name": "Зимние",
-        "market_count": 17
+        "market_count": 21
     },
     {
         "id": 7522,
         "name": "Баскетбол ",
-        "market_count": 172
+        "market_count": 218
     },
     {
         "id": 7524,
         "name": "Хоккей ",
-        "market_count": 127
+        "market_count": 122
     },
     {
         "id": 61420,
@@ -147,7 +147,7 @@ sports = [
     {
         "id": 4339,
         "name": "Собачьи бега",
-        "market_count": 275
+        "market_count": 239
     },
     {
         "id": 2378961,

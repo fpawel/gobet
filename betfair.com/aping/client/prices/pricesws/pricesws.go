@@ -302,8 +302,8 @@ func RegisterNewReader(ID string, conn *websocket.Conn)  {
 				return
 			default:
 				var x struct{
-					marketID string `json:"market_id"`
-					include bool `json:"include"`
+					MarketID string `json:"market_id"`
+					Include bool `json:"include"`
 				}
 				if err := json.Unmarshal(recivedBytes, &x); err !=nil {
 					nestedError("unmarhaling", err )
@@ -315,7 +315,7 @@ func RegisterNewReader(ID string, conn *websocket.Conn)  {
 					trace( "session was closed" )
 					return
 				}
-				writer.setMarketID(x.marketID, x.include)
+				writer.setMarketID(x.MarketID, x.Include)
 			}
 		}
 	}()
