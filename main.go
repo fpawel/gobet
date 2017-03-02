@@ -22,6 +22,7 @@ import (
 	"strconv"
 
 	"github.com/user/gobet/betfair.com/aping/client/prices"
+	"github.com/user/gobet/betfair.com/aping/client/prices/pricesws"
 )
 
 const (
@@ -51,6 +52,8 @@ func setupRouter(port string) {
 
 	})
 
+
+
 	router.GET("football/games", func(c *gin.Context) {
 		games, err := footbalGames.Get()
 		jsonResult(c, games, err)
@@ -60,8 +63,43 @@ func setupRouter(port string) {
 	setupRouterEvents(router)
 	setupRouteMarkets(router)
 	setupRoutePrices(router)
+	setupRouteWebsocketPrices(router)
+
 	setupRouteStatic(router)
 	router.Run(":" + port)
+}
+
+func setupRouteWebsocketPrices(router *gin.Engine){
+	router.GET("wsprices/:ID", func(c *gin.Context) {
+
+		eventID, err := strconv.Atoi(c.Param("ID"))
+		if err != nil {
+			c.String(http.StatusBadRequest, "bad request: %v, %v", c.Param("ID"), err)
+			return
+		}
+
+		conn, err := websocketUpgrader.Upgrade(c.Writer, c.Request, nil)
+		if err != nil {
+			returnInternalServerError(c, err)
+			return
+		}
+
+		conn.EnableWriteCompression(true)
+		pricesws.RegisterNewWriter(eventID,conn)
+
+
+	})
+
+	router.GET("wsprices-markets/:ID", func(c *gin.Context) {
+		sessionID  := c.Param("ID")
+		conn, err := websocketUpgrader.Upgrade(c.Writer, c.Request, nil)
+		if err != nil {
+			returnInternalServerError(c, err)
+			return
+		}
+		conn.EnableWriteCompression(true)
+		pricesws.RegisterNewReader(sessionID,conn)
+	})
 }
 
 func setupRouterSports(router *gin.Engine) {

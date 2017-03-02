@@ -8,9 +8,9 @@ import (
 	"github.com/user/gobet/betfair.com/football/games/update"
 	"hash/fnv"
 	"log"
-	"strconv"
 	"sync"
 	"time"
+	"strconv"
 )
 
 type Handle struct {
@@ -33,7 +33,7 @@ func Open(conn *websocket.Conn, onclose func(*Handle, error)) *Handle {
 }
 
 func (x *Handle) What() string {
-	return x.websocketConn.RemoteAddr().String()
+	return fmt.Sprint( "ws-football", x.websocketConn.RemoteAddr().String())
 }
 
 func (x *Handle) read() (messageType int, recivedBytes []byte, err error) {
@@ -94,9 +94,9 @@ func (x *Handle) doUpdate(games []football.Game) (err error) {
 
 	dataToSend := &struct {
 		Changes  *update.Games `json:"changes"`
-		HashCode uint64        `json:"hash_code"`
+		HashCode string        `json:"hash_code"`
 	}{Changes: changes,
-		HashCode: fnv32a.Sum64(),
+		HashCode: strconv.FormatUint( fnv32a.Sum64(), 16),
 	}
 
 	x.mu.Lock()
@@ -122,14 +122,7 @@ func (x *Handle) doUpdate(games []football.Game) (err error) {
 		err = fmt.Errorf("%v: client drope COLSE message", x.What())
 		return
 	default:
-		var recivedValue uint64
-		recivedValue, err = strconv.ParseUint(string(recivedBytes), 10, 64)
-		if err != nil {
-			err = fmt.Errorf("%v: error parsing recived string, %s",
-				x.What(), err.Error())
-			return
-		}
-		if recivedValue == dataToSend.HashCode {
+		if string(recivedBytes) == dataToSend.HashCode {
 
 			x.mu.Lock()
 			x.games = games
@@ -139,8 +132,10 @@ func (x *Handle) doUpdate(games []football.Game) (err error) {
 		} else {
 			time.Sleep(time.Second)
 
-			err = fmt.Errorf("unexpected answer %x, expected %x",
-				recivedValue, dataToSend.HashCode)
+			log.Printf("%s, unexpected answer [%s], expected [%s]",
+				x.What(),
+				string(recivedBytes),
+				dataToSend.HashCode)
 			return
 		}
 	}

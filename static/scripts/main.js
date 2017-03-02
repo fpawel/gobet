@@ -12620,138 +12620,51 @@ var _fpawel$gobet_front$Football$view = function (_p2) {
 		}
 	}
 };
-var _fpawel$gobet_front$Football$encodeGame = function (x) {
-	var encodedOdds = A2(
-		_elm_lang$core$List$filterMap,
-		function (_p7) {
-			var _p8 = _p7;
-			return A2(
-				_elm_lang$core$Maybe$map,
-				function (v) {
-					return {
-						ctor: '_Tuple2',
-						_0: _p8._0,
-						_1: _elm_lang$core$Json_Encode$float(v)
-					};
-				},
-				_p8._1);
-		},
-		{
-			ctor: '::',
-			_0: {ctor: '_Tuple2', _0: 'win1', _1: x.win1},
-			_1: {
-				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: 'win2', _1: x.win2},
-				_1: {
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'draw1', _1: x.draw1},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'draw2', _1: x.draw2},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'lose1', _1: x.lose1},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'lose2', _1: x.lose2},
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}
-			}
-		});
-	return _elm_lang$core$Json_Encode$object(
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			{
-				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'event_id',
-					_1: _elm_lang$core$Json_Encode$int(x.eventID)
-				},
-				_1: {
-					ctor: '::',
-					_0: {
-						ctor: '_Tuple2',
-						_0: 'page',
-						_1: _elm_lang$core$Json_Encode$int(x.page)
-					},
-					_1: {
-						ctor: '::',
-						_0: {
-							ctor: '_Tuple2',
-							_0: 'order',
-							_1: _elm_lang$core$Json_Encode$int(x.order)
-						},
-						_1: {
-							ctor: '::',
-							_0: {
-								ctor: '_Tuple2',
-								_0: 'time',
-								_1: _elm_lang$core$Json_Encode$string(x.time)
-							},
-							_1: {
-								ctor: '::',
-								_0: {
-									ctor: '_Tuple2',
-									_0: 'result',
-									_1: _elm_lang$core$Json_Encode$string(x.result)
-								},
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}
-			},
-			encodedOdds));
-};
 var _fpawel$gobet_front$Football$decoderMaybeFloat = _elm_lang$core$Json_Decode$maybe(
 	_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$float));
-var _fpawel$gobet_front$Football$websocketURL = function (_p9) {
-	var _p10 = _p9;
+var _fpawel$gobet_front$Football$websocketURL = function (_p7) {
+	var _p8 = _p7;
 	return A2(
 		_elm_lang$core$Basics_ops['++'],
-		_fpawel$gobet_front$Help_Utils$websocketURL(_p10.location),
+		_fpawel$gobet_front$Help_Utils$websocketURL(_p8.location),
 		'/football');
 };
 var _fpawel$gobet_front$Football$updateGame = F2(
-	function (x, _p11) {
-		var _p12 = _p11;
-		var _p14 = _p12.time;
-		var _p13 = _p12.result;
+	function (x, _p9) {
+		var _p10 = _p9;
+		var _p12 = _p10.time;
+		var _p11 = _p10.result;
 		return _elm_lang$core$Native_Utils.update(
 			x,
 			{
-				page: A2(_elm_lang$core$Maybe$withDefault, x.page, _p12.page),
-				order: A2(_elm_lang$core$Maybe$withDefault, x.order, _p12.order),
-				time: A2(_elm_lang$core$Maybe$withDefault, x.time, _p14),
-				result: A2(_elm_lang$core$Maybe$withDefault, x.result, _p13),
-				win1: A2(_elm_lang$core$Maybe$withDefault, x.win1, _p12.win1),
-				win2: A2(_elm_lang$core$Maybe$withDefault, x.win2, _p12.win2),
-				draw1: A2(_elm_lang$core$Maybe$withDefault, x.draw1, _p12.draw1),
-				draw2: A2(_elm_lang$core$Maybe$withDefault, x.draw2, _p12.draw2),
-				lose1: A2(_elm_lang$core$Maybe$withDefault, x.lose1, _p12.lose1),
-				lose2: A2(_elm_lang$core$Maybe$withDefault, x.lose2, _p12.lose2),
-				utime: _fpawel$gobet_front$Help_Utils$isJust(_p14),
-				uresult: _fpawel$gobet_front$Help_Utils$isJust(_p13)
+				page: A2(_elm_lang$core$Maybe$withDefault, x.page, _p10.page),
+				order: A2(_elm_lang$core$Maybe$withDefault, x.order, _p10.order),
+				time: A2(_elm_lang$core$Maybe$withDefault, x.time, _p12),
+				result: A2(_elm_lang$core$Maybe$withDefault, x.result, _p11),
+				win1: A2(_elm_lang$core$Maybe$withDefault, x.win1, _p10.win1),
+				win2: A2(_elm_lang$core$Maybe$withDefault, x.win2, _p10.win2),
+				draw1: A2(_elm_lang$core$Maybe$withDefault, x.draw1, _p10.draw1),
+				draw2: A2(_elm_lang$core$Maybe$withDefault, x.draw2, _p10.draw2),
+				lose1: A2(_elm_lang$core$Maybe$withDefault, x.lose1, _p10.lose1),
+				lose2: A2(_elm_lang$core$Maybe$withDefault, x.lose2, _p10.lose2),
+				utime: _fpawel$gobet_front$Help_Utils$isJust(_p12),
+				uresult: _fpawel$gobet_front$Help_Utils$isJust(_p11)
 			});
 	});
 var _fpawel$gobet_front$Football$updateGamesList = F2(
-	function (_p15, games) {
-		var _p16 = _p15;
-		var _p22 = _p16.inplay;
-		var isJust = function (_p17) {
+	function (_p13, games) {
+		var _p14 = _p13;
+		var _p20 = _p14.inplay;
+		var isJust = function (_p15) {
 			return A2(
 				_elm_lang$core$Maybe$withDefault,
 				false,
 				A2(
 					_elm_lang$core$Maybe$map,
-					function (_p18) {
+					function (_p16) {
 						return true;
 					},
-					_p17));
+					_p15));
 		};
 		var changesMap = _elm_lang$core$Dict$fromList(
 			A2(
@@ -12759,15 +12672,15 @@ var _fpawel$gobet_front$Football$updateGamesList = F2(
 				function (x) {
 					return {ctor: '_Tuple2', _0: x.eventID, _1: x};
 				},
-				_p16.changes));
+				_p14.changes));
 		var inplaySet = _elm_lang$core$Set$fromList(
 			A2(
 				_elm_lang$core$List$map,
 				function (x) {
 					return x.eventID;
 				},
-				_p22));
-		var outplaySet = _elm_lang$core$Set$fromList(_p16.outplay);
+				_p20));
+		var outplaySet = _elm_lang$core$Set$fromList(_p14.outplay);
 		var play = A2(
 			_elm_lang$core$List$map,
 			function (x) {
@@ -12781,13 +12694,13 @@ var _fpawel$gobet_front$Football$updateGamesList = F2(
 			},
 			A2(
 				_elm_lang$core$List$filter,
-				function (_p19) {
-					var _p20 = _p19;
-					var _p21 = _p20.eventID;
-					return (!A2(_elm_lang$core$Set$member, _p21, outplaySet)) && (!A2(_elm_lang$core$Set$member, _p21, inplaySet));
+				function (_p17) {
+					var _p18 = _p17;
+					var _p19 = _p18.eventID;
+					return (!A2(_elm_lang$core$Set$member, _p19, outplaySet)) && (!A2(_elm_lang$core$Set$member, _p19, inplaySet));
 				},
 				games));
-		return A2(_elm_lang$core$Basics_ops['++'], _p22, play);
+		return A2(_elm_lang$core$Basics_ops['++'], _p20, play);
 	});
 var _fpawel$gobet_front$Football$Game = function (a) {
 	return function (b) {
@@ -13008,7 +12921,7 @@ var _fpawel$gobet_front$Football$ReplyFromServer = F2(
 var _fpawel$gobet_front$Football$decoderReplyFromServer = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 	'hash_code',
-	_elm_lang$core$Json_Decode$int,
+	_elm_lang$core$Json_Decode$string,
 	A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 		'changes',
@@ -13026,33 +12939,33 @@ var _fpawel$gobet_front$Football$init = function (location) {
 		});
 };
 var _fpawel$gobet_front$Football$update = F2(
-	function (msg, _p23) {
-		var _p24 = _p23;
-		var _p27 = _p24._0;
-		var _p25 = msg;
-		if (_p25._0.ctor === 'Err') {
+	function (msg, _p21) {
+		var _p22 = _p21;
+		var _p25 = _p22._0;
+		var _p23 = msg;
+		if (_p23._0.ctor === 'Err') {
 			return A2(
 				_elm_lang$core$Platform_Cmd_ops['!'],
 				_fpawel$gobet_front$Football$Model(
 					_elm_lang$core$Native_Utils.update(
-						_p27,
+						_p25,
 						{
 							error: _elm_lang$core$Maybe$Just(
-								A2(_elm_lang$core$Debug$log, 'FOOTBAL error', _p25._0._0))
+								A2(_elm_lang$core$Debug$log, 'FOOTBAL error', _p23._0._0))
 						})),
 				{ctor: '[]'});
 		} else {
-			var _p26 = _p25._0._0;
+			var _p24 = _p23._0._0;
 			var answer = A2(
 				_elm_lang$websocket$WebSocket$send,
-				_fpawel$gobet_front$Football$websocketURL(_p27),
-				_elm_lang$core$Basics$toString(_p26.hashCode));
-			var games = A2(_fpawel$gobet_front$Football$updateGamesList, _p26.changes, _p27.games);
+				_fpawel$gobet_front$Football$websocketURL(_p25),
+				_p24.hashCode);
+			var games = A2(_fpawel$gobet_front$Football$updateGamesList, _p24.changes, _p25.games);
 			return A2(
 				_elm_lang$core$Platform_Cmd_ops['!'],
 				_fpawel$gobet_front$Football$Model(
 					_elm_lang$core$Native_Utils.update(
-						_p27,
+						_p25,
 						{games: games, error: _elm_lang$core$Maybe$Nothing})),
 				{
 					ctor: '::',
@@ -13064,14 +12977,14 @@ var _fpawel$gobet_front$Football$update = F2(
 var _fpawel$gobet_front$Football$MsgReplyFromServer = function (a) {
 	return {ctor: 'MsgReplyFromServer', _0: a};
 };
-var _fpawel$gobet_front$Football$subscriptions = function (_p28) {
-	var _p29 = _p28;
+var _fpawel$gobet_front$Football$subscriptions = function (_p26) {
+	var _p27 = _p26;
 	return A2(
 		_elm_lang$websocket$WebSocket$listen,
-		_fpawel$gobet_front$Football$websocketURL(_p29._0),
-		function (_p30) {
+		_fpawel$gobet_front$Football$websocketURL(_p27._0),
+		function (_p28) {
 			return _fpawel$gobet_front$Football$MsgReplyFromServer(
-				A2(_elm_lang$core$Json_Decode$decodeString, _fpawel$gobet_front$Football$decoderReplyFromServer, _p30));
+				A2(_elm_lang$core$Json_Decode$decodeString, _fpawel$gobet_front$Football$decoderReplyFromServer, _p28));
 		});
 };
 
@@ -13764,7 +13677,10 @@ var _fpawel$gobet_front$Market$init = F2(
 			A3(_fpawel$gobet_front$Market$Model, market, location, false),
 			{ctor: '[]'});
 	});
-var _fpawel$gobet_front$Market$ToggleCollapse = {ctor: 'ToggleCollapse'};
+var _fpawel$gobet_front$Market$ToggleCollapse = F2(
+	function (a, b) {
+		return {ctor: 'ToggleCollapse', _0: a, _1: b};
+	});
 var _fpawel$gobet_front$Market$view = function (_p1) {
 	var _p2 = _p1;
 	var _p6 = _p2.market;
@@ -13853,7 +13769,8 @@ var _fpawel$gobet_front$Market$view = function (_p1) {
 					_p5 ? 'dropup' : 'dropdown')),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$html$Html_Events$onClick(_fpawel$gobet_front$Market$ToggleCollapse),
+				_0: _elm_lang$html$Html_Events$onClick(
+					A2(_fpawel$gobet_front$Market$ToggleCollapse, _p6.id, !_p5)),
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$html$Html_Attributes$style(
@@ -13950,20 +13867,27 @@ var _fpawel$gobet_front$Market$view = function (_p1) {
 			runners));
 };
 
-var _fpawel$gobet_front$Event$subscriptions = function (_p0) {
-	return _elm_lang$core$Platform_Sub$none;
-};
-var _fpawel$gobet_front$Event$chooseMarkets = function (_p1) {
+var _fpawel$gobet_front$Event$websocketURLPrices = F2(
+	function (location, eventID) {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			_fpawel$gobet_front$Help_Utils$websocketURL(location),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'/wsprices/',
+				_elm_lang$core$Basics$toString(eventID)));
+	});
+var _fpawel$gobet_front$Event$chooseMarkets = function (_p0) {
 	return A2(
 		_elm_lang$core$List$sortBy,
-		function (_p2) {
-			var _p3 = _p2;
-			var _p5 = _p3.name;
+		function (_p1) {
+			var _p2 = _p1;
+			var _p4 = _p2.name;
 			return {
 				ctor: '_Tuple3',
 				_0: function () {
-					var _p4 = _p5;
-					switch (_p4) {
+					var _p3 = _p4;
+					switch (_p3) {
 						case 'Ставки':
 							return 0;
 						case 'Результат':
@@ -13972,21 +13896,45 @@ var _fpawel$gobet_front$Event$chooseMarkets = function (_p1) {
 							return 2;
 					}
 				}(),
-				_1: -1 * _p3.totalMatched,
-				_2: _p5
+				_1: -1 * _p2.totalMatched,
+				_2: _p4
 			};
 		},
 		A2(
 			_elm_lang$core$List$filter,
-			function (_p6) {
-				var _p7 = _p6;
-				return !_elm_lang$core$Native_Utils.eq(_p7.name, 'Азиатский гандикап');
+			function (_p5) {
+				var _p6 = _p5;
+				return !_elm_lang$core$Native_Utils.eq(_p6.name, 'Азиатский гандикап');
 			},
-			_p1));
+			_p0));
 };
-var _fpawel$gobet_front$Event$Model = F4(
-	function (a, b, c, d) {
-		return {eventID: a, event: b, markets: c, location: d};
+var _fpawel$gobet_front$Event$answerHashcode = F2(
+	function (hashCode, m) {
+		return A2(
+			_elm_lang$websocket$WebSocket$send,
+			A2(_fpawel$gobet_front$Event$websocketURLPrices, m.location, m.eventID),
+			hashCode);
+	});
+var _fpawel$gobet_front$Event$init = F2(
+	function (location, eventID) {
+		return A2(
+			_elm_lang$core$Platform_Cmd_ops['!'],
+			{
+				eventID: eventID,
+				event: _elm_lang$core$Maybe$Nothing,
+				markets: {ctor: '[]'},
+				location: location,
+				sessionID: ''
+			},
+			{ctor: '[]'});
+	});
+var _fpawel$gobet_front$Event$Model = F5(
+	function (a, b, c, d, e) {
+		return {eventID: a, event: b, markets: c, location: d, sessionID: e};
+	});
+var _fpawel$gobet_front$Event$WebsocketBatch = F2(
+	function (a, b) {
+		return {data: a, hashCode: b};
 	});
 var _fpawel$gobet_front$Event$MsgMarket = F2(
 	function (a, b) {
@@ -13994,18 +13942,19 @@ var _fpawel$gobet_front$Event$MsgMarket = F2(
 	});
 var _fpawel$gobet_front$Event$update = F2(
 	function (msg, m) {
-		var _p8 = msg;
-		if (_p8.ctor === 'MsgMarket') {
-			var _p9 = _elm_lang$core$List$unzip(
+		var _p7 = msg;
+		if (_p7.ctor === 'MsgMarket') {
+			var _p11 = _p7._1;
+			var _p8 = _elm_lang$core$List$unzip(
 				A2(
 					_elm_lang$core$List$map,
 					function (mmarket) {
-						var _p10 = _elm_lang$core$Native_Utils.eq(mmarket.market.id, _p8._0) ? A2(_fpawel$gobet_front$Market$update, _p8._1, mmarket) : A2(
+						var _p9 = _elm_lang$core$Native_Utils.eq(mmarket.market.id, _p7._0) ? A2(_fpawel$gobet_front$Market$update, _p11, mmarket) : A2(
 							_elm_lang$core$Platform_Cmd_ops['!'],
 							mmarket,
 							{ctor: '[]'});
-						var mmarket_ = _p10._0;
-						var cmd = _p10._1;
+						var mmarket_ = _p9._0;
+						var cmd = _p9._1;
 						return A2(
 							_elm_lang$core$Platform_Cmd_ops['!'],
 							mmarket_,
@@ -14019,8 +13968,40 @@ var _fpawel$gobet_front$Event$update = F2(
 							});
 					},
 					m.markets));
-			var markets = _p9._0;
-			var cmds = _p9._1;
+			var markets = _p8._0;
+			var cmds_markets = _p8._1;
+			var cmds = function () {
+				var _p10 = _p11;
+				var url = A2(
+					_elm_lang$core$Basics_ops['++'],
+					_fpawel$gobet_front$Help_Utils$websocketURL(m.location),
+					A2(_elm_lang$core$Basics_ops['++'], '/wsprices-markets/', m.sessionID));
+				var cmd = A2(
+					_elm_lang$websocket$WebSocket$send,
+					url,
+					A2(
+						_elm_lang$core$Json_Encode$encode,
+						0,
+						_elm_lang$core$Json_Encode$object(
+							{
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: 'market_id',
+									_1: _elm_lang$core$Json_Encode$string(_p10._0)
+								},
+								_1: {
+									ctor: '::',
+									_0: {
+										ctor: '_Tuple2',
+										_0: 'include',
+										_1: _elm_lang$core$Json_Encode$bool(_p10._1)
+									},
+									_1: {ctor: '[]'}
+								}
+							})));
+				return {ctor: '::', _0: cmd, _1: cmds_markets};
+			}();
 			return A2(
 				_elm_lang$core$Platform_Cmd_ops['!'],
 				_elm_lang$core$Native_Utils.update(
@@ -14028,41 +14009,70 @@ var _fpawel$gobet_front$Event$update = F2(
 					{markets: markets}),
 				cmds);
 		} else {
-			if (_p8._0.ctor === 'Ok') {
-				var _p13 = _p8._0._0;
-				var _p11 = _elm_lang$core$List$unzip(
-					A2(
-						_elm_lang$core$List$map,
-						function (market) {
-							var _p12 = A2(_fpawel$gobet_front$Market$init, m.location, market);
-							var mmarket_ = _p12._0;
-							var cmd = _p12._1;
-							return A2(
-								_elm_lang$core$Platform_Cmd_ops['!'],
-								mmarket_,
+			if (_p7._0.ctor === 'Ok') {
+				var _p16 = _p7._0._0.hashCode;
+				var _p12 = _p7._0._0.data;
+				switch (_p12.ctor) {
+					case 'WebsocketEvent':
+						var _p15 = _p12._0;
+						var _p13 = _elm_lang$core$List$unzip(
+							A2(
+								_elm_lang$core$List$map,
+								function (market) {
+									var _p14 = A2(_fpawel$gobet_front$Market$init, m.location, market);
+									var mmarket_ = _p14._0;
+									var cmd = _p14._1;
+									return A2(
+										_elm_lang$core$Platform_Cmd_ops['!'],
+										mmarket_,
+										{
+											ctor: '::',
+											_0: A2(
+												_elm_lang$core$Platform_Cmd$map,
+												_fpawel$gobet_front$Event$MsgMarket(market.id),
+												cmd),
+											_1: {ctor: '[]'}
+										});
+								},
+								_fpawel$gobet_front$Event$chooseMarkets(_p15.markets)));
+						var markets_ = _p13._0;
+						var cmds = _p13._1;
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							_elm_lang$core$Native_Utils.update(
+								m,
 								{
-									ctor: '::',
-									_0: A2(
-										_elm_lang$core$Platform_Cmd$map,
-										_fpawel$gobet_front$Event$MsgMarket(market.id),
-										cmd),
-									_1: {ctor: '[]'}
-								});
-						},
-						_fpawel$gobet_front$Event$chooseMarkets(_p13.markets)));
-				var markets_ = _p11._0;
-				var cmds = _p11._1;
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						m,
-						{
-							event: _elm_lang$core$Maybe$Just(_p13),
-							markets: markets_
-						}),
-					cmds);
+									event: _elm_lang$core$Maybe$Just(_p15),
+									markets: markets_
+								}),
+							{
+								ctor: '::',
+								_0: A2(_fpawel$gobet_front$Event$answerHashcode, _p16, m),
+								_1: cmds
+							});
+					case 'WebsocketPrices':
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							m,
+							{
+								ctor: '::',
+								_0: A2(_fpawel$gobet_front$Event$answerHashcode, _p16, m),
+								_1: {ctor: '[]'}
+							});
+					default:
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							_elm_lang$core$Native_Utils.update(
+								m,
+								{sessionID: _p12._0}),
+							{
+								ctor: '::',
+								_0: A2(_fpawel$gobet_front$Event$answerHashcode, _p16, m),
+								_1: {ctor: '[]'}
+							});
+				}
 			} else {
-				var _p14 = A2(
+				var _p17 = A2(
 					_elm_lang$core$Debug$log,
 					A2(
 						_elm_lang$core$Basics_ops['++'],
@@ -14071,7 +14081,7 @@ var _fpawel$gobet_front$Event$update = F2(
 							_elm_lang$core$Basics_ops['++'],
 							_elm_lang$core$Basics$toString(m.eventID),
 							' error')),
-					_p8._0._0);
+					_p7._0._0);
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					m,
@@ -14081,16 +14091,16 @@ var _fpawel$gobet_front$Event$update = F2(
 	});
 var _fpawel$gobet_front$Event$view1 = F2(
 	function (event, markets) {
-		var _p15 = A2(
+		var _p18 = A2(
 			_elm_lang$core$List$partition,
-			function (_p16) {
+			function (_p19) {
 				return A2(
 					F2(
 						function (x, y) {
 							return _elm_lang$core$Native_Utils.eq(x, y);
 						}),
 					0,
-					_elm_lang$core$Tuple$first(_p16));
+					_elm_lang$core$Tuple$first(_p19));
 			},
 			A2(
 				_elm_lang$core$List$indexedMap,
@@ -14106,8 +14116,8 @@ var _fpawel$gobet_front$Event$view1 = F2(
 						};
 					}),
 				markets));
-		var ms1_ = _p15._0;
-		var ms2_ = _p15._1;
+		var ms1_ = _p18._0;
+		var ms2_ = _p18._1;
 		var ms1 = A2(_elm_lang$core$List$map, _elm_lang$core$Tuple$second, ms1_);
 		var ms2 = A2(_elm_lang$core$List$map, _elm_lang$core$Tuple$second, ms2_);
 		var header = A2(
@@ -14207,58 +14217,74 @@ var _fpawel$gobet_front$Event$view1 = F2(
 				}
 			});
 	});
-var _fpawel$gobet_front$Event$view = function (_p17) {
-	var _p18 = _p17;
-	var _p19 = _p18.event;
-	if (_p19.ctor === 'Just') {
-		return A2(_fpawel$gobet_front$Event$view1, _p19._0, _p18.markets);
+var _fpawel$gobet_front$Event$view = function (_p20) {
+	var _p21 = _p20;
+	var _p22 = _p21.event;
+	if (_p22.ctor === 'Just') {
+		return A2(_fpawel$gobet_front$Event$view1, _p22._0, _p21.markets);
 	} else {
 		return _fpawel$gobet_front$Help_Component$spinner_text('Подготовка данных...');
 	}
 };
-var _fpawel$gobet_front$Event$ApingEvent = function (a) {
-	return {ctor: 'ApingEvent', _0: a};
+var _fpawel$gobet_front$Event$MsgWebsocket = function (a) {
+	return {ctor: 'MsgWebsocket', _0: a};
 };
-var _fpawel$gobet_front$Event$httpRequestEvent = F2(
-	function (location, eventID) {
-		var decoder = A2(_elm_lang$core$Json_Decode$field, 'ok', _fpawel$gobet_front$Aping_Decoder$event);
-		var eventURL = A2(
-			_elm_lang$core$Basics_ops['++'],
-			location.protocol,
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'//',
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					location.host,
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						'/event/',
-						_elm_lang$core$Basics$toString(eventID)))));
-		return A2(
-			_elm_lang$http$Http$send,
-			function (_p20) {
-				return _fpawel$gobet_front$Event$ApingEvent(
-					A2(_elm_lang$core$Result$mapError, _elm_lang$core$Basics$toString, _p20));
-			},
-			A2(_elm_lang$http$Http$get, eventURL, decoder));
-	});
-var _fpawel$gobet_front$Event$init = F2(
-	function (location, eventID) {
-		return A2(
-			_elm_lang$core$Platform_Cmd_ops['!'],
-			{
-				eventID: eventID,
-				event: _elm_lang$core$Maybe$Nothing,
-				markets: {ctor: '[]'},
-				location: location
-			},
+var _fpawel$gobet_front$Event$WebsocketSessionID = function (a) {
+	return {ctor: 'WebsocketSessionID', _0: a};
+};
+var _fpawel$gobet_front$Event$decoderWebsocketSessionID = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'session_id',
+	_elm_lang$core$Json_Decode$string,
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Event$WebsocketSessionID));
+var _fpawel$gobet_front$Event$WebsocketPrices = function (a) {
+	return {ctor: 'WebsocketPrices', _0: a};
+};
+var _fpawel$gobet_front$Event$decoderWebsocketPrices = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'markets',
+	_elm_lang$core$Json_Decode$list(_fpawel$gobet_front$Aping_Decoder$market),
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Event$WebsocketPrices));
+var _fpawel$gobet_front$Event$WebsocketEvent = function (a) {
+	return {ctor: 'WebsocketEvent', _0: a};
+};
+var _fpawel$gobet_front$Event$decoderWebsocketEvent = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'event',
+	_fpawel$gobet_front$Aping_Decoder$event,
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Event$WebsocketEvent));
+var _fpawel$gobet_front$Event$decoderWebsocket = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'hash_code',
+	_elm_lang$core$Json_Decode$string,
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'ok',
+		_elm_lang$core$Json_Decode$oneOf(
 			{
 				ctor: '::',
-				_0: A2(_fpawel$gobet_front$Event$httpRequestEvent, location, eventID),
-				_1: {ctor: '[]'}
-			});
-	});
+				_0: _fpawel$gobet_front$Event$decoderWebsocketEvent,
+				_1: {
+					ctor: '::',
+					_0: _fpawel$gobet_front$Event$decoderWebsocketPrices,
+					_1: {
+						ctor: '::',
+						_0: _fpawel$gobet_front$Event$decoderWebsocketSessionID,
+						_1: {ctor: '[]'}
+					}
+				}
+			}),
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Event$WebsocketBatch)));
+var _fpawel$gobet_front$Event$subscriptions = function (_p23) {
+	var _p24 = _p23;
+	return A2(
+		_elm_lang$core$Platform_Sub$map,
+		_fpawel$gobet_front$Event$MsgWebsocket,
+		A2(
+			_elm_lang$websocket$WebSocket$listen,
+			A2(_fpawel$gobet_front$Event$websocketURLPrices, _p24.location, _p24.eventID),
+			_elm_lang$core$Json_Decode$decodeString(_fpawel$gobet_front$Event$decoderWebsocket)));
+};
 
 var _fpawel$gobet_front$Sports$update = F2(
 	function (msg, m) {
@@ -15020,12 +15046,7 @@ var _fpawel$gobet_front$Main$view = function (_p0) {
 };
 var _fpawel$gobet_front$Main$subscriptions = function (_p5) {
 	var _p6 = _p5;
-	return _elm_lang$core$Platform_Sub$batch(
-		{
-			ctor: '::',
-			_0: _fpawel$gobet_front$Content$subscriptions(_p6.content),
-			_1: {ctor: '[]'}
-		});
+	return _fpawel$gobet_front$Content$subscriptions(_p6.content);
 };
 var _fpawel$gobet_front$Main$navigate = F2(
 	function (newRoute, model) {
