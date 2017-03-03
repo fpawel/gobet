@@ -2,17 +2,17 @@ sports = [
     {
         "id": 1,
         "name": "Футбол ",
-        "market_count": 19027
+        "market_count": 22903
     },
     {
         "id": 2,
         "name": "Теннис ",
-        "market_count": 1576
+        "market_count": 1690
     },
     {
         "id": 3,
         "name": "Гольф ",
-        "market_count": 95
+        "market_count": 70
     },
     {
         "id": 4,
@@ -22,22 +22,22 @@ sports = [
     {
         "id": 5,
         "name": "Регби",
-        "market_count": 166
+        "market_count": 185
     },
     {
         "id": 1477,
         "name": "Регби-13",
-        "market_count": 132
+        "market_count": 100
     },
     {
         "id": 6,
         "name": "Бокс",
-        "market_count": 41
+        "market_count": 48
     },
     {
         "id": 7,
         "name": "Скачки",
-        "market_count": 1121
+        "market_count": 1332
     },
     {
         "id": 8,
@@ -47,7 +47,7 @@ sports = [
     {
         "id": 27454571,
         "name": "Киберспорт",
-        "market_count": 8
+        "market_count": 6
     },
     {
         "id": 998918,
@@ -62,7 +62,7 @@ sports = [
     {
         "id": 998917,
         "name": "Волейбол",
-        "market_count": 12
+        "market_count": 15
     },
     {
         "id": 11,
@@ -87,7 +87,7 @@ sports = [
     {
         "id": 6422,
         "name": "Снукер",
-        "market_count": 5
+        "market_count": 40
     },
     {
         "id": 6231,
@@ -107,37 +107,37 @@ sports = [
     {
         "id": 606611,
         "name": "Нетбол",
-        "market_count": 5
+        "market_count": 4
     },
     {
         "id": 451485,
         "name": "Зимние",
-        "market_count": 21
+        "market_count": 23
     },
     {
         "id": 7522,
         "name": "Баскетбол ",
-        "market_count": 218
+        "market_count": 320
     },
     {
         "id": 7524,
         "name": "Хоккей ",
-        "market_count": 122
+        "market_count": 168
     },
     {
         "id": 61420,
         "name": "Австралийский футбол",
-        "market_count": 36
+        "market_count": 34
     },
     {
         "id": 468328,
         "name": "Гандбол ",
-        "market_count": 24
+        "market_count": 22
     },
     {
         "id": 3503,
         "name": "Дартс",
-        "market_count": 148
+        "market_count": 64
     },
     {
         "id": 26420387,
@@ -147,7 +147,7 @@ sports = [
     {
         "id": 4339,
         "name": "Собачьи бега",
-        "market_count": 239
+        "market_count": 337
     },
     {
         "id": 2378961,

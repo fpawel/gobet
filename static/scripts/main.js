@@ -11335,8 +11335,8 @@ var _fpawel$gobet_front$Aping$getSportByID = F2(
 			return _elm_lang$core$Native_Utils.crashCase(
 				'Aping',
 				{
-					start: {line: 43, column: 5},
-					end: {line: 48, column: 67}
+					start: {line: 44, column: 5},
+					end: {line: 49, column: 67}
 				},
 				_p3)(
 				A2(
@@ -11353,9 +11353,9 @@ var _fpawel$gobet_front$Aping$Event = F8(
 	function (a, b, c, d, e, f, g, h) {
 		return {id: a, name: b, country: c, openDate: d, timezone: e, venue: f, sport: g, markets: h};
 	});
-var _fpawel$gobet_front$Aping$Market = F5(
-	function (a, b, c, d, e) {
-		return {id: a, name: b, totalMatched: c, runners: d, competition: e};
+var _fpawel$gobet_front$Aping$Market = F6(
+	function (a, b, c, d, e, f) {
+		return {id: a, name: b, totalMatched: c, totalAvailable: d, runners: e, competition: f};
 	});
 var _fpawel$gobet_front$Aping$Runner = F2(
 	function (a, b) {
@@ -11958,19 +11958,24 @@ var _fpawel$gobet_front$Aping_Decoder$market = A4(
 		{ctor: '[]'},
 		A4(
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-			'totalMatched',
+			'totalAvailable',
 			_elm_lang$core$Json_Decode$float,
 			0,
 			A4(
 				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-				'marketName',
-				_elm_lang$core$Json_Decode$string,
-				'',
-				A3(
-					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-					'marketId',
+				'totalMatched',
+				_elm_lang$core$Json_Decode$float,
+				0,
+				A4(
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+					'marketName',
 					_elm_lang$core$Json_Decode$string,
-					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Aping$Market))))));
+					'',
+					A3(
+						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+						'marketId',
+						_elm_lang$core$Json_Decode$string,
+						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Aping$Market)))))));
 var _fpawel$gobet_front$Aping_Decoder$sport = A4(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
 	'market_count',
@@ -13869,6 +13874,74 @@ var _fpawel$gobet_front$Market$view = function (_p1) {
 			runners));
 };
 
+var _fpawel$gobet_front$Prices$Market = F4(
+	function (a, b, c, d) {
+		return {id: a, totalMatched: b, totalAvailable: c, runners: d};
+	});
+var _fpawel$gobet_front$Prices$Runner = F2(
+	function (a, b) {
+		return {id: a, odds: b};
+	});
+var _fpawel$gobet_front$Prices$Odd = F3(
+	function (a, b, c) {
+		return {index: a, side: b, odd: c};
+	});
+var _fpawel$gobet_front$Prices$PriceSize = F2(
+	function (a, b) {
+		return {price: a, size: b};
+	});
+var _fpawel$gobet_front$Prices$priceSize = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'size',
+	_elm_lang$core$Json_Decode$float,
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'price',
+		_elm_lang$core$Json_Decode$float,
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Prices$PriceSize)));
+var _fpawel$gobet_front$Prices$odd = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'odd',
+	_elm_lang$core$Json_Decode$maybe(_fpawel$gobet_front$Prices$priceSize),
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'side',
+		_elm_lang$core$Json_Decode$string,
+		A3(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+			'index',
+			_elm_lang$core$Json_Decode$int,
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Prices$Odd))));
+var _fpawel$gobet_front$Prices$runner = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'odds',
+	_elm_lang$core$Json_Decode$list(_fpawel$gobet_front$Prices$odd),
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'id',
+		_elm_lang$core$Json_Decode$int,
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Prices$Runner)));
+var _fpawel$gobet_front$Prices$decoderMarket = A4(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+	'runners',
+	_elm_lang$core$Json_Decode$list(_fpawel$gobet_front$Prices$runner),
+	{ctor: '[]'},
+	A4(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+		'totalAvailable',
+		A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, _elm_lang$core$Json_Decode$float),
+		_elm_lang$core$Maybe$Nothing,
+		A4(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+			'totalMatched',
+			A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, _elm_lang$core$Json_Decode$float),
+			_elm_lang$core$Maybe$Nothing,
+			A3(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+				'id',
+				_elm_lang$core$Json_Decode$string,
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Prices$Market)))));
+
 var _fpawel$gobet_front$Event$websocketURLPrices = F2(
 	function (location, eventID) {
 		return A2(
@@ -14056,7 +14129,7 @@ var _fpawel$gobet_front$Event$update = F2(
 									_0: A2(_fpawel$gobet_front$Event$answerHashcode, _p16, m),
 									_1: cmds
 								});
-						case 'WebsocketMarket':
+						case 'WebsocketPricesMarket':
 							return A2(
 								_elm_lang$core$Platform_Cmd_ops['!'],
 								m,
@@ -14248,14 +14321,14 @@ var _fpawel$gobet_front$Event$decoderWebsocketSessionID = A3(
 	'session_id',
 	_elm_lang$core$Json_Decode$string,
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Event$WebsocketSessionID));
-var _fpawel$gobet_front$Event$WebsocketMarket = function (a) {
-	return {ctor: 'WebsocketMarket', _0: a};
+var _fpawel$gobet_front$Event$WebsocketPricesMarket = function (a) {
+	return {ctor: 'WebsocketPricesMarket', _0: a};
 };
-var _fpawel$gobet_front$Event$decoderWebsocketMarket = A3(
+var _fpawel$gobet_front$Event$decoderWebsocketPricesMarket = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 	'market',
-	_fpawel$gobet_front$Aping_Decoder$market,
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Event$WebsocketMarket));
+	_fpawel$gobet_front$Prices$decoderMarket,
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Event$WebsocketPricesMarket));
 var _fpawel$gobet_front$Event$WebsocketEvent = function (a) {
 	return {ctor: 'WebsocketEvent', _0: a};
 };
@@ -14277,7 +14350,7 @@ var _fpawel$gobet_front$Event$decoderWebsocket = A3(
 				_0: _fpawel$gobet_front$Event$decoderWebsocketEvent,
 				_1: {
 					ctor: '::',
-					_0: _fpawel$gobet_front$Event$decoderWebsocketMarket,
+					_0: _fpawel$gobet_front$Event$decoderWebsocketPricesMarket,
 					_1: {
 						ctor: '::',
 						_0: _fpawel$gobet_front$Event$decoderWebsocketSessionID,

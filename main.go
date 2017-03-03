@@ -21,8 +21,8 @@ import (
 	"github.com/user/gobet/betfair.com/aping/client/events"
 	"strconv"
 
-	"github.com/user/gobet/betfair.com/aping/client/prices"
-	"github.com/user/gobet/betfair.com/aping/client/prices/pricesws"
+	"github.com/user/gobet/betfair.com/aping/client/eventPrices"
+	"github.com/user/gobet/betfair.com/aping/client/eventPrices/eventPricesWS"
 )
 
 const (
@@ -85,7 +85,7 @@ func setupRouteWebsocketPrices(router *gin.Engine){
 		}
 
 		conn.EnableWriteCompression(true)
-		pricesws.RegisterNewWriter(eventID,conn)
+	    eventPricesWS.RegisterNewWriter(eventID,conn)
 
 
 	})
@@ -98,7 +98,7 @@ func setupRouteWebsocketPrices(router *gin.Engine){
 			return
 		}
 		conn.EnableWriteCompression(true)
-		pricesws.RegisterNewReader(sessionID,conn)
+		eventPricesWS.RegisterNewReader(sessionID,conn)
 	})
 }
 
@@ -164,8 +164,8 @@ func setupRoutePrices(router *gin.Engine) {
 			return
 		}
 
-		ch := make(chan prices.Result)
-		prices.Get(eventID, marketIDs, ch)
+		ch := make(chan eventPrices.Result)
+		eventPrices.Get(eventID, marketIDs, ch)
 		x := <-ch
 		close(ch)
 		jsonResult(c, x.Markets, x.Error)

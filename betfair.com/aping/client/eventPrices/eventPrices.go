@@ -1,4 +1,4 @@
-package prices
+package eventPrices
 
 import (
 	"encoding/json"

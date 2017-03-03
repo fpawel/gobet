@@ -153,6 +153,20 @@ type Odd struct {
 	Size  float64 `json:"size"`
 }
 
+func (x *Runner) GetOdd( side string, index int) *Odd{
+	if x.ExchangePrices == nil {
+		return nil
+	}
+	xs := x.ExchangePrices.AvailableToBack
+	if side == "LAY" {
+		xs = x.ExchangePrices.AvailableToLay
+	}
+	if index >= len(xs) {
+		return nil
+	}
+	return &xs[index]
+}
+
 func (market *Market) Copy(copyMarket *Market) {
 	*copyMarket = *market
 	copyMarket.Runners = make([]Runner, len(market.Runners))
