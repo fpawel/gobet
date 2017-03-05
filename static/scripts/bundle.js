@@ -236,12 +236,11 @@ var DataTypes;
             }).map(function (game) {
                 return applyGameChanges(game, changes[game.event_id]);
             });
-            var newGames = gamesChanges.inplay ? gamesChanges.inplay : [];
             var nextGames = [];
             updatedGames.forEach(function (game) { return nextGames.push(game); });
-            newGames.forEach(function (game) {
-                nextGames.push(game);
-            });
+            for (var key in inplays) {
+                nextGames.push(inplays[key]);
+            }
             nextGames.forEach(function (game) { return game.changes = changes[game.event_id]; });
             nextGames.sort(function (x, y) {
                 switch (numberToCompare(x.page - y.page)) {
