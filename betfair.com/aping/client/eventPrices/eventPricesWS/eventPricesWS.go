@@ -53,7 +53,7 @@ func oddDiff(n int, side string, x *client.Runner, y *client.Runner) (r *Odd){
 	return
 }
 
-func getDiferenceOfMarkets(x *client.Market, y *client.Market, r *Market) (yes bool){
+func (r *Market) diff(x *client.Market, y *client.Market) (yes bool){
 	r.ID = y.ID
 	if x.TotalMatched != y.TotalMatched {
 		yes = true
@@ -131,8 +131,8 @@ func RegisterNewWriter(eventID int, conn *websocket.Conn) {
 
 func (session *Writer) run() {
 
-	log.Println(session.what(), "wsprices started")
-	defer log.Println(session.what(), "wsprices ended")
+	session.trace("started")
+	defer session.trace("ended")
 
 	// отправить потребителю идентификатор сессии
 	isClosed := session.send(struct {
@@ -147,6 +147,11 @@ func (session *Writer) run() {
 		if len(marketIDs) == 0 {
 			time.Sleep(2 * time.Second)
 			continue
+		}
+		if err := session.conn.WriteControl(websocket.PingMessage, []byte(""), time.Now().Add(3 * time.Second)); err != nil {
+			session.conn.Close()
+			session.trace("ping error: " + err.Error())
+			return
 		}
 		isClosed = session.processPrices(marketIDs)
 	}
@@ -200,49 +205,38 @@ func (session *Writer) setMarkets(markets []client.Market) (isClosed bool) {
 	for _, nextMarket := range markets {
 		nmarket, ok := nmarkets[nextMarket.ID]
 		if !ok {
-			log.Println("market ID not found", nextMarket.ID, session.what())
+			session.traceError(fmt.Sprint("market ID not found", nextMarket.ID))
 			continue
 		}
 		market := session.event.Markets[nmarket]
 
-		diff := Market{}
-		if getDiferenceOfMarkets(&market, &nextMarket, &diff){
+		diffMarket := Market{}
+		if diffMarket.diff(&market, &nextMarket){
 			isClosed = session.send(struct {
 				Market Market `json:"market"`
-			}{Market: diff})
+			}{Market: diffMarket})
 			if isClosed {
 				return
 			}
 			session.event.Markets[nmarket] = nextMarket
+			time.Sleep(3 * time.Second)
 		}
-
-
 	}
 	return
 }
 
 func (session *Writer) send(data interface{}) (isClosed bool) {
-	var err error
-	isClosed, err = session.send1(data)
 
-	if isClosed || err != nil {
-		return
-	}
-
-	if err != nil {
-		log.Println( session.what(), "writing event error:", err.Error())
-		session.conn.Close()
+	failWithError := func (context string, err error){
 		isClosed = true
+		session.conn.Close()
+		session.traceError(context + ": " +err.Error())
 	}
-	return
-}
-
-func (session *Writer) send1(data interface{}) (isClosed bool, err error) {
 
 	var eventBytes []byte
-	eventBytes, err = json.Marshal(data)
+	eventBytes, err := json.Marshal(data)
 	if err != nil {
-		err = session.newError("marhaling json", err)
+		failWithError("marhaling json", err)
 		return
 	}
 	fnv32a := fnv.New64a()
@@ -257,29 +251,27 @@ func (session *Writer) send1(data interface{}) (isClosed bool, err error) {
 	}
 	err = session.conn.WriteJSON(dataToSend)
 	if err != nil {
-		err = session.newError("writing", err)
+		failWithError("writing", err)
 		return
 	}
 	messageType, recivedBytes, err := session.conn.ReadMessage()
 	if err != nil {
+		failWithError("reading", err)
 		time.Sleep(time.Second)
-		err = session.newError("reading", err)
 		return
 	}
 
 	switch messageType {
 	case websocket.CloseMessage:
 		isClosed = true
-		log.Printf("%s, client drope COLSE message\n",
-			session.what())
+		session.trace("client drope COLSE message")
 		return
 	default:
 		if string(recivedBytes) == dataToSend.HashCode {
 			return
 		} else {
-			err = fmt.Errorf("%s: unexpected answer [%s], expected hash code [%s]",
-				session.what(),
-				string(recivedBytes), dataToSend.HashCode)
+			session.traceError( fmt.Sprintf("unexpected answer [%s], expected hash code [%s]",
+				string(recivedBytes), dataToSend.HashCode) )
 			time.Sleep(time.Second)
 			return
 		}
@@ -287,38 +279,18 @@ func (session *Writer) send1(data interface{}) (isClosed bool, err error) {
 	return
 }
 
-func (session *Writer) internalError(internalError error) {
+func (session *Writer) exitWithInternalError(context string, internalErr error) {
+	errText := fmt.Sprintf("%s: %s", context, internalErr.Error())
+	session.traceError( errText )
 	err := session.conn.WriteJSON(struct {
 		Error string `json:"error"`
-	}{internalError.Error()})
+	}{errText })
 	if err != nil {
-		log.Println(session.what(), "failed writing internal error info", err.Error())
+		session.traceError( "failed writing internal error info: " + err.Error() )
 	}
-}
-
-func (session *Writer) newError(context string, err error) error {
-	return fmt.Errorf(
-		"%s: %s, %s",
-		session.what(), context, err.Error())
-}
-
-func (session *Writer) exitWithInternalError(context string, err error) {
-	session.internalError(session.newError(context, err))
-	session.conn.Close()
 	time.Sleep(10 * time.Second)
+	session.conn.Close()
 	return
-
-}
-
-func (session *Writer) what() string {
-	s := ""
-	if session.event != nil {
-		s = fmt.Sprintf("-\"%s\"", session.event.Name)
-	}
-	return fmt.Sprintf("wsprices-writer-%d-%s-%s%s",
-		session.eventID,
-		session.conn.RemoteAddr().String(),
-		session.id, s)
 }
 
 func (session *Writer) getMarketIDs() (marketIDs []string) {
@@ -339,6 +311,24 @@ func (session *Writer) setMarketID(ID string, include bool) {
 	} else {
 		delete(session.marketIDs, ID)
 	}
+}
+
+func (session *Writer) what() string{
+	s := ""
+	if session.event != nil {
+		s = fmt.Sprintf("-\"%s\"", session.event.Name)
+	}
+	return fmt.Sprintf("wsprices-writer-%d-%s-%s%s",
+		session.eventID,
+		session.conn.RemoteAddr().String(),
+		session.id, s)
+}
+
+func (session *Writer) trace(text string) {
+	log.Println( session.what(), ":", text)
+}
+func (session *Writer) traceError(context string) {
+	session.trace("error: " + context)
 }
 
 func RegisterNewReader(ID string, conn *websocket.Conn) {

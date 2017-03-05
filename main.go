@@ -181,6 +181,8 @@ func setupRouteStatic(router *gin.Engine) {
 	// тестовые маршруты
 	router.StaticFile("test/proxi", "static/proxitest.html")
 	router.StaticFile("test/ws", "static/wstest.html")
+
+	router.StaticFile("test1", "static/ts1.html")
 }
 
 func jsonResult(c *gin.Context, data interface{}, err error) {
