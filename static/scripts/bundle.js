@@ -24,7 +24,7 @@ var FootballGameRow = (function (_super) {
         var game = this.props.game;
         function maybeChanged(f) {
             return game.changes ?
-                (f(game.changes) ? 'changed animated jello' : undefined) :
+                (f(game.changes) ? 'changed animated pulse' : undefined) :
                 undefined;
         }
         var odd = function (k) {
