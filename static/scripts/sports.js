@@ -7,7 +7,7 @@ sports = [
     {
         "id": 2,
         "name": "Теннис ",
-        "market_count": 2347
+        "market_count": 2453
     },
     {
         "id": 3,
@@ -37,7 +37,7 @@ sports = [
     {
         "id": 7,
         "name": "Скачки",
-        "market_count": 594
+        "market_count": 590
     },
     {
         "id": 8,
@@ -112,7 +112,7 @@ sports = [
     {
         "id": 7522,
         "name": "Баскетбол ",
-        "market_count": 234
+        "market_count": 239
     },
     {
         "id": 7524,
@@ -142,7 +142,7 @@ sports = [
     {
         "id": 4339,
         "name": "Собачьи бега",
-        "market_count": 406
+        "market_count": 372
     },
     {
         "id": 2378961,
