@@ -189,7 +189,10 @@ exports.code_to_country = {
     'GI': 'Гибралтар',
     'CY': 'Кипр',
 };
-exports.getCountryNameByCode = function (code) { return exports.code_to_country.code; };
+exports.getCountryNameByCode = function (code) {
+    var x = exports.code_to_country[code];
+    return x ? x : '';
+};
 
 },{}],3:[function(require,module,exports){
 "use strict";
