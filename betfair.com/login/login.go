@@ -72,7 +72,9 @@ func GetAuth( ch chan<- Result )  {
 
 		result :=  login(user, pass)
 		if result.Error != nil {
-			log.Println("can`t login betfair.com: ok")
+			log.Println("login betfair.com: successfully")
+		} else {
+			log.Println("login betfair.com: failed")
 		}
 
 

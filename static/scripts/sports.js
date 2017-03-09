@@ -2,12 +2,12 @@ sports = [
     {
         "id": 1,
         "name": "Футбол ",
-        "market_count": 10518
+        "market_count": 13792
     },
     {
         "id": 2,
         "name": "Теннис ",
-        "market_count": 3748
+        "market_count": 3761
     },
     {
         "id": 3,
@@ -17,17 +17,17 @@ sports = [
     {
         "id": 4,
         "name": "Крикет",
-        "market_count": 118
+        "market_count": 124
     },
     {
         "id": 5,
         "name": "Регби",
-        "market_count": 180
+        "market_count": 198
     },
     {
         "id": 1477,
         "name": "Регби-13",
-        "market_count": 139
+        "market_count": 125
     },
     {
         "id": 6,
@@ -37,7 +37,7 @@ sports = [
     {
         "id": 7,
         "name": "Скачки",
-        "market_count": 941
+        "market_count": 1017
     },
     {
         "id": 8,
@@ -107,7 +107,7 @@ sports = [
     {
         "id": 7522,
         "name": "Баскетбол ",
-        "market_count": 198
+        "market_count": 218
     },
     {
         "id": 7524,
@@ -137,7 +137,7 @@ sports = [
     {
         "id": 4339,
         "name": "Собачьи бега",
-        "market_count": 433
+        "market_count": 334
     },
     {
         "id": 2378961,
