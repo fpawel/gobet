@@ -105,7 +105,7 @@ func init() {
 	var err error
 	appKeyValue, err = getAppKey()
 	if err != nil {
-		log.Fatalf("can`t get application key: %v", err)
+		log.Fatalln("can`t get application key:", err)
 	}
 	log.Printf("app key: %v", appKeyValue)
 

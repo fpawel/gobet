@@ -6,49 +6,83 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"sync"
+	"time"
 )
 
-// Login выполняет вход на betfair.com, возвращает строку сессии
-func Login(user string, pass string) (sessionToken string, err error) {
+type Result struct {
+	SessionToken string
+	Error      error
+}
+
+var muAwaiters sync.RWMutex
+var awaiters   []chan<- Result
+var muSessionToken    sync.RWMutex
+var sessionToken  string
+var sessionTime time.Time
+
+
+// Login выполняет авторизацию на  betfair.com
+func login(user string, pass string) (result Result) {
 	const URL = `https://identitysso.betfair.com/api/login?username=%s&password=%s&login=true&redirectMethod=POST&product=home.betfair.int&url=https://www.betfair.com/`
 	urlStr := fmt.Sprintf(URL, user, pass)
 	var req *http.Request
-	if req, err = http.NewRequest("POST", urlStr, nil); err != nil {
+	if req, result.Error = http.NewRequest("POST", urlStr, nil);
+		result.Error != nil {
 		return
 	}
 
 	var client http.Client
 	var response *http.Response
-	if response, err = client.Do(req); err != nil {
+	if response, result.Error = client.Do(req); result.Error != nil {
 		return
 	}
 	strSetCookie := response.Header.Get("Set-Cookie")
 
 	m := regexp.MustCompile("ssoid=([^;]+);").FindStringSubmatch(strSetCookie)
 	if len(m) < 2 {
-		err = fmt.Errorf("no headers in response %v", strSetCookie)
+		result.Error = fmt.Errorf("no headers in response %v", strSetCookie)
 		return
 	}
-	sessionToken = m[1]
+	result.SessionToken = m[1]
 	return
 
 }
 
-// SessionToken строка сессии betfair.com
-func SessionToken() string {
-	return sessionToken
-}
-
-var sessionToken string
-
-func init() {
-	user := os.Getenv("BETFAIR_LOGIN_USER")
-	pass := os.Getenv("BETFAIR_LOGIN_PASS")
-	var err error
-	sessionToken, err = Login(user, pass)
-	if err != nil {
-		log.Fatalf("can`t login betfair.com: %v", err)
+func GetAuth( ch chan<- Result )  {
+	muSessionToken.RLock()
+	if sessionToken != "" && time.Since(sessionTime) < 30 * time.Minute {
+		muSessionToken.RUnlock()
+		go func(){
+			ch <- Result{SessionToken: sessionToken, Error: nil}
+		}()
+		return
 	}
-	log.Printf("login betfair.com: ok")
+	muSessionToken.RUnlock()
 
+	muAwaiters.Lock()
+	awaiters = append(awaiters,ch)
+	defer  muAwaiters.Unlock()
+	if len(awaiters)>1{
+		return
+	}
+	go func() {
+		user := os.Getenv("BETFAIR_LOGIN_USER")
+		pass := os.Getenv("BETFAIR_LOGIN_PASS")
+
+		result :=  login(user, pass)
+		if result.Error != nil {
+			log.Println("can`t login betfair.com: ok")
+		}
+
+
+		muAwaiters.Lock()
+		defer muAwaiters.Unlock()
+		for _, ch := range awaiters {
+			ch <- result
+		}
+		awaiters = nil
+	}()
 }
+
+
