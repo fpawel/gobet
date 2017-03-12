@@ -71,12 +71,12 @@ func GetAuth( ch chan<- Result )  {
 		pass := os.Getenv("BETFAIR_LOGIN_PASS")
 
 		result :=  login(user, pass)
-		if result.Error != nil {
-			log.Println("login betfair.com: successfully")
-		} else {
-			log.Println("login betfair.com: failed")
-		}
 
+		s := "successfully"
+		if result.Error != nil {
+			s ="failed"
+		}
+		log.Println("login betfair.com: ",s)
 
 		muAwaiters.Lock()
 		defer muAwaiters.Unlock()
