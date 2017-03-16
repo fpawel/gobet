@@ -12823,7 +12823,7 @@ var _fpawel$gobet_front$Football$decoderGame = A2(
 																		'event_id',
 																		_elm_lang$core$Json_Decode$int,
 																		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Football$Game)))))))))))))))))));
-var _fpawel$gobet_front$Football$GameCahnges = function (a) {
+var _fpawel$gobet_front$Football$GameUpdates = function (a) {
 	return function (b) {
 		return function (c) {
 			return function (d) {
@@ -12900,7 +12900,7 @@ var _fpawel$gobet_front$Football$decoderGameCahnges = A4(
 											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 											'event_id',
 											_elm_lang$core$Json_Decode$int,
-											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Football$GameCahnges))))))))))));
+											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Football$GameUpdates))))))))))));
 var _fpawel$gobet_front$Football$GameListUpdates = F3(
 	function (a, b, c) {
 		return {inplay: a, outplay: b, changes: c};
@@ -12921,11 +12921,11 @@ var _fpawel$gobet_front$Football$decoderGameListUpdates = A4(
 			_elm_lang$core$Json_Decode$list(_fpawel$gobet_front$Football$decoderGame),
 			{ctor: '[]'},
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Football$GameListUpdates))));
-var _fpawel$gobet_front$Football$ReplyFromServer = F2(
+var _fpawel$gobet_front$Football$WebData = F2(
 	function (a, b) {
 		return {changes: a, hashCode: b};
 	});
-var _fpawel$gobet_front$Football$decoderReplyFromServer = A3(
+var _fpawel$gobet_front$Football$decoderWebData = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 	'hash_code',
 	_elm_lang$core$Json_Decode$string,
@@ -12933,7 +12933,7 @@ var _fpawel$gobet_front$Football$decoderReplyFromServer = A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 		'changes',
 		_fpawel$gobet_front$Football$decoderGameListUpdates,
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Football$ReplyFromServer)));
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_fpawel$gobet_front$Football$WebData)));
 var _fpawel$gobet_front$Football$Model = function (a) {
 	return {ctor: 'Model', _0: a};
 };
@@ -12981,8 +12981,8 @@ var _fpawel$gobet_front$Football$update = F2(
 				});
 		}
 	});
-var _fpawel$gobet_front$Football$MsgReplyFromServer = function (a) {
-	return {ctor: 'MsgReplyFromServer', _0: a};
+var _fpawel$gobet_front$Football$OnWebData = function (a) {
+	return {ctor: 'OnWebData', _0: a};
 };
 var _fpawel$gobet_front$Football$subscriptions = function (_p26) {
 	var _p27 = _p26;
@@ -12990,8 +12990,8 @@ var _fpawel$gobet_front$Football$subscriptions = function (_p26) {
 		_elm_lang$websocket$WebSocket$listen,
 		_fpawel$gobet_front$Football$websocketURL(_p27._0),
 		function (_p28) {
-			return _fpawel$gobet_front$Football$MsgReplyFromServer(
-				A2(_elm_lang$core$Json_Decode$decodeString, _fpawel$gobet_front$Football$decoderReplyFromServer, _p28));
+			return _fpawel$gobet_front$Football$OnWebData(
+				A2(_elm_lang$core$Json_Decode$decodeString, _fpawel$gobet_front$Football$decoderWebData, _p28));
 		});
 };
 
@@ -14614,8 +14614,8 @@ var _fpawel$gobet_front$Sports$init = function (location) {
 		});
 };
 
-var _fpawel$gobet_front$Msg$UrlChange = function (a) {
-	return {ctor: 'UrlChange', _0: a};
+var _fpawel$gobet_front$Msg$OnLocationChanged = function (a) {
+	return {ctor: 'OnLocationChanged', _0: a};
 };
 var _fpawel$gobet_front$Msg$Football = function (a) {
 	return {ctor: 'Football', _0: a};
@@ -14838,8 +14838,8 @@ var _fpawel$gobet_front$Content$update = F2(
 		return _elm_lang$core$Native_Utils.crashCase(
 			'Content',
 			{
-				start: {line: 75, column: 5},
-				end: {line: 98, column: 67}
+				start: {line: 77, column: 5},
+				end: {line: 100, column: 67}
 			},
 			_p6)(
 			A2(
@@ -15191,7 +15191,7 @@ var _fpawel$gobet_front$Main$update = F2(
 	function (msg, model) {
 		var _p9 = msg;
 		switch (_p9.ctor) {
-			case 'UrlChange':
+			case 'OnLocationChanged':
 				var currentRoute = _fpawel$gobet_front$Content$route(model.content);
 				var newRoute = A2(
 					_elm_lang$core$Maybe$withDefault,
@@ -15252,7 +15252,7 @@ var _fpawel$gobet_front$Main$init = F2(
 	});
 var _fpawel$gobet_front$Main$main = A2(
 	_elm_lang$navigation$Navigation$programWithFlags,
-	_fpawel$gobet_front$Msg$UrlChange,
+	_fpawel$gobet_front$Msg$OnLocationChanged,
 	{init: _fpawel$gobet_front$Main$init, view: _fpawel$gobet_front$Main$view, update: _fpawel$gobet_front$Main$update, subscriptions: _fpawel$gobet_front$Main$subscriptions})(
 	A2(
 		_elm_lang$core$Json_Decode$andThen,
