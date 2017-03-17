@@ -6,21 +6,22 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"fmt"
+
 	"github.com/user/gobet/betfair.com/aping/client/endpoint"
 	"github.com/user/gobet/betfair.com/login"
-	"fmt"
+	"github.com/user/gobet/mobileinet"
 )
 
 func GetResponse(appKey *string, endpoint endpoint.Endpoint, params interface{}) (responseBody []byte, err error) {
 
 	chLogin := make(chan login.Result)
 	login.GetAuth(chLogin)
-	rLogin :=  <- chLogin
+	rLogin := <-chLogin
 	if rLogin.Error != nil {
 		err = fmt.Errorf("login error: %v", rLogin.Error)
 		return
 	}
-
 
 	jsonReq := struct {
 		Jsonrpc string      `json:"jsonrpc"`
@@ -56,5 +57,8 @@ func GetResponse(appKey *string, endpoint endpoint.Endpoint, params interface{})
 	defer resp.Body.Close()
 
 	responseBody, err = ioutil.ReadAll(resp.Body)
+
+	mobileinet.LogAddTotalBytesReaded(len(responseBody), "API-NG")
+
 	return
 }

@@ -1,5 +1,9 @@
 package client
 
+import (
+	"time"
+)
+
 type EventType struct {
 	ID          int    `json:"id"`
 	Name        string `json:"name"`
@@ -180,5 +184,16 @@ func (x *Event) Copy(theCopy *Event) {
 	theCopy.Markets = make([]Market, len(x.Markets))
 	for n := range x.Markets {
 		x.Markets[n].Copy(&theCopy.Markets[n])
+	}
+}
+
+func NewEvent(id int, name string) Event {
+	return  Event{
+		ID:id,
+		Name: name,
+		CountryCode:"",
+		OpenDate:  time.Now().String(),
+		Timezone:"",
+		Venue:"",
 	}
 }

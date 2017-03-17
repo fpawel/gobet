@@ -2,9 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
-	"os"
 	"strings"
 
 	"compress/gzip"
@@ -23,20 +21,17 @@ import (
 
 	"github.com/user/gobet/betfair.com/aping/client/eventPrices"
 	"github.com/user/gobet/betfair.com/aping/client/eventPrices/eventPricesWS"
-)
-
-const (
-	LOCALHOST_KEY = "LOCALHOST"
+	"github.com/user/gobet/envvars"
 )
 
 var footbalGames = games.New()
 var websocketUpgrader = websocket.Upgrader{} // use default options
 
 func main() {
-	setupRouter(getPort())
+	setupRouter()
 }
 
-func setupRouter(port string) {
+func setupRouter() {
 	router := gin.Default()
 	//router.Use(gzip.Gzip(gzip.DefaultCompression))
 	//router.Use(gin.Logger())
@@ -51,22 +46,17 @@ func setupRouter(port string) {
 		footbalGames.OpenWebSocketSession(conn)
 
 	})
-
-
-
 	router.GET("football/games", func(c *gin.Context) {
 		games, err := footbalGames.Get()
 		jsonResult(c, games, err)
 	})
-
 	setupRouterSports(router)
 	setupRouterEvents(router)
 	setupRouteMarkets(router)
 	setupRoutePrices(router)
 	setupRouteWebsocketPrices(router)
-
 	setupRouteStatic(router)
-	router.Run(":" + port)
+	router.Run(":" + envvars.Port())
 }
 
 func setupRouteWebsocketPrices(router *gin.Engine){
@@ -226,33 +216,6 @@ func setCompressedJSON(c *gin.Context, data interface{}) {
 	c.Writer.WriteHeader(http.StatusOK)
 }
 
-func getPort() (port string) {
-	port = os.Getenv("PORT")
-	if len(os.Args) >= 2 {
-		switch strings.ToLower(os.Args[1]) {
-		case "localhost":
-			port = "8083"
-			os.Setenv(LOCALHOST_KEY, "true")
-		case "mobileinet":
-			port = "8083"
-			os.Setenv(LOCALHOST_KEY, "true")
-			os.Setenv("MYMOBILEINET", "true")
-
-		case "8083":
-			port = "8083"
-
-		default:
-			log.Fatalf("wrong argument: %v", os.Args[1])
-		}
-	}
-
-	log.Printf("port: %s, localhost: %s, mymobileinet: %s",
-		port, os.Getenv(LOCALHOST_KEY), os.Getenv("MYMOBILEINET"))
-	if port == "" {
-		log.Fatal("$PORT must be set")
-	}
-	return
-}
 
 func returnInternalServerError(c *gin.Context, err error) {
 	c.String(http.StatusInternalServerError, err.Error())

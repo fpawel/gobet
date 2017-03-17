@@ -1,18 +1,24 @@
 package games
 
 import (
+	"sync"
+
 	"github.com/gorilla/websocket"
 	"github.com/user/gobet/betfair.com/football"
 	"github.com/user/gobet/betfair.com/football/games/ws"
 	"github.com/user/gobet/betfair.com/football/webclient"
-	"sync"
 
 	"github.com/user/gobet/betfair.com/aping/client"
 	"github.com/user/gobet/betfair.com/aping/client/events"
 
-	"os"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
+	"os"
 	"time"
+	"github.com/user/gobet/mobileinet"
 )
 
 type listGames struct {
@@ -30,14 +36,7 @@ func New() (x *listGames) {
 
 	go func() {
 		for {
-			x.update()
-			if os.Getenv("MYMOBILEINET") == "true" {
-				log.Println("MYMOBILEINET: sleep one minute")
-				time.Sleep(time.Minute)
-			} else if x.err != nil {
-				time.Sleep(10 * time.Second)
-			}
-
+			x.updateGames()
 		}
 	}()
 
@@ -89,46 +88,20 @@ func (x *listGames) OpenWebSocketSession(conn *websocket.Conn) {
 	}
 }
 
-func (x *listGames) update() {
-
-	mevents, err := getEvents()
+func (x *listGames) updateGames() {
+	sleepTime := time.Second
+	readGamesfunc := readGames
+	if os.Getenv("MYMOBILEINET") == "true" {
+		readGamesfunc = getGamesListFromHerokuApp
+		sleepTime = 20 * time.Second
+	}
+	nextGames, err := readGamesfunc()
 	if err != nil {
 		x.setError(err)
 		return
 	}
-
-	firstPageURL, err := webclient.ReadFirstPageURL()
-	if err != nil {
-		x.setError(err)
-		return
-	}
-
-	var readedGames []football.Game
-	ptrNextPage := &firstPageURL
-	for page := 0; ptrNextPage != nil && err == nil; page++ {
-
-		var gamesPage []football.Game
-		gamesPage, ptrNextPage, err = webclient.ReadPage(webclient.BetfairURL + *ptrNextPage)
-		if err != nil {
-			x.setError(err)
-			return
-		}
-
-		for _, game := range gamesPage {
-			game.Live.Page = page
-			if event, ok := mevents[game.EventID]; ok {
-				game.Event = &event
-				readedGames = append(readedGames, game)
-			} else {
-				// нет события Event с game.EventID.
-				// Возможно, кеш событий "не свежий" и его следует обновить
-				events.ClearCache(1)
-			}
-		}
-	}
-	if err == nil {
-		x.setGames(readedGames)
-	}
+	x.setGames(nextGames)
+	time.Sleep(sleepTime)
 }
 
 func getEvents() (mevents map[int]client.Event, err error) {
@@ -147,4 +120,74 @@ func getEvents() (mevents map[int]client.Event, err error) {
 	}
 	return
 
+}
+
+func readGames() (readedGames []football.Game, err error) {
+	var firstPageURL string
+	firstPageURL, err = webclient.ReadFirstPageURL()
+	if err != nil {
+		return
+	}
+
+	var mevents map[int]client.Event
+	mevents, err = getEvents()
+	if err != nil {
+		return
+	}
+
+	ptrNextPage := &firstPageURL
+	hasMissingEvents := false
+	for page := 0; ptrNextPage != nil && err == nil; page++ {
+		var gamesPage []football.Game
+		gamesPage, ptrNextPage, err = webclient.ReadPage(webclient.BetfairURL + *ptrNextPage)
+		if err != nil {
+			return
+		}
+		for _, game := range gamesPage {
+			game.Live.Page = page
+			readedGames = append(readedGames, game)
+
+			if event, ok := mevents[game.EventID]; ok {
+				game.Event = &event
+			} else {
+				log.Println("footbal: missing event", game)
+				// нет события Event с game.EventID.
+				hasMissingEvents = true
+			}
+		}
+	}
+
+	if hasMissingEvents {
+		// Возможно, кеш событий "не свежий" и его следует обновить
+		events.ClearCache(1)
+	}
+
+	return
+}
+
+func getGamesListFromHerokuApp() (readedGames []football.Game, err error) {
+
+	var resp *http.Response
+	url := "http://gobet.herokuapp.com/football/games"
+	resp, err = http.Get(url)
+	if err != nil {
+		err = fmt.Errorf("http error of %v: %v", url, err)
+		return
+	}
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	mobileinet.LogAddTotalBytesReaded(len(body), "HEROKU APP")
+
+	var data struct {
+		Ok  []football.Game `json:"ok,omitempty"`
+		Err error           `json:"error,omitempty"`
+	}
+
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		err = fmt.Errorf("data error of %v: %v", url, err)
+		return
+	}
+	readedGames = data.Ok
+	return
 }

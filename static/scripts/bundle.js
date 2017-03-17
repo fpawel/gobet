@@ -91,7 +91,7 @@ var FootballGameRow = (function (_super) {
         };
         return React.createElement("tr", null,
             React.createElement("td", { className: maybeChanged(function (a) { return a.page || a.order; }) }, game.page + "." + game.order),
-            React.createElement("td", null, "" + country_code_1.getCountryNameByCode(game.event.country_code)),
+            React.createElement("td", null, "" + (game.event ? country_code_1.getCountryNameByCode(game.event.country_code) : '')),
             React.createElement("td", null, game.home),
             React.createElement("td", null, game.away),
             React.createElement("td", { className: maybeChanged(function (a) { return a.time; }) }, game.time),

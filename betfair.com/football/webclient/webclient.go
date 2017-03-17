@@ -5,14 +5,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
-
 	"log"
-
 	"github.com/PuerkitoBio/goquery"
 	"github.com/user/gobet/betfair.com/football"
 	"github.com/user/gobet/betfair.com/football/parse"
 	"github.com/user/gobet/utils"
+	"github.com/user/gobet/envvars"
 )
 
 const (
@@ -39,7 +37,7 @@ func downloadURL(srcURL string, header http.Header) (*goquery.Document, error) {
 
 	URL := srcURL
 
-	if os.Getenv("LOCALHOST") == "true" {
+	if envvars.Localhost() {
 		// https://betproxi.herokuapp.com/test/proxi/https%3A%2F%2Fwww.betfair.com%2Fexchange%2Ffootball
 		//URL = fmt.Sprintf("http://betproxi.herokuapp.com/test/proxi/%s",
 		URL = fmt.Sprintf("http://gobet.herokuapp.com/proxi/%s",
@@ -64,7 +62,7 @@ func downloadURL(srcURL string, header http.Header) (*goquery.Document, error) {
 		return fail(utils.FuncFileLine(), err)
 	}
 
-	if os.Getenv("MYMOBILEINET") == "true" {
+	if envvars.MobileInet() {
 		log.Printf("MYMOBILEINET: %v", srcURL)
 	}
 
