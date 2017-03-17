@@ -34,16 +34,13 @@ func downloadURL(srcURL string, header http.Header) (*goquery.Document, error) {
 	fail := func(fileLine string, e error) (*goquery.Document, error) {
 		return nil, fmt.Errorf("betfairPage, DownloadURL, %q, %s, %s", srcURL, fileLine, e.Error())
 	}
-
 	URL := srcURL
-
 	if envvars.Localhost() {
 		// https://betproxi.herokuapp.com/test/proxi/https%3A%2F%2Fwww.betfair.com%2Fexchange%2Ffootball
 		//URL = fmt.Sprintf("http://betproxi.herokuapp.com/test/proxi/%s",
 		URL = fmt.Sprintf("http://gobet.herokuapp.com/proxi/%s",
 			utils.QueryEscape(URL))
 	}
-
 	request, err := http.NewRequest("GET", URL, nil)
 	if err != nil {
 		return fail(utils.FuncFileLine(), err)
