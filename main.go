@@ -6,18 +6,19 @@ import (
 	"strings"
 
 	"compress/gzip"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 
-	_ "github.com/user/gobet/betfair.com/aping/client/eventTypes"
 	"github.com/user/gobet/betfair.com/football/games"
 	"github.com/user/gobet/proxi"
 	"github.com/user/gobet/utils"
 
+	"strconv"
+
 	"github.com/user/gobet/betfair.com/aping/client/event"
 	"github.com/user/gobet/betfair.com/aping/client/eventTypes"
 	"github.com/user/gobet/betfair.com/aping/client/events"
-	"strconv"
 
 	"github.com/user/gobet/betfair.com/aping/client/eventPrices"
 	"github.com/user/gobet/betfair.com/aping/client/eventPrices/eventPricesWS"
@@ -59,7 +60,7 @@ func setupRouter() {
 	router.Run(":" + envvars.Port())
 }
 
-func setupRouteWebsocketPrices(router *gin.Engine){
+func setupRouteWebsocketPrices(router *gin.Engine) {
 	router.GET("wsprices/:ID", func(c *gin.Context) {
 
 		eventID, err := strconv.Atoi(c.Param("ID"))
@@ -75,20 +76,19 @@ func setupRouteWebsocketPrices(router *gin.Engine){
 		}
 
 		conn.EnableWriteCompression(true)
-	    eventPricesWS.RegisterNewWriter(eventID,conn)
-
+		eventPricesWS.RegisterNewWriter(eventID, conn)
 
 	})
 
 	router.GET("wsprices-markets/:ID", func(c *gin.Context) {
-		sessionID  := c.Param("ID")
+		sessionID := c.Param("ID")
 		conn, err := websocketUpgrader.Upgrade(c.Writer, c.Request, nil)
 		if err != nil {
 			returnInternalServerError(c, err)
 			return
 		}
 		conn.EnableWriteCompression(true)
-		eventPricesWS.RegisterNewReader(sessionID,conn)
+		eventPricesWS.RegisterNewReader(sessionID, conn)
 	})
 }
 
@@ -215,7 +215,6 @@ func setCompressedJSON(c *gin.Context, data interface{}) {
 
 	c.Writer.WriteHeader(http.StatusOK)
 }
-
 
 func returnInternalServerError(c *gin.Context, err error) {
 	c.String(http.StatusInternalServerError, err.Error())

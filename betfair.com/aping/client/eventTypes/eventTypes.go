@@ -3,13 +3,13 @@ package eventTypes
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"strconv"
+	"sync"
+
 	"github.com/user/gobet/betfair.com/aping/client"
 	"github.com/user/gobet/betfair.com/aping/client/appkey"
 	"github.com/user/gobet/betfair.com/aping/client/endpoint"
-	"log"
-	"os"
-	"strconv"
-	"sync"
 )
 
 type Result struct {
@@ -117,22 +117,4 @@ func read() (eventTypes []client.EventType, err error) {
 		eventTypes = append(eventTypes, y)
 	}
 	return
-}
-
-func init() {
-
-	xs, err := read()
-
-	filePath := "./static/scripts/sports.js"
-	fs, err := os.Create(filePath)
-	if err != nil {
-		log.Fatalf("%s: %v", filePath, err)
-	}
-	defer fs.Close()
-
-	bytes, err := json.MarshalIndent(xs, "", "    ")
-	if err != nil {
-		log.Fatalf("%v", err)
-	}
-	fmt.Fprintf(fs, "sports = %s", string(bytes))
 }

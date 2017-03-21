@@ -18,6 +18,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+
 	"github.com/user/gobet/mobileinet"
 )
 
@@ -145,8 +146,6 @@ func readGames() (readedGames []football.Game, err error) {
 		}
 		for _, game := range gamesPage {
 			game.Live.Page = page
-			readedGames = append(readedGames, game)
-
 			if event, ok := mevents[game.EventID]; ok {
 				game.Event = &event
 			} else {
@@ -154,6 +153,7 @@ func readGames() (readedGames []football.Game, err error) {
 				// нет события Event с game.EventID.
 				hasMissingEvents = true
 			}
+			readedGames = append(readedGames, game)
 		}
 	}
 
