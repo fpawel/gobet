@@ -19,6 +19,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/user/gobet/envvars"
 	"github.com/user/gobet/mobileinet"
 )
 
@@ -90,6 +91,16 @@ func (x *listGames) OpenWebSocketSession(conn *websocket.Conn) {
 }
 
 func (x *listGames) updateGames() {
+
+	if !envvars.RunFootbal() {
+		x.mu.RLock()
+		hasGames := len(x.xs) > 0
+		x.mu.RUnlock()
+		if hasGames {
+			return
+		}
+	}
+
 	sleepTime := time.Second
 	readGamesfunc := readGames
 	if os.Getenv("MYMOBILEINET") == "true" {

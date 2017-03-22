@@ -1,52 +1,59 @@
 package envvars
 
 import (
+	"log"
 	"os"
 	"strings"
-	"log"
 )
 
 const (
-	_LOCALHOST    = "LOCALHOST"
-	_MYMOBILEINET = "MYMOBILEINET"
-	_PORT         = "PORT"
+	VarLocalHost    = "LOCALHOST"
+	VarMyMobileInet = "MYMOBILEINET"
+	VarPort         = "PORT"
+	VarRunFootbal   = "RUN_FOOTBALL"
 )
-
 
 // MobileInet true если переменная окружение _MYMOBILEINET утановлена в true
 func MobileInet() bool {
-	return os.Getenv(_MYMOBILEINET) == "true"
+	return os.Getenv(VarMyMobileInet) == "true"
 }
 
 func Port() string {
-	return os.Getenv(_PORT)
+	return os.Getenv(VarPort)
 }
 
 func Localhost() bool {
-	return os.Getenv(_LOCALHOST) == "true"
+	return os.Getenv(VarLocalHost) == "true"
 }
 
-func init(){
+func RunFootbal() bool {
+	return os.Getenv(VarRunFootbal) == "true"
+}
 
-	if len(os.Args) >= 2 {
+func init() {
+	os.Setenv(VarRunFootbal, "true")
+
+	if len(os.Args) == 2 {
 		switch strings.ToLower(os.Args[1]) {
 		case "localhost":
-			os.Setenv(_PORT, "8083")
-			os.Setenv(_LOCALHOST, "true")
+			os.Setenv(VarPort, "8083")
+			os.Setenv(VarLocalHost, "true")
 		case "mobileinet":
-			os.Setenv(_PORT, "8083")
-			os.Setenv(_LOCALHOST, "true")
-			os.Setenv(_MYMOBILEINET, "true")
+			os.Setenv(VarPort, "8083")
+			os.Setenv(VarLocalHost, "true")
+			os.Setenv(VarMyMobileInet, "true")
 		case "8083":
-			os.Setenv(_PORT, "8083")
+			os.Setenv(VarPort, "8083")
+		case "nofootball":
+			os.Setenv(VarRunFootbal, "false")
 		default:
 			log.Fatalf("wrong argument: %v", os.Args[1])
 		}
 	}
 	log.Printf("port: %s, localhost: %s, mymobileinet: %s",
-		os.Getenv(_PORT),
-		os.Getenv(_LOCALHOST), os.Getenv("_MYMOBILEINET"))
-	if os.Getenv(_PORT) == "" {
+		os.Getenv(VarPort),
+		os.Getenv(VarLocalHost), os.Getenv("_MYMOBILEINET"))
+	if os.Getenv(VarPort) == "" {
 		log.Fatal("$_PORT must be set")
 	}
 }
