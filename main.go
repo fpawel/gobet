@@ -88,7 +88,7 @@ func setupRouteWebsocketPrices(router *gin.Engine) {
 			return
 		}
 		err = eventPricesWS.SetIncludeMarket(requestBody)
-		jsonResult(c, struct {}{}, err)
+		jsonResult(c, struct{}{}, err)
 	})
 }
 

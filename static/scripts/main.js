@@ -14344,44 +14344,137 @@ var _fpawel$gobet_front$View_Sport$view = F3(
 				A2(_elm_lang$core$Dict$get, sportID, m.sportEvents)));
 	});
 
-var _fpawel$gobet_front$View_Market$tdMoney = function (color) {
-	return function (_p0) {
+var _fpawel$gobet_front$View_Market$tdMoney = F2(
+	function (color, value) {
+		return _elm_lang$core$Native_Utils.eq(value, 0) ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(
+			A2(
+				_elm_lang$html$Html$td,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'color', _1: color},
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(
+								_elm_lang$core$Basics$round(value)),
+							'$')),
+					_1: {ctor: '[]'}
+				}));
+	});
+var _fpawel$gobet_front$View_Market$viewRunner = F2(
+	function (prices, runner) {
+		var xs = A2(
+			_elm_lang$core$Maybe$withDefault,
+			{ctor: '[]'},
+			A2(
+				_elm_lang$core$Maybe$map,
+				function (_) {
+					return _.odds;
+				},
+				A2(
+					_elm_lang$core$Maybe$andThen,
+					function (_p0) {
+						return _elm_lang$core$List$head(
+							A2(
+								_elm_lang$core$List$filter,
+								function (_p1) {
+									var _p2 = _p1;
+									return _elm_lang$core$Native_Utils.eq(_p2.id, runner.id);
+								},
+								function (_) {
+									return _.runners;
+								}(_p0)));
+					},
+					prices)));
+		var odd = function (side) {
+			return A2(
+				_elm_lang$core$Maybe$withDefault,
+				{ctor: '[]'},
+				A2(
+					_elm_lang$core$Maybe$map,
+					function (_p3) {
+						var _p4 = _p3;
+						return _elm_lang$core$List$singleton(
+							_elm_lang$html$Html$text(
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(
+										_elm_lang$core$Basics$round(_p4.price)),
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										' ',
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											_elm_lang$core$Basics$toString(
+												_elm_lang$core$Basics$round(_p4.size)),
+											'$')))));
+					},
+					A2(
+						_elm_lang$core$Maybe$andThen,
+						function (_) {
+							return _.odd;
+						},
+						_elm_lang$core$List$head(
+							A2(
+								_elm_lang$core$List$filter,
+								function (x) {
+									return _elm_lang$core$Native_Utils.eq(x.side, side);
+								},
+								xs)))));
+		};
 		return A2(
-			_elm_lang$core$Maybe$map,
-			function (value) {
-				return A2(
+			_elm_lang$html$Html$tr,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
 					_elm_lang$html$Html$td,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$style(
-							{
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'color', _1: color},
-								_1: {ctor: '[]'}
-							}),
+						_0: A2(_elm_lang$html$Html_Attributes$attribute, 'width', '100%'),
 						_1: {ctor: '[]'}
 					},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text(
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								_elm_lang$core$Basics$toString(
-									_elm_lang$core$Basics$round(value)),
-								'$')),
+						_0: _elm_lang$html$Html$text(runner.name),
 						_1: {ctor: '[]'}
-					});
-			},
-			A2(
-				_elm_lang$core$Maybe$andThen,
-				function (value) {
-					return _elm_lang$core$Native_Utils.eq(value, 0) ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(value);
-				},
-				_p0));
-	};
-};
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$td,
+						{
+							ctor: '::',
+							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'width', '40px'),
+							_1: {ctor: '[]'}
+						},
+						odd('BACK')),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$td,
+							{
+								ctor: '::',
+								_0: A2(_elm_lang$html$Html_Attributes$attribute, 'width', '40px'),
+								_1: {ctor: '[]'}
+							},
+							odd('LAY')),
+						_1: {ctor: '[]'}
+					}
+				}
+			});
+	});
 var _fpawel$gobet_front$View_Market$viewRunners = function (prices) {
-	return function (_p1) {
+	return function (_p5) {
 		return _elm_lang$core$List$singleton(
 			A2(
 				_elm_lang$html$Html$div,
@@ -14400,25 +14493,8 @@ var _fpawel$gobet_front$View_Market$viewRunners = function (prices) {
 								{ctor: '[]'},
 								A2(
 									_elm_lang$core$List$map,
-									function (_p2) {
-										var _p3 = _p2;
-										return A2(
-											_elm_lang$html$Html$tr,
-											{ctor: '[]'},
-											{
-												ctor: '::',
-												_0: A2(
-													_elm_lang$html$Html$td,
-													{ctor: '[]'},
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html$text(_p3.name),
-														_1: {ctor: '[]'}
-													}),
-												_1: {ctor: '[]'}
-											});
-									},
-									_p1)))))));
+									_fpawel$gobet_front$View_Market$viewRunner(prices),
+									_p5)))))));
 	};
 };
 var _fpawel$gobet_front$View_Market$headPanel = F2(
@@ -14427,20 +14503,26 @@ var _fpawel$gobet_front$View_Market$headPanel = F2(
 			_fpawel$gobet_front$View_Market$tdMoney,
 			'green',
 			A2(
-				_elm_lang$core$Maybe$andThen,
-				function (_) {
-					return _.totalAvailable;
-				},
-				prices));
+				_elm_lang$core$Maybe$withDefault,
+				market.totalAvailable,
+				A2(
+					_elm_lang$core$Maybe$andThen,
+					function (_) {
+						return _.totalAvailable;
+					},
+					prices)));
 		var totalMatched = A2(
 			_fpawel$gobet_front$View_Market$tdMoney,
 			'yellow',
 			A2(
-				_elm_lang$core$Maybe$andThen,
-				function (_) {
-					return _.totalMatched;
-				},
-				prices));
+				_elm_lang$core$Maybe$withDefault,
+				market.totalMatched,
+				A2(
+					_elm_lang$core$Maybe$andThen,
+					function (_) {
+						return _.totalMatched;
+					},
+					prices)));
 		var marketName = A2(
 			_elm_lang$html$Html$td,
 			{

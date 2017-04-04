@@ -12,23 +12,21 @@ import (
 
 type Result struct {
 	SessionToken string
-	Error      error
+	Error        error
 }
 
 var muAwaiters sync.RWMutex
-var awaiters   []chan<- Result
-var muSessionToken    sync.RWMutex
-var sessionToken  string
+var awaiters []chan<- Result
+var muSessionToken sync.RWMutex
+var sessionToken string
 var sessionTime time.Time
-
 
 // Login выполняет авторизацию на  betfair.com
 func login(user string, pass string) (result Result) {
 	const URL = `https://identitysso.betfair.com/api/login?username=%s&password=%s&login=true&redirectMethod=POST&product=home.betfair.int&url=https://www.betfair.com/`
 	urlStr := fmt.Sprintf(URL, user, pass)
 	var req *http.Request
-	if req, result.Error = http.NewRequest("POST", urlStr, nil);
-		result.Error != nil {
+	if req, result.Error = http.NewRequest("POST", urlStr, nil); result.Error != nil {
 		return
 	}
 
@@ -49,11 +47,11 @@ func login(user string, pass string) (result Result) {
 
 }
 
-func GetAuth( ch chan<- Result )  {
+func GetAuth(ch chan<- Result) {
 	muSessionToken.RLock()
-	if sessionToken != "" && time.Since(sessionTime) < 30 * time.Minute {
+	if sessionToken != "" && time.Since(sessionTime) < 30*time.Minute {
 		muSessionToken.RUnlock()
-		go func(){
+		go func() {
 			ch <- Result{SessionToken: sessionToken, Error: nil}
 		}()
 		return
@@ -61,22 +59,27 @@ func GetAuth( ch chan<- Result )  {
 	muSessionToken.RUnlock()
 
 	muAwaiters.Lock()
-	awaiters = append(awaiters,ch)
-	defer  muAwaiters.Unlock()
-	if len(awaiters)>1{
+	defer muAwaiters.Unlock()
+	awaiters = append(awaiters, ch)
+	if len(awaiters) > 1 {
 		return
 	}
 	go func() {
 		user := os.Getenv("BETFAIR_LOGIN_USER")
 		pass := os.Getenv("BETFAIR_LOGIN_PASS")
 
-		result :=  login(user, pass)
+		result := login(user, pass)
 
 		s := "successfully"
 		if result.Error != nil {
-			s ="failed"
+			s = "failed"
+		} else {
+			muSessionToken.Lock()
+			sessionToken = result.SessionToken
+			sessionTime = time.Now()
+			muSessionToken.Unlock()
 		}
-		log.Println("login betfair.com: ",s)
+		log.Println("login betfair.com: ", s)
 
 		muAwaiters.Lock()
 		defer muAwaiters.Unlock()
@@ -86,5 +89,3 @@ func GetAuth( ch chan<- Result )  {
 		awaiters = nil
 	}()
 }
-
-
