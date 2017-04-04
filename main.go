@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"strings"
 
@@ -80,15 +81,14 @@ func setupRouteWebsocketPrices(router *gin.Engine) {
 
 	})
 
-	router.GET("wsprices-markets/:ID", func(c *gin.Context) {
-		sessionID := c.Param("ID")
-		conn, err := websocketUpgrader.Upgrade(c.Writer, c.Request, nil)
+	router.POST("prices-markets", func(c *gin.Context) {
+		requestBody, err := ioutil.ReadAll(c.Request.Body)
 		if err != nil {
 			returnInternalServerError(c, err)
 			return
 		}
-		conn.EnableWriteCompression(true)
-		eventPricesWS.RegisterNewReader(sessionID, conn)
+		err = eventPricesWS.SetIncludeMarket(requestBody)
+		jsonResult(c, struct {}{}, err)
 	})
 }
 

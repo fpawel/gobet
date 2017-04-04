@@ -3,57 +3,57 @@ package eventPricesWS
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/websocket"
-	"github.com/user/gobet/betfair.com/aping/client"
-	"github.com/user/gobet/betfair.com/aping/client/event"
-	"github.com/user/gobet/betfair.com/aping/client/eventPrices"
-	"github.com/user/gobet/utils"
 	"hash/fnv"
 	"log"
 	"reflect"
 	"strconv"
 	"sync"
 	"time"
+
+	"github.com/gorilla/websocket"
+	"github.com/user/gobet/betfair.com/aping/client"
+	"github.com/user/gobet/betfair.com/aping/client/event"
+	"github.com/user/gobet/betfair.com/aping/client/eventPrices"
+	"github.com/user/gobet/utils"
 )
 
 const (
 	BACK = "BACK"
-	LAY = "LAY"
+	LAY  = "LAY"
 )
 
 type Market struct {
-	ID             string  `json:"id"`
-	TotalMatched   float64 `json:"total_matched,omitempty"`
-	TotalAvailable float64 `json:"total_available,omitempty"`
-	Runners [] Runner `json:"runners,omitempty"`
+	ID             string   `json:"id"`
+	TotalMatched   float64  `json:"total_matched,omitempty"`
+	TotalAvailable float64  `json:"total_available,omitempty"`
+	Runners        []Runner `json:"runners,omitempty"`
 }
 
 type Runner struct {
-	ID   int    `json:"id"`
-	Odds []Odd  `json:"odds,omitempty"`
+	ID   int   `json:"id"`
+	Odds []Odd `json:"odds,omitempty"`
 }
 
 type Odd struct {
-	Index  int  `json:"index"`
-	Side  string  `json:"side"`
-	Odd   * client.Odd`json:"odd"`
+	Index int         `json:"index"`
+	Side  string      `json:"side"`
+	Odd   *client.Odd `json:"odd"`
 }
 
-
-func oddDiff(n int, side string, x *client.Runner, y *client.Runner) (r *Odd){
-	x_ := x.GetOdd(side,n)
-	y_ := y.GetOdd(side,n)
-	if !reflect.DeepEqual(x_,y_){
+func oddDiff(n int, side string, x *client.Runner, y *client.Runner) (r *Odd) {
+	x_ := x.GetOdd(side, n)
+	y_ := y.GetOdd(side, n)
+	if !reflect.DeepEqual(x_, y_) {
 		r = &Odd{
-			Index  : n,
-			Side  : side,
-			Odd   : y_,
+			Index: n,
+			Side:  side,
+			Odd:   y_,
 		}
 	}
 	return
 }
 
-func (r *Market) diff(x *client.Market, y *client.Market) (yes bool){
+func (r *Market) diff(x *client.Market, y *client.Market) (yes bool) {
 	r.ID = y.ID
 	if x.TotalMatched != y.TotalMatched {
 		yes = true
@@ -64,23 +64,23 @@ func (r *Market) diff(x *client.Market, y *client.Market) (yes bool){
 		yes = true
 		r.TotalAvailable = y.TotalAvailable
 	}
-	if len(x.Runners) != len(y.Runners){
-		log.Println("ERROR getDiferenceOfMarkets:",x.Name,x.ID,
+	if len(x.Runners) != len(y.Runners) {
+		log.Println("ERROR getDiferenceOfMarkets:", x.Name, x.ID,
 			"difernt numbers of runners", len(x.Runners), len(y.Runners))
 		return
 	}
 
-	for nRunner,aX := range x.Runners{
-		runner := Runner{ID:aX.ID}
+	for nRunner, aX := range x.Runners {
+		runner := Runner{ID: aX.ID}
 		yesRunner := false
 		aY := y.Runners[nRunner]
-		for n := 0; n<3; n++{
+		for n := 0; n < 3; n++ {
 
-			if back := oddDiff(n, BACK, &aX,&aY); back != nil {
+			if back := oddDiff(n, BACK, &aX, &aY); back != nil {
 				runner.Odds = append(runner.Odds, *back)
 				yesRunner = true
 			}
-			if lay := oddDiff(n, LAY, &aX,&aY); lay != nil {
+			if lay := oddDiff(n, LAY, &aX, &aY); lay != nil {
 				runner.Odds = append(runner.Odds, *lay)
 				yesRunner = true
 			}
@@ -93,7 +93,6 @@ func (r *Market) diff(x *client.Market, y *client.Market) (yes bool){
 
 	return
 }
-
 
 type Writer struct {
 	conn        *websocket.Conn
@@ -148,7 +147,7 @@ func (session *Writer) run() {
 			time.Sleep(2 * time.Second)
 			continue
 		}
-		if err := session.conn.WriteControl(websocket.PingMessage, []byte(""), time.Now().Add(3 * time.Second)); err != nil {
+		if err := session.conn.WriteControl(websocket.PingMessage, []byte(""), time.Now().Add(3*time.Second)); err != nil {
 			session.conn.Close()
 			session.trace("ping error: " + err.Error())
 			return
@@ -211,7 +210,7 @@ func (session *Writer) setMarkets(markets []client.Market) (isClosed bool) {
 		market := session.event.Markets[nmarket]
 
 		diffMarket := Market{}
-		if diffMarket.diff(&market, &nextMarket){
+		if diffMarket.diff(&market, &nextMarket) {
 			isClosed = session.send(struct {
 				Market Market `json:"market"`
 			}{Market: diffMarket})
@@ -227,10 +226,10 @@ func (session *Writer) setMarkets(markets []client.Market) (isClosed bool) {
 
 func (session *Writer) send(data interface{}) (isClosed bool) {
 
-	failWithError := func (context string, err error){
+	failWithError := func(context string, err error) {
 		isClosed = true
 		session.conn.Close()
-		session.traceError(context + ": " +err.Error())
+		session.traceError(context + ": " + err.Error())
 	}
 
 	var eventBytes []byte
@@ -270,8 +269,8 @@ func (session *Writer) send(data interface{}) (isClosed bool) {
 		if string(recivedBytes) == dataToSend.HashCode {
 			return
 		} else {
-			session.traceError( fmt.Sprintf("unexpected answer [%s], expected hash code [%s]",
-				string(recivedBytes), dataToSend.HashCode) )
+			session.traceError(fmt.Sprintf("unexpected answer [%s], expected hash code [%s]",
+				string(recivedBytes), dataToSend.HashCode))
 			time.Sleep(time.Second)
 			return
 		}
@@ -281,12 +280,12 @@ func (session *Writer) send(data interface{}) (isClosed bool) {
 
 func (session *Writer) exitWithInternalError(context string, internalErr error) {
 	errText := fmt.Sprintf("%s: %s", context, internalErr.Error())
-	session.traceError( errText )
+	session.traceError(errText)
 	err := session.conn.WriteJSON(struct {
 		Error string `json:"error"`
-	}{errText })
+	}{errText})
 	if err != nil {
-		session.traceError( "failed writing internal error info: " + err.Error() )
+		session.traceError("failed writing internal error info: " + err.Error())
 	}
 	time.Sleep(10 * time.Second)
 	session.conn.Close()
@@ -313,7 +312,7 @@ func (session *Writer) setMarketID(ID string, include bool) {
 	}
 }
 
-func (session *Writer) what() string{
+func (session *Writer) what() string {
 	s := ""
 	if session.event != nil {
 		s = fmt.Sprintf("-\"%s\"", session.event.Name)
@@ -325,10 +324,33 @@ func (session *Writer) what() string{
 }
 
 func (session *Writer) trace(text string) {
-	log.Println( session.what(), ":", text)
+	log.Println(session.what(), ":", text)
 }
 func (session *Writer) traceError(context string) {
 	session.trace("error: " + context)
+}
+
+func SetIncludeMarket(requestBody []byte) (err error) {
+	var request struct {
+		MarketID  string `json:"market_id"`
+		Include   bool   `json:"include"`
+		SessionID string `json:"session_id"`
+	}
+
+	if err = json.Unmarshal(requestBody, &request); err != nil {
+		err = fmt.Errorf("toggle market request: unmarhaling json of request body: %v", err)
+		return
+	}
+
+	writer, ok := openedSessions.getSession(request.SessionID)
+	if !ok {
+		err = fmt.Errorf("toggle market request: session ID not found: %v", request.SessionID)
+		return
+	}
+
+	writer.setMarketID(request.MarketID, request.Include)
+	return
+
 }
 
 func RegisterNewReader(ID string, conn *websocket.Conn) {
