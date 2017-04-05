@@ -1,10 +1,9 @@
-.tooltip {
+.my-tooltip {
     position: relative;
     display: inline-block;
-    border-bottom: 1px dotted black;
 }
 
-.tooltip .tooltiptext {
+.my-tooltip .my-tooltiptext {
     visibility: hidden;
     width: 120px;
     background-color: black;
@@ -19,9 +18,9 @@
     margin-left: -60px;
 }
 
-.tooltip .tooltiptext::after {
+.my-tooltip .my-tooltiptext::after {
     content: "";
-    position: absolute;
+    position: absolute; 
     bottom: 100%;
     left: 50%;
     margin-left: -5px;
@@ -30,6 +29,6 @@
     border-color: transparent transparent black transparent;
 }
 
-.tooltip:hover .tooltiptext {
+.my-tooltip:hover .my-tooltiptext {
     visibility: visible;
 }

@@ -14434,7 +14434,7 @@ var _fpawel$gobet_front$View_Market$tdMoney = F3(
 						_elm_lang$html$Html$div,
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('tooltip'),
+							_0: _elm_lang$html$Html_Attributes$class('my-tooltip'),
 							_1: {ctor: '[]'}
 						},
 						{
@@ -14467,7 +14467,7 @@ var _fpawel$gobet_front$View_Market$tdMoney = F3(
 									_elm_lang$html$Html$span,
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$class('tooltip-text'),
+										_0: _elm_lang$html$Html_Attributes$class('my-tooltiptext'),
 										_1: {ctor: '[]'}
 									},
 									{
