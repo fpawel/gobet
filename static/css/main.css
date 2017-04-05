@@ -1,0 +1,24 @@
+* {
+        margin: 0;
+        padding: 0;
+    }
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        font-size: 15px;
+    }
+
+    .table td,
+    .table th {
+        padding: 1px;
+    }
+
+    .table-football th, .table-football td {
+        border-top: none !important;
+    }
+
+
+    .table th span {
+        font-size: 150%;
+    }            

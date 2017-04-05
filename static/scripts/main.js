@@ -12566,30 +12566,78 @@ var _fpawel$gobet_front$Data_Prices$encodeToggleMarket = function (x) {
 				}
 			}));
 };
-var _fpawel$gobet_front$Data_Prices$toggleMarket = F2(
-	function (marketID, marketsPrices) {
+var _fpawel$gobet_front$Data_Prices$updateMarketPrices = F2(
+	function (ms, rs) {
+		var maybeInsert = function (k) {
+			return function (_p0) {
+				return A2(
+					_elm_lang$core$Maybe$withDefault,
+					_elm_lang$core$Basics$identity,
+					A2(
+						_elm_lang$core$Maybe$map,
+						_elm_lang$core$Dict$insert(k),
+						_p0));
+			};
+		};
+		return A6(
+			_elm_lang$core$Dict$merge,
+			_elm_lang$core$Dict$insert,
+			F2(
+				function (k, _p1) {
+					return maybeInsert(k);
+				}),
+			maybeInsert,
+			ms,
+			rs,
+			_elm_lang$core$Dict$empty);
+	});
+var _fpawel$gobet_front$Data_Prices$indexedPrices = _elm_lang$core$List$concatMap(
+	function (runner) {
 		return A2(
-			_elm_lang$core$Maybe$withDefault,
-			A3(
-				_elm_lang$core$Dict$insert,
-				marketID,
-				{
-					id: marketID,
-					totalMatched: _elm_lang$core$Maybe$Nothing,
-					totalAvailable: _elm_lang$core$Maybe$Nothing,
-					runners: {ctor: '[]'}
-				},
-				marketsPrices),
+			_elm_lang$core$List$map,
+			function (odd) {
+				return {
+					ctor: '_Tuple2',
+					_0: {ctor: '_Tuple3', _0: runner.id, _1: odd.side, _2: odd.index},
+					_1: odd.odd
+				};
+			},
+			runner.odds);
+	});
+var _fpawel$gobet_front$Data_Prices$updateAppMarket = F2(
+	function (_p2, x) {
+		var _p3 = _p2;
+		return _elm_lang$core$Native_Utils.update(
+			x,
+			{
+				id: _p3.id,
+				totalMatched: _p3.totalMatched,
+				totalAvailable: _p3.totalAvailable,
+				prices: A2(
+					_fpawel$gobet_front$Data_Prices$updateMarketPrices,
+					x.prices,
+					_elm_lang$core$Dict$fromList(
+						_fpawel$gobet_front$Data_Prices$indexedPrices(_p3.runners)))
+			});
+	});
+var _fpawel$gobet_front$Data_Prices$updateAppMarkets = F2(
+	function (markets, market) {
+		var m = A2(
+			_fpawel$gobet_front$Data_Prices$updateAppMarket,
+			market,
 			A2(
-				_elm_lang$core$Maybe$map,
-				function (_p0) {
-					return A2(_elm_lang$core$Dict$remove, marketID, marketsPrices);
-				},
-				A2(_elm_lang$core$Dict$get, marketID, marketsPrices)));
+				_elm_lang$core$Maybe$withDefault,
+				{id: market.id, totalMatched: _elm_lang$core$Maybe$Nothing, totalAvailable: _elm_lang$core$Maybe$Nothing, prices: _elm_lang$core$Dict$empty},
+				A2(_elm_lang$core$Dict$get, market.id, markets)));
+		return A3(_elm_lang$core$Dict$insert, market.id, m, markets);
 	});
 var _fpawel$gobet_front$Data_Prices$Market = F4(
 	function (a, b, c, d) {
 		return {id: a, totalMatched: b, totalAvailable: c, runners: d};
+	});
+var _fpawel$gobet_front$Data_Prices$AppMarket = F4(
+	function (a, b, c, d) {
+		return {id: a, totalMatched: b, totalAvailable: c, prices: d};
 	});
 var _fpawel$gobet_front$Data_Prices$Runner = F2(
 	function (a, b) {
@@ -12641,12 +12689,12 @@ var _fpawel$gobet_front$Data_Prices$decoderMarket = A4(
 	{ctor: '[]'},
 	A4(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-		'totalAvailable',
+		'total_available',
 		A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, _elm_lang$core$Json_Decode$float),
 		_elm_lang$core$Maybe$Nothing,
 		A4(
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-			'totalMatched',
+			'total_matched',
 			A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, _elm_lang$core$Json_Decode$float),
 			_elm_lang$core$Maybe$Nothing,
 			A3(
@@ -12734,6 +12782,22 @@ var _fpawel$gobet_front$App$tryGetSportByEventID = F2(
 						},
 						_elm_lang$core$Dict$toList(m.sportEvents)))));
 	});
+var _fpawel$gobet_front$App$toggleMarket = F2(
+	function (marketID, marketsPrices) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			A3(
+				_elm_lang$core$Dict$insert,
+				marketID,
+				{id: marketID, totalMatched: _elm_lang$core$Maybe$Nothing, totalAvailable: _elm_lang$core$Maybe$Nothing, prices: _elm_lang$core$Dict$empty},
+				marketsPrices),
+			A2(
+				_elm_lang$core$Maybe$map,
+				function (_p2) {
+					return A2(_elm_lang$core$Dict$remove, marketID, marketsPrices);
+				},
+				A2(_elm_lang$core$Dict$get, marketID, marketsPrices)));
+	});
 var _fpawel$gobet_front$App$Model = F6(
 	function (a, b, c, d, e, f) {
 		return {location: a, page: b, footballGames: c, sports: d, sportEvents: e, events: f};
@@ -12741,6 +12805,10 @@ var _fpawel$gobet_front$App$Model = F6(
 var _fpawel$gobet_front$App$MarketsPrices = F2(
 	function (a, b) {
 		return {session: a, marketsPrices: b};
+	});
+var _fpawel$gobet_front$App$Market = F4(
+	function (a, b, c, d) {
+		return {id: a, totalMatched: b, totalAvailable: c, prices: d};
 	});
 var _fpawel$gobet_front$App$PageFootball = {ctor: 'PageFootball'};
 var _fpawel$gobet_front$App$PageEvent = function (a) {
@@ -13243,7 +13311,7 @@ var _fpawel$gobet_front$Update_ToggleMarket$update = F2(
 		var _p2 = m.page;
 		if (_p2.ctor === 'PageEvent') {
 			var _p3 = _p2._0;
-			var marketsPrices = A2(_fpawel$gobet_front$Data_Prices$toggleMarket, marketID, _p3.marketsPrices);
+			var marketsPrices = A2(_fpawel$gobet_front$App$toggleMarket, marketID, _p3.marketsPrices);
 			var include = _fpawel$gobet_front$Help_Utils$isJust(
 				A2(_elm_lang$core$Dict$get, marketID, marketsPrices));
 			var cmds = _elm_lang$core$String$isEmpty(_p3.session) ? {ctor: '[]'} : {
@@ -14344,8 +14412,9 @@ var _fpawel$gobet_front$View_Sport$view = F3(
 				A2(_elm_lang$core$Dict$get, sportID, m.sportEvents)));
 	});
 
-var _fpawel$gobet_front$View_Market$tdMoney = F2(
-	function (color, value) {
+var _fpawel$gobet_front$View_Market$width100perc = A2(_elm_lang$html$Html_Attributes$attribute, 'width', '100%');
+var _fpawel$gobet_front$View_Market$tdMoney = F3(
+	function (tooltip, color, value) {
 		return _elm_lang$core$Native_Utils.eq(value, 0) ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(
 			A2(
 				_elm_lang$html$Html$td,
@@ -14361,75 +14430,158 @@ var _fpawel$gobet_front$View_Market$tdMoney = F2(
 				},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(
-								_elm_lang$core$Basics$round(value)),
-							'$')),
-					_1: {ctor: '[]'}
-				}));
-	});
-var _fpawel$gobet_front$View_Market$viewRunner = F2(
-	function (prices, runner) {
-		var xs = A2(
-			_elm_lang$core$Maybe$withDefault,
-			{ctor: '[]'},
-			A2(
-				_elm_lang$core$Maybe$map,
-				function (_) {
-					return _.odds;
-				},
-				A2(
-					_elm_lang$core$Maybe$andThen,
-					function (_p0) {
-						return _elm_lang$core$List$head(
-							A2(
-								_elm_lang$core$List$filter,
-								function (_p1) {
-									var _p2 = _p1;
-									return _elm_lang$core$Native_Utils.eq(_p2.id, runner.id);
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('tooltip'),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$span,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$style(
+										{
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'margin-left', _1: '10px'},
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
 								},
-								function (_) {
-									return _.runners;
-								}(_p0)));
-					},
-					prices)));
-		var odd = function (side) {
-			return A2(
-				_elm_lang$core$Maybe$withDefault,
-				{ctor: '[]'},
-				A2(
-					_elm_lang$core$Maybe$map,
-					function (_p3) {
-						var _p4 = _p3;
-						return _elm_lang$core$List$singleton(
-							_elm_lang$html$Html$text(
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Basics$toString(
-										_elm_lang$core$Basics$round(_p4.price)),
-									A2(
-										_elm_lang$core$Basics_ops['++'],
-										' ',
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(
 										A2(
 											_elm_lang$core$Basics_ops['++'],
 											_elm_lang$core$Basics$toString(
-												_elm_lang$core$Basics$round(_p4.size)),
-											'$')))));
+												_elm_lang$core$Basics$round(value)),
+											'$')),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$span,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class('tooltip-text'),
+										_1: {ctor: '[]'}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(tooltip),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {ctor: '[]'}
+				}));
+	});
+var _fpawel$gobet_front$View_Market$tdPriceSize = F2(
+	function (side, _p0) {
+		var _p1 = _p0;
+		return A2(
+			_elm_lang$html$Html$td,
+			{
+				ctor: '::',
+				_0: A2(_elm_lang$html$Html_Attributes$attribute, 'width', '80px'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'price ',
+							_elm_lang$core$Native_Utils.eq(side, 'BACK') ? 'back' : 'lay')),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: A2(_elm_lang$html$Html_Attributes$attribute, 'width', '100%'),
+						_1: {ctor: '[]'}
 					},
-					A2(
-						_elm_lang$core$Maybe$andThen,
-						function (_) {
-							return _.odd;
-						},
-						_elm_lang$core$List$head(
-							A2(
-								_elm_lang$core$List$filter,
-								function (x) {
-									return _elm_lang$core$Native_Utils.eq(x.side, side);
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'font-weight', _1: 'bolder'},
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									_elm_lang$core$Basics$toString(_p1.price)),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$style(
+										{
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'font-style', _1: 'italic'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'font-size', _1: 'small'},
+												_1: {ctor: '[]'}
+											}
+										}),
+									_1: {ctor: '[]'}
 								},
-								xs)))));
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											_elm_lang$core$Basics$toString(
+												_elm_lang$core$Basics$round(_p1.size)),
+											'$')),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			});
+	});
+var _fpawel$gobet_front$View_Market$viewRunner = F2(
+	function (market, runner) {
+		var odd = function (side) {
+			return A2(
+				_elm_lang$core$Maybe$withDefault,
+				A2(
+					_elm_lang$html$Html$td,
+					{
+						ctor: '::',
+						_0: A2(_elm_lang$html$Html_Attributes$attribute, 'width', '80px'),
+						_1: {ctor: '[]'}
+					},
+					{ctor: '[]'}),
+				A2(
+					_elm_lang$core$Maybe$map,
+					_fpawel$gobet_front$View_Market$tdPriceSize(side),
+					A2(
+						_elm_lang$core$Dict$get,
+						{ctor: '_Tuple3', _0: runner.id, _1: side, _2: 0},
+						market.prices)));
 		};
 		return A2(
 			_elm_lang$html$Html$tr,
@@ -14440,7 +14592,7 @@ var _fpawel$gobet_front$View_Market$viewRunner = F2(
 					_elm_lang$html$Html$td,
 					{
 						ctor: '::',
-						_0: A2(_elm_lang$html$Html_Attributes$attribute, 'width', '100%'),
+						_0: _elm_lang$html$Html_Attributes$class('runner'),
 						_1: {ctor: '[]'}
 					},
 					{
@@ -14450,69 +14602,58 @@ var _fpawel$gobet_front$View_Market$viewRunner = F2(
 					}),
 				_1: {
 					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$td,
-						{
-							ctor: '::',
-							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'width', '40px'),
-							_1: {ctor: '[]'}
-						},
-						odd('BACK')),
+					_0: odd('BACK'),
 					_1: {
 						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$td,
-							{
-								ctor: '::',
-								_0: A2(_elm_lang$html$Html_Attributes$attribute, 'width', '40px'),
-								_1: {ctor: '[]'}
-							},
-							odd('LAY')),
+						_0: odd('LAY'),
 						_1: {ctor: '[]'}
 					}
 				}
 			});
 	});
-var _fpawel$gobet_front$View_Market$viewRunners = function (prices) {
-	return function (_p5) {
+var _fpawel$gobet_front$View_Market$viewRunners = function (market) {
+	return function (_p2) {
 		return _elm_lang$core$List$singleton(
 			A2(
 				_elm_lang$html$Html$div,
 				{
 					ctor: '::',
 					_0: _elm_lang$html$Html_Attributes$class('panel-body'),
-					_1: {ctor: '[]'}
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'padding', _1: '10px'},
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
 				},
 				_elm_lang$core$List$singleton(
 					A2(
 						_elm_lang$html$Html$table,
-						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('table table-condenced table-market-runners'),
+							_1: {ctor: '[]'}
+						},
 						_elm_lang$core$List$singleton(
 							A2(
 								_elm_lang$html$Html$tbody,
 								{ctor: '[]'},
 								A2(
 									_elm_lang$core$List$map,
-									_fpawel$gobet_front$View_Market$viewRunner(prices),
-									_p5)))))));
+									_fpawel$gobet_front$View_Market$viewRunner(market),
+									_p2)))))));
 	};
 };
 var _fpawel$gobet_front$View_Market$headPanel = F2(
-	function (market, prices) {
-		var totalAvailable = A2(
+	function (market, markets) {
+		var appMarket = A2(_elm_lang$core$Dict$get, market.id, markets);
+		var totalMatched = A3(
 			_fpawel$gobet_front$View_Market$tdMoney,
-			'green',
-			A2(
-				_elm_lang$core$Maybe$withDefault,
-				market.totalAvailable,
-				A2(
-					_elm_lang$core$Maybe$andThen,
-					function (_) {
-						return _.totalAvailable;
-					},
-					prices)));
-		var totalMatched = A2(
-			_fpawel$gobet_front$View_Market$tdMoney,
+			'totalMatched',
 			'yellow',
 			A2(
 				_elm_lang$core$Maybe$withDefault,
@@ -14522,7 +14663,20 @@ var _fpawel$gobet_front$View_Market$headPanel = F2(
 					function (_) {
 						return _.totalMatched;
 					},
-					prices)));
+					appMarket)));
+		var totalAvailable = A3(
+			_fpawel$gobet_front$View_Market$tdMoney,
+			'totalAvailable',
+			'LightCyan',
+			A2(
+				_elm_lang$core$Maybe$withDefault,
+				market.totalAvailable,
+				A2(
+					_elm_lang$core$Maybe$andThen,
+					function (_) {
+						return _.totalAvailable;
+					},
+					appMarket)));
 		var marketName = A2(
 			_elm_lang$html$Html$td,
 			{
@@ -14586,23 +14740,32 @@ var _fpawel$gobet_front$View_Market$headPanel = F2(
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						'panel-heading ',
-						_fpawel$gobet_front$Help_Utils$isJust(prices) ? 'dropup' : 'dropdown')),
+						_fpawel$gobet_front$Help_Utils$isJust(appMarket) ? 'dropup' : 'dropdown')),
 				_1: {
 					ctor: '::',
-					_0: _elm_lang$html$Html_Events$onClick(
-						_fpawel$gobet_front$App$ToggleMarket(market.id)),
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'padding', _1: '3px 5px'},
+							_1: {ctor: '[]'}
+						}),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$style(
-							{
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'cursor', _1: 'pointer'},
-								_1: {ctor: '[]'}
-							}),
+						_0: _elm_lang$html$Html_Events$onClick(
+							_fpawel$gobet_front$App$ToggleMarket(market.id)),
 						_1: {
 							ctor: '::',
-							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'width', '100%'),
-							_1: {ctor: '[]'}
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'cursor', _1: 'pointer'},
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(_elm_lang$html$Html_Attributes$attribute, 'width', '100%'),
+								_1: {ctor: '[]'}
+							}
 						}
 					}
 				}
@@ -14635,24 +14798,40 @@ var _fpawel$gobet_front$View_Market$headPanel = F2(
 			});
 	});
 var _fpawel$gobet_front$View_Market$view = F2(
-	function (market, prices) {
-		var headPan = A2(_fpawel$gobet_front$View_Market$headPanel, market, prices);
+	function (market, markets) {
+		var headPan = A2(_fpawel$gobet_front$View_Market$headPanel, market, markets);
 		return A2(
 			_elm_lang$html$Html$div,
 			{
 				ctor: '::',
 				_0: _elm_lang$html$Html_Attributes$class('panel panel-primary'),
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'margin-bottom', _1: '5px'},
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
 			},
-			_fpawel$gobet_front$Help_Utils$isJust(prices) ? {
-				ctor: '::',
-				_0: headPan,
-				_1: A2(_fpawel$gobet_front$View_Market$viewRunners, prices, market.runners)
-			} : {
-				ctor: '::',
-				_0: headPan,
-				_1: {ctor: '[]'}
-			});
+			function () {
+				var _p3 = A2(_elm_lang$core$Dict$get, market.id, markets);
+				if (_p3.ctor === 'Just') {
+					return {
+						ctor: '::',
+						_0: headPan,
+						_1: A2(_fpawel$gobet_front$View_Market$viewRunners, _p3._0, market.runners)
+					};
+				} else {
+					return {
+						ctor: '::',
+						_0: headPan,
+						_1: {ctor: '[]'}
+					};
+				}
+			}());
 	});
 
 var _fpawel$gobet_front$View_Event$split2ColumnsMarkets = F2(
@@ -14675,10 +14854,7 @@ var _fpawel$gobet_front$View_Event$split2ColumnsMarkets = F2(
 						return {
 							ctor: '_Tuple2',
 							_0: A2(_elm_lang$core$Basics_ops['%'], n, 2),
-							_1: A2(
-								_fpawel$gobet_front$View_Market$view,
-								market,
-								A2(_elm_lang$core$Dict$get, market.id, markets))
+							_1: A2(_fpawel$gobet_front$View_Market$view, market, markets)
 						};
 					}),
 				choosenMarkets));
@@ -15090,19 +15266,32 @@ var _fpawel$gobet_front$Main$updatePricesSessionID = F3(
 	});
 var _fpawel$gobet_front$Main$updateMarketsPrices = F2(
 	function (m, webdata) {
-		var _p6 = _fpawel$gobet_front$Routing$parseRoute(m.location);
-		if (_p6.ctor === 'RouteEvent') {
+		var _p6 = {
+			ctor: '_Tuple2',
+			_0: _fpawel$gobet_front$Routing$parseRoute(m.location),
+			_1: m.page
+		};
+		if (((_p6.ctor === '_Tuple2') && (_p6._0.ctor === 'RouteEvent')) && (_p6._1.ctor === 'PageEvent')) {
+			var _p9 = _p6._1._0;
 			var _p7 = webdata;
 			switch (_p7.ctor) {
 				case 'WebMarket':
+					var nextAppMarkets = A2(_fpawel$gobet_front$Data_Prices$updateAppMarkets, _p9.marketsPrices, _p7._0);
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
-						m,
+						_elm_lang$core$Native_Utils.update(
+							m,
+							{
+								page: _fpawel$gobet_front$App$PageEvent(
+									_elm_lang$core$Native_Utils.update(
+										_p9,
+										{marketsPrices: nextAppMarkets}))
+							}),
 						{
 							ctor: '::',
 							_0: A2(
 								_elm_lang$websocket$WebSocket$send,
-								A2(_fpawel$gobet_front$Main$websocketURLPrices, m.location, _p6._0),
+								A2(_fpawel$gobet_front$Main$websocketURLPrices, m.location, _p6._0._0),
 								_p7._1),
 							_1: {ctor: '[]'}
 						});
@@ -15134,8 +15323,8 @@ var _fpawel$gobet_front$Main$updateMarketsPrices = F2(
 		}
 	});
 var _fpawel$gobet_front$Main$initPage = function (location) {
-	var _p9 = _fpawel$gobet_front$Routing$parseRoute(location);
-	switch (_p9.ctor) {
+	var _p10 = _fpawel$gobet_front$Routing$parseRoute(location);
+	switch (_p10.ctor) {
 		case 'RouteFootball':
 			return {ctor: '_Tuple2', _0: _fpawel$gobet_front$App$PageFootball, _1: _elm_lang$core$Platform_Cmd$none};
 		case 'RouteSport':
@@ -15143,7 +15332,7 @@ var _fpawel$gobet_front$Main$initPage = function (location) {
 				ctor: '_Tuple2',
 				_0: _fpawel$gobet_front$App$PageSport(
 					_evancz$elm_sortable_table$Table$initialSort('Дата открытия')),
-				_1: A2(_fpawel$gobet_front$Main$webRequestEvents, _p9._0, location)
+				_1: A2(_fpawel$gobet_front$Main$webRequestEvents, _p10._0, location)
 			};
 		default:
 			return {
@@ -15167,9 +15356,9 @@ var _fpawel$gobet_front$Main$updateLocation = F2(
 				m_,
 				{ctor: '[]'});
 		} else {
-			var _p10 = _fpawel$gobet_front$Main$initPage(nextLocation);
-			var page = _p10._0;
-			var cmd = _p10._1;
+			var _p11 = _fpawel$gobet_front$Main$initPage(nextLocation);
+			var page = _p11._0;
+			var cmd = _p11._1;
 			return A2(
 				_elm_lang$core$Platform_Cmd_ops['!'],
 				_elm_lang$core$Native_Utils.update(
@@ -15184,20 +15373,20 @@ var _fpawel$gobet_front$Main$updateLocation = F2(
 	});
 var _fpawel$gobet_front$Main$logValue = F3(
 	function (m, text, value) {
-		var _p11 = A2(_elm_lang$core$Debug$log, text, value);
+		var _p12 = A2(_elm_lang$core$Debug$log, text, value);
 		return A2(
 			_elm_lang$core$Platform_Cmd_ops['!'],
 			m,
 			{ctor: '[]'});
 	});
-var _fpawel$gobet_front$Main$dictID = function (_p12) {
+var _fpawel$gobet_front$Main$dictID = function (_p13) {
 	return _elm_lang$core$Dict$fromList(
 		A2(
 			_elm_lang$core$List$map,
 			function (x) {
 				return {ctor: '_Tuple2', _0: x.id, _1: x};
 			},
-			_p12));
+			_p13));
 };
 var _fpawel$gobet_front$Main$updateEventsWebData = F3(
 	function (m, sportID, events) {
@@ -15224,8 +15413,8 @@ var _fpawel$gobet_front$Main$updateEventsWebData = F3(
 			{ctor: '[]'});
 	});
 var _fpawel$gobet_front$Main$subscriptions = function (m) {
-	var _p13 = _fpawel$gobet_front$Routing$parseRoute(m.location);
-	switch (_p13.ctor) {
+	var _p14 = _fpawel$gobet_front$Routing$parseRoute(m.location);
+	switch (_p14.ctor) {
 		case 'RouteFootball':
 			return A2(
 				_elm_lang$websocket$WebSocket$listen,
@@ -15233,12 +15422,12 @@ var _fpawel$gobet_front$Main$subscriptions = function (m) {
 					_elm_lang$core$Basics_ops['++'],
 					_fpawel$gobet_front$Help_Utils$websocketURL(m.location),
 					'/football'),
-				function (_p14) {
+				function (_p15) {
 					return A3(
 						_fpawel$gobet_front$Help_Utils$fromResult,
 						_fpawel$gobet_front$App$WebDataError,
 						_fpawel$gobet_front$App$FootballWebData,
-						_fpawel$gobet_front$Data_Football$parseWebData(_p14));
+						_fpawel$gobet_front$Data_Football$parseWebData(_p15));
 				});
 		case 'RouteEvent':
 			return A2(
@@ -15246,7 +15435,7 @@ var _fpawel$gobet_front$Main$subscriptions = function (m) {
 				A2(_fpawel$gobet_front$Help_Utils$fromResult, _fpawel$gobet_front$App$WebDataError, _fpawel$gobet_front$App$PricesWebData),
 				A2(
 					_elm_lang$websocket$WebSocket$listen,
-					A2(_fpawel$gobet_front$Main$websocketURLPrices, m.location, _p13._0),
+					A2(_fpawel$gobet_front$Main$websocketURLPrices, m.location, _p14._0),
 					_fpawel$gobet_front$Data_Prices$decodeWebData));
 		default:
 			return _elm_lang$core$Platform_Sub$none;
@@ -15254,42 +15443,42 @@ var _fpawel$gobet_front$Main$subscriptions = function (m) {
 };
 var _fpawel$gobet_front$Main$update = F2(
 	function (msg, m) {
-		var _p15 = msg;
-		switch (_p15.ctor) {
+		var _p16 = msg;
+		switch (_p16.ctor) {
 			case 'LocationChanged':
-				return A2(_fpawel$gobet_front$Main$updateLocation, m, _p15._0);
+				return A2(_fpawel$gobet_front$Main$updateLocation, m, _p16._0);
 			case 'FootballWebData':
-				return A2(_fpawel$gobet_front$Main$updateFootball, _p15._0, m);
+				return A2(_fpawel$gobet_front$Main$updateFootball, _p16._0, m);
 			case 'WebDataError':
-				return A3(_fpawel$gobet_front$Main$logValue, m, 'web data error', _p15._0);
+				return A3(_fpawel$gobet_front$Main$logValue, m, 'web data error', _p16._0);
 			case 'SportsWebData':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						m,
 						{
-							sports: _fpawel$gobet_front$Main$dictID(_p15._0)
+							sports: _fpawel$gobet_front$Main$dictID(_p16._0)
 						}),
 					{ctor: '[]'});
 			case 'EventsWebData':
-				return A3(_fpawel$gobet_front$Main$updateEventsWebData, m, _p15._0, _p15._1);
+				return A3(_fpawel$gobet_front$Main$updateEventsWebData, m, _p16._0, _p16._1);
 			case 'PricesWebData':
-				return A2(_fpawel$gobet_front$Main$updateMarketsPrices, m, _p15._0);
+				return A2(_fpawel$gobet_front$Main$updateMarketsPrices, m, _p16._0);
 			case 'ToggleMarket':
-				return A2(_fpawel$gobet_front$Update_ToggleMarket$update, m, _p15._0);
+				return A2(_fpawel$gobet_front$Update_ToggleMarket$update, m, _p16._0);
 			case 'SportTableState':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
-					A2(_fpawel$gobet_front$Main$updateSportTableState, m, _p15._0),
+					A2(_fpawel$gobet_front$Main$updateSportTableState, m, _p16._0),
 					{ctor: '[]'});
 			default:
-				return A3(_fpawel$gobet_front$Main$logValue, m, 'ToggleMarketPosted', _p15._0);
+				return A3(_fpawel$gobet_front$Main$logValue, m, 'ToggleMarketPosted', _p16._0);
 		}
 	});
 var _fpawel$gobet_front$Main$init = function (location) {
-	var _p16 = _fpawel$gobet_front$Main$initPage(location);
-	var page = _p16._0;
-	var cmd = _p16._1;
+	var _p17 = _fpawel$gobet_front$Main$initPage(location);
+	var page = _p17._0;
+	var cmd = _p17._1;
 	return A2(
 		_elm_lang$core$Platform_Cmd_ops['!'],
 		{

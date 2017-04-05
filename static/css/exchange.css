@@ -1,0 +1,58 @@
+            
+    .event-HomeTeam {
+        color: #4169e1;
+    }
+
+    .event-AwayTeam {
+        color: #4682b4;
+    }
+
+    .event-PageTitle {
+        height: 100px;
+    }
+
+    table.table-market-runners{
+        margin-bottom: 0px;
+        width: 100%;
+        border-spacing: 2px;
+        border-color: grey;
+        
+    }
+
+    table.table-market-runners tr td {
+        padding: 0px;                 
+        vertical-align: middle;                
+    }
+
+    table.table-market-runners tr:first-child td {
+        border-top: none;
+    }
+
+    .runner {
+        width: calc(100% - 80px);
+        padding-top: 3px;
+        padding-bottom: 3px;
+        padding-left: 8px;
+    }
+
+    .price{
+        cursor:pointer;
+        width: 80px;
+        text-align: center;
+    }
+
+    .price.back {
+        background : #72bbef;
+    }
+
+    .price.lay {
+        background : #faa9ba;
+    }
+
+    td:hover.price.back {
+        background: #4F9BD0;
+    }
+
+    td:hover.price.lay {
+        background: #DF8397;
+    }
