@@ -1,4 +1,4 @@
-package placeOrder
+package placeOrders
 
 import (
 	"github.com/user/gobet/betfair.com/aping/client/appkey"
