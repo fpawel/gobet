@@ -76,7 +76,7 @@ func GetAPIResponse(a *Request) (placeBetReports []PlaceBetReportAPI, err error)
 	userSessionChanel := make(chan login.Result)
 	userSessions.GetUserSession(a.User, userSessionChanel)
 	loginResult := <-userSessionChanel
-	if loginResult.Error {
+	if loginResult.Error != nil {
 		err = fmt.Errorf( "login error : %s", loginResult.Error.Error())
 		return
 	}
