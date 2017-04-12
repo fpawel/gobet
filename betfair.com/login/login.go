@@ -11,8 +11,8 @@ import (
 )
 
 type Result struct {
-	SessionToken string
-	Error        error
+	Token string
+	Error error
 }
 
 var muAwaiters sync.RWMutex
@@ -21,10 +21,16 @@ var muSessionToken sync.RWMutex
 var sessionToken string
 var sessionTime time.Time
 
+
+type User struct{
+	Name string
+	Pass string
+}
+
 // Login выполняет авторизацию на  betfair.com
-func login(user string, pass string) (result Result) {
-	const URL = `https://identitysso.betfair.com/api/login?username=%s&password=%s&login=true&redirectMethod=POST&product=home.betfair.int&url=https://www.betfair.com/`
-	urlStr := fmt.Sprintf(URL, user, pass)
+func Login(user User) (result Result) {
+	const URL = `https://identitysso.betfair.com/api/Login?username=%s&password=%s&Login=true&redirectMethod=POST&product=home.betfair.int&url=https://www.betfair.com/`
+	urlStr := fmt.Sprintf(URL, user.Name, user.Pass)
 	var req *http.Request
 	if req, result.Error = http.NewRequest("POST", urlStr, nil); result.Error != nil {
 		return
@@ -42,17 +48,18 @@ func login(user string, pass string) (result Result) {
 		result.Error = fmt.Errorf("no headers in response %v", strSetCookie)
 		return
 	}
-	result.SessionToken = m[1]
+	result.Token = m[1]
 	return
 
 }
 
-func GetAuth(ch chan<- Result) {
+// GetAdminAuth - токен авторизированной сессии betfair.com
+func GetAdminAuth(ch chan<- Result) {
 	muSessionToken.RLock()
 	if sessionToken != "" && time.Since(sessionTime) < 30*time.Minute {
 		muSessionToken.RUnlock()
 		go func() {
-			ch <- Result{SessionToken: sessionToken, Error: nil}
+			ch <- Result{Token: sessionToken, Error: nil}
 		}()
 		return
 	}
@@ -68,18 +75,18 @@ func GetAuth(ch chan<- Result) {
 		user := os.Getenv("BETFAIR_LOGIN_USER")
 		pass := os.Getenv("BETFAIR_LOGIN_PASS")
 
-		result := login(user, pass)
+		result := Login( User{user, pass})
 
 		s := "successfully"
 		if result.Error != nil {
 			s = "failed"
 		} else {
 			muSessionToken.Lock()
-			sessionToken = result.SessionToken
+			sessionToken = result.Token
 			sessionTime = time.Now()
 			muSessionToken.Unlock()
 		}
-		log.Println("login betfair.com: ", s)
+		log.Println("Login betfair.com: ", s)
 
 		muAwaiters.Lock()
 		defer muAwaiters.Unlock()

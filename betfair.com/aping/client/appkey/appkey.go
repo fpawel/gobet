@@ -30,8 +30,12 @@ type developerAppVersion struct {
 	VendorSecret         string `json:"vendorSecret,omitempty"`
 }
 
-func GetResponse(endpoint endpoint.Endpoint, params interface{}) (responseBody []byte, err error) {
-	return request.GetResponse(&appKeyValue, endpoint, params)
+func GetResponse( xAuthentication string, endpoint endpoint.Endpoint, params interface{}) (responseBody []byte, err error) {
+	return request.GetResponse(xAuthentication, &appKeyValue, endpoint, params)
+}
+
+func GetResponseWithAdminLogin(endpoint endpoint.Endpoint, params interface{}) (responseBody []byte, err error) {
+	return request.GetResponseWithAdminLogin(&appKeyValue, endpoint, params)
 }
 
 func extractApplicationKey1(bytes []byte, out *string) (result bool) {
@@ -61,7 +65,7 @@ func extractApplicationKey2(bytes []byte, out *string) (result bool) {
 func getAppKey() (appKey string, err error) {
 	var responseBody []byte
 
-	responseBody, err = request.GetResponse(nil, endpoint.AccauntAPI("getDeveloperAppKeys"), nil)
+	responseBody, err = request.GetResponseWithAdminLogin(nil, endpoint.AccauntAPI("getDeveloperAppKeys"), nil)
 	if err != nil {
 		return
 	}
@@ -80,7 +84,7 @@ func getAppKey() (appKey string, err error) {
 		AppName string `json:"appName"`
 	}{u4.String()}
 
-	responseBody, err = request.GetResponse(nil, endpoint.AccauntAPI("createDeveloperAppKeys"), params)
+	responseBody, err = request.GetResponseWithAdminLogin(nil, endpoint.AccauntAPI("createDeveloperAppKeys"), params)
 	if err != nil {
 		return
 	}
@@ -92,12 +96,12 @@ func getAppKey() (appKey string, err error) {
 	return
 }
 
-// Value The unqiue application key associated with this betfair's ApiNG application version
+// Get appKeyValue
 func Get() string {
 	return appKeyValue
 }
 
-// value - appKey value
+// appKeyValue - the unqiue application key associated with this betfair's ApiNG application version
 var appKeyValue string
 
 func init() {

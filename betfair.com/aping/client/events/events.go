@@ -122,7 +122,7 @@ func readEvents(eventTypeID int) (events Events, err error) {
 	reqParams.Locale = "ru"
 	reqParams.Filter.EventTypeIDs = []int{eventTypeID}
 	ep := endpoint.BettingAPI("listEvents")
-	responseBody, err := appkey.GetResponse(ep, &reqParams)
+	responseBody, err := appkey.GetResponseWithAdminLogin(ep, &reqParams)
 	if err != nil {
 		return
 	}

@@ -129,7 +129,7 @@ func readMarkets(eventID int, marketIDs []string) (markets []client.Market, err 
 
 	ep := endpoint.BettingAPI("listMarketBook")
 
-	responseBody, err := appkey.GetResponse(ep, &reqParams)
+	responseBody, err := appkey.GetResponseWithAdminLogin(ep, &reqParams)
 	if err != nil {
 		return
 	}

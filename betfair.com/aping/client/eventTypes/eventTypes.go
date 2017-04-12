@@ -65,7 +65,7 @@ func (reader *reader) get(ch chan<- Result) {
 }
 
 func (reader *reader) performRead() {
-	xs, err := read()
+	xs, err := getAPIResponse()
 	log.Printf("event types: %v\n", err)
 
 	reader.muAwaiters.Lock()
@@ -78,7 +78,7 @@ func (reader *reader) performRead() {
 	}
 }
 
-func read() (eventTypes []client.EventType, err error) {
+func getAPIResponse() (eventTypes []client.EventType, err error) {
 
 	var reqParams struct {
 		Locale string   `json:"locale"`
@@ -87,7 +87,7 @@ func read() (eventTypes []client.EventType, err error) {
 	reqParams.Locale = "ru"
 	ep := endpoint.BettingAPI("listEventTypes")
 	var responseBody []byte
-	responseBody, err = appkey.GetResponse(ep, &reqParams)
+	responseBody, err = appkey.GetResponseWithAdminLogin(ep, &reqParams)
 	if err != nil {
 		return
 	}

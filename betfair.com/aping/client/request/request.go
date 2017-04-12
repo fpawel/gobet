@@ -13,15 +13,8 @@ import (
 	"github.com/user/gobet/mobileinet"
 )
 
-func GetResponse(appKey *string, endpoint endpoint.Endpoint, params interface{}) (responseBody []byte, err error) {
-
-	chLogin := make(chan login.Result)
-	login.GetAuth(chLogin)
-	rLogin := <-chLogin
-	if rLogin.Error != nil {
-		err = fmt.Errorf("login error: %v", rLogin.Error)
-		return
-	}
+func GetResponse(xAuthentication string, appKey *string,
+		endpoint endpoint.Endpoint, params interface{}) (responseBody []byte, err error) {
 
 	jsonReq := struct {
 		Jsonrpc string      `json:"jsonrpc"`
@@ -44,7 +37,7 @@ func GetResponse(appKey *string, endpoint endpoint.Endpoint, params interface{})
 		req.Header.Set("X-Application", *appKey)
 	}
 
-	req.Header.Set("X-Authentication", rLogin.SessionToken)
+	req.Header.Set("X-Authentication", xAuthentication)
 	req.Header.Set("ContentType", "application/json")
 	req.Header.Set("AcceptCharset", "UTF-8")
 	req.Header.Set("Accept", "application/json")
@@ -61,4 +54,16 @@ func GetResponse(appKey *string, endpoint endpoint.Endpoint, params interface{})
 	mobileinet.LogAddTotalBytesReaded(len(responseBody), "API-NG")
 
 	return
+}
+
+func GetResponseWithAdminLogin(appKey *string, endpoint endpoint.Endpoint, params interface{}) (responseBody []byte, err error) {
+
+	chLogin := make(chan login.Result)
+	login.GetAdminAuth(chLogin)
+	rLogin := <-chLogin
+	if rLogin.Error != nil {
+		err = fmt.Errorf("login error: %v", rLogin.Error)
+		return
+	}
+	return GetResponse(rLogin.Token, appKey, endpoint, params )
 }
