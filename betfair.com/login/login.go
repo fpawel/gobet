@@ -21,15 +21,14 @@ var muSessionToken sync.RWMutex
 var sessionToken string
 var sessionTime time.Time
 
-
-type User struct{
+type User struct {
 	Name string
 	Pass string
 }
 
 // Login выполняет авторизацию на  betfair.com
 func Login(user User) (result Result) {
-	const URL = `https://identitysso.betfair.com/api/Login?username=%s&password=%s&Login=true&redirectMethod=POST&product=home.betfair.int&url=https://www.betfair.com/`
+	const URL = `https://identitysso.betfair.com/api/login?username=%s&password=%s&login=true&redirectMethod=POST&product=home.betfair.int&url=https://www.betfair.com/`
 	urlStr := fmt.Sprintf(URL, user.Name, user.Pass)
 	var req *http.Request
 	if req, result.Error = http.NewRequest("POST", urlStr, nil); result.Error != nil {
@@ -75,7 +74,7 @@ func GetAdminAuth(ch chan<- Result) {
 		user := os.Getenv("BETFAIR_LOGIN_USER")
 		pass := os.Getenv("BETFAIR_LOGIN_PASS")
 
-		result := Login( User{user, pass})
+		result := Login(User{user, pass})
 
 		s := "successfully"
 		if result.Error != nil {
