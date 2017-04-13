@@ -26,10 +26,12 @@ type User struct {
 	Pass string
 }
 
+const urlPattern = `https://identitysso.betfair.com/api/login?username=%s&password=%s&login=true&redirectMethod=POST&product=home.betfair.int&url=https://www.betfair.com/`
+
 // Login выполняет авторизацию на  betfair.com
 func Login(user User) (result Result) {
-	const URL = `https://identitysso.betfair.com/api/login?username=%s&password=%s&login=true&redirectMethod=POST&product=home.betfair.int&url=https://www.betfair.com/`
-	urlStr := fmt.Sprintf(URL, user.Name, user.Pass)
+
+	urlStr := fmt.Sprintf(urlPattern, user.Name, user.Pass)
 	var req *http.Request
 	if req, result.Error = http.NewRequest("POST", urlStr, nil); result.Error != nil {
 		return
