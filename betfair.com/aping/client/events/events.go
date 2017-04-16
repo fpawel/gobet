@@ -43,7 +43,7 @@ func getEventsFromCache(eventTypeID int) (events Events) {
 
 func doReadEvents(eventTypeID int) {
 	result := Result{}
-	result.Events, result.Error = readEvents(eventTypeID)
+	result.Events, result.Error = getResponse(eventTypeID)
 	log.Printf("read events %d: %v\n", eventTypeID, result.Error)
 
 	if result.Error == nil {
@@ -112,7 +112,8 @@ func Get(eventTypeID int, ch chan<- Result) {
 	return
 }
 
-func readEvents(eventTypeID int) (events Events, err error) {
+func getResponse(eventTypeID int) (events Events, err error) {
+
 	var reqParams struct {
 		Locale string `json:"locale"`
 		Filter struct {
@@ -159,5 +160,9 @@ func readEvents(eventTypeID int) (events Events, err error) {
 		events = append(events, y)
 	}
 	log.Printf("readede events %d", eventTypeID)
+
+
+
+
 	return
 }

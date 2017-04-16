@@ -2,7 +2,7 @@ package event
 
 import (
 	"encoding/json"
-	"errors"
+
 	"fmt"
 	"log"
 	"strconv"
@@ -123,7 +123,7 @@ func (reader *reader) get(eventID int, ch chan<- Result) {
 	return
 }
 
-func readMarkets(eventID int) (markets []client.Market, err error) {
+func getAPIResponse(eventID int) (markets []client.Market, err error) {
 	var reqParams struct {
 		Locale           string   `json:"locale"`
 		MarketProjection []string `json:"marketProjection"`
@@ -156,6 +156,12 @@ func readMarkets(eventID int) (markets []client.Market, err error) {
 	for _, market := range responseData.Result {
 		markets = append(markets, market)
 	}
+
+	if len(markets) == 0 {
+		err = fmt.Errorf("no markets : %s", string(responseBody))
+		return
+	}
+
 	return
 }
 
@@ -230,14 +236,11 @@ func readMarketEvent(event *client.Event) error {
 func readEvent(eventID int) (event *client.Event, err error) {
 	var markets []client.Market
 
-	markets, err = readMarkets(eventID)
+	markets, err = getAPIResponse(eventID)
 	if err != nil {
 		return
 	}
-	if len(markets) == 0 {
-		err = errors.New("no markets")
-		return
-	}
+
 
 	event = &client.Event{ID: eventID}
 	err = readMarketEvent(event)

@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 	"strconv"
+	"github.com/user/gobet/betfair.com/aping/client/events"
 )
 
 type Handle struct {
@@ -82,6 +83,26 @@ func (x *Handle) doUpdate(games []football.Game) (err error) {
 		return
 	}
 
+	if len(changes.Inplay) > 0 {
+		ch := make(chan events.Result)
+		events.Get(1, ch)
+		eventsResult := <- ch
+		if eventsResult.Error != nil {
+			err = fmt.Errorf("%v, error getting football events : %s",
+				x.What(), eventsResult.Error.Error() )
+			return
+		}
+		inplays := make(map[int]struct{})
+		for _,y := range changes.Inplay {
+			inplays[y.EventID] = struct{}{}
+		}
+		for _,y := range eventsResult.Events{
+			if _,ok := inplays[y.ID]; ok{
+				changes.Events = append(changes.Events, y)
+			}
+		}
+	}
+	
 	var changesBytes []byte
 	changesBytes, err = json.Marshal(changes)
 	if err != nil {

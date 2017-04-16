@@ -2,9 +2,11 @@ package update
 
 import (
 	"encoding/json"
-	"github.com/user/gobet/betfair.com/football"
 	"hash/fnv"
 	"log"
+
+	"github.com/user/gobet/betfair.com/aping/client"
+	"github.com/user/gobet/betfair.com/football"
 )
 
 // Game содержит изменения в данных футбольной игры на стороне сервера,
@@ -30,6 +32,7 @@ type Games struct {
 	Inplay  []football.Game `json:"inplay,omitempty"`
 	Outplay []int           `json:"outplay,omitempty"`
 	Changes []Game          `json:"game_changes,omitempty"`
+	Events  []client.Event  `json:"events,omitempty"`
 }
 
 func (x *Games) isEmpty() bool {
@@ -89,6 +92,7 @@ func New(prev []football.Game, next []football.Game) *Games {
 	if x.isEmpty() {
 		return nil
 	}
+
 	return &x
 }
 

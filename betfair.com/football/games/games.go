@@ -8,13 +8,10 @@ import (
 	"github.com/user/gobet/betfair.com/football/games/ws"
 	"github.com/user/gobet/betfair.com/football/webclient"
 
-	"github.com/user/gobet/betfair.com/aping/client"
-	"github.com/user/gobet/betfair.com/aping/client/events"
 
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -116,24 +113,6 @@ func (x *listGames) updateGames() {
 	time.Sleep(sleepTime)
 }
 
-func getEvents() (mevents map[int]client.Event, err error) {
-
-	ch := make(chan events.Result)
-	events.Get(1, ch)
-	r := <-ch
-	err = r.Error
-	if r.Error != nil {
-		return
-	}
-
-	mevents = make(map[int]client.Event)
-	for _, event := range r.Events {
-		mevents[event.ID] = event
-	}
-	return
-
-}
-
 func readGames() (readedGames []football.Game, err error) {
 	var firstPageURL string
 	firstPageURL, err = webclient.ReadFirstPageURL()
@@ -141,14 +120,7 @@ func readGames() (readedGames []football.Game, err error) {
 		return
 	}
 
-	var mevents map[int]client.Event
-	mevents, err = getEvents()
-	if err != nil {
-		return
-	}
-
 	ptrNextPage := &firstPageURL
-	hasMissingEvents := false
 	for page := 0; ptrNextPage != nil && err == nil; page++ {
 		var gamesPage []football.Game
 		gamesPage, ptrNextPage, err = webclient.ReadPage(webclient.BetfairURL + *ptrNextPage)
@@ -156,21 +128,9 @@ func readGames() (readedGames []football.Game, err error) {
 			return
 		}
 		for _, game := range gamesPage {
-			game.Live.Page = page
-			if event, ok := mevents[game.EventID]; ok {
-				game.Event = &event
-			} else {
-				log.Println("footbal: missing event", game)
-				// нет события Event с game.EventID.
-				hasMissingEvents = true
-			}
+			game.Page = page
 			readedGames = append(readedGames, game)
 		}
-	}
-
-	if hasMissingEvents {
-		// Возможно, кеш событий "не свежий" и его следует обновить
-		events.ClearCache(1)
 	}
 
 	return

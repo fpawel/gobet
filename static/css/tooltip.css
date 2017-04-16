@@ -1,9 +1,9 @@
-.my-tooltip {
+.my-tooltip-bottom {
     position: relative;
     display: inline-block;
 }
 
-.my-tooltip .my-tooltiptext {
+.my-tooltip-bottom .my-tooltiptext-bottom {
     visibility: hidden;
     width: 120px;
     background-color: black;
@@ -18,9 +18,9 @@
     margin-left: -60px;
 }
 
-.my-tooltip .my-tooltiptext::after {
+.my-tooltip-bottom .my-tooltiptext-bottom::after {
     content: "";
-    position: absolute; 
+    position: absolute;
     bottom: 100%;
     left: 50%;
     margin-left: -5px;
@@ -29,6 +29,39 @@
     border-color: transparent transparent black transparent;
 }
 
-.my-tooltip:hover .my-tooltiptext {
+.my-tooltip-bottom:hover .my-tooltiptext-bottom {
+    visibility: visible;
+}
+
+.my-tooltip-right {
+    position: relative;
+    display: inline-block;
+}
+
+.my-tooltip-right .my-tooltiptext-right {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    top: -5px;
+    left: 110%;
+}
+
+.my-tooltip-right .my-tooltiptext-right::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent black transparent transparent;
+}
+.my-tooltip-right:hover .my-tooltiptext-right {
     visibility: visible;
 }
