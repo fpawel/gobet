@@ -46,10 +46,10 @@ type placeOrderReportAPI struct {
 	ErrorCode       *string                      `json:"errorCode,omitempty"`
 	Status          string                      `json:"status"`
 	MarketID        string                      `json:"marketId"`
-	PlaceBetReports []PlaceBetReportAPI `json:"instructionReports"`
+	PlaceBetReports []PlaceInstructionReport `json:"instructionReports"`
 }
 
-type PlaceBetReportAPI struct {
+type PlaceInstructionReport struct {
 
 	//cause of failure, or null if command succeeds
 	ErrorCode *string `json:"errorCode,omitempty"`
@@ -71,7 +71,7 @@ type PlaceBetReportAPI struct {
 }
 
 
-func GetAPIResponse(a *Request) (placeBetReports []PlaceBetReportAPI, err error) {
+func GetAPIResponse(a *Request) (placeBetReports []PlaceInstructionReport, err error) {
 
 	userSessionChanel := make(chan login.Result)
 	userSessions.GetUserSession(a.User, userSessionChanel)
