@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"errors"
-	"github.com/user/gobet/betfair.com/aping/client/request"
 	"github.com/user/gobet/betfair.com/aping/client/order"
 )
 
