@@ -108,6 +108,15 @@ func GetHashCodeOfObject(data interface{}) uint64 {
 	return fnv32a.Sum64()
 }
 
+func RoundFloat64(num float64) int {
+	return int(num + math.Copysign(0.5, num))
+}
+
+func Float64ToFixed(num float64, precision int) float64 {
+	output := math.Pow(10, float64(precision))
+	return float64(RoundFloat64(num * output)) / output
+}
+
 
 // HumanateBytes produces a human readable representation of an SI size.
 // bytes(82854982) -> 83 MB

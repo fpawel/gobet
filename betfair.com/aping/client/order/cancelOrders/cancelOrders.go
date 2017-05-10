@@ -15,24 +15,57 @@ type Request struct {
 	User        login.User
 	MarketID    string
 	BetID int64
-	SizeReduction        float32
+	SizeReduction        float64
 }
 
-func GetAPIResponse(a *Request) (instructionReports []CancelInstructionReportAPI, err error) {
+type CancelOrderReport struct{
+	SizeCancelled float64
+}
+
+func (request *Request) CancelSingleOrder () (report *CancelOrderReport , err error) {
+	var instructionReports []CancelInstructionReportAPI
+	instructionReports,err = request.GetAPIResponse()
+	if err != nil {
+		return
+	}
+	if  len(instructionReports) == 0 {
+		err =  errors.New ( "CancelSingleOrder : no instruction report")
+		return
+	}
+
+	p := instructionReports[0]
+
+	if  p.ErrorCode != nil {
+		err = fmt.Errorf( "CancelSingleOrder error : %s", p.ErrorCode)
+		return
+	}
+
+	if  p.Status != "SUCCESS" {
+		err = fmt.Errorf( "CancelSingleOrder error : status is not SUCCESS : %s", p.Status)
+		return
+	}
+
+	report = &CancelOrderReport{
+		SizeCancelled : p.SizeCancelled,
+	}
+	return
+}
+
+func (request *Request) GetAPIResponse () (instructionReports []CancelInstructionReportAPI, err error) {
 
 	userSessionChanel := make(chan login.Result)
-	userSessions.GetUserSession(a.User, userSessionChanel)
+	userSessions.GetUserSession(request.User, userSessionChanel)
 	loginResult := <-userSessionChanel
 	if loginResult.Error != nil {
 		err = fmt.Errorf( "cancelOrders : login error : %s", loginResult.Error.Error())
 		return
 	}
 	placeOrderRequest := cancelOrderAPI{
-		MarketID: a.MarketID,
+		MarketID: request.MarketID,
 		Instructions: []CancelInstructionAPI{
 			{
-				BetId:a.BetID,
-				SizeReduction: a.SizeReduction,
+				BetId:         request.BetID,
+				SizeReduction: request.SizeReduction,
 			},
 		},
 	}
@@ -58,17 +91,18 @@ func GetAPIResponse(a *Request) (instructionReports []CancelInstructionReportAPI
 		return
 	}
 
-	if  len(r.InstructionReports) == 0 {
-		err =  errors.New ( "cancelOrders : no instruction report")
+	if  r.Status != "SUCCESS" {
+		err = fmt.Errorf( "cancelOrders error : status is not SUCCESS : %s", r.Status)
 		return
 	}
+
 	return
 }
 
 type CancelInstructionAPI struct {
 	BetId  int64 `json:"betId"`
 	// If supplied then this is a partial cancel.  Should be set to 'null' if no size reduction is required
-	SizeReduction float32 `json:"sizeReduction"`
+	SizeReduction float64 `json:"sizeReduction"`
 }
 
 type cancelOrderAPI struct{
@@ -98,7 +132,7 @@ type CancelInstructionReportAPI struct{
 	// The instruction that was requested
 	Instruction  CancelInstructionAPI `json:"instruction"`
 
-	SizeCancelled float32 `json:"sizeCancelled"`
+	SizeCancelled float64 `json:"sizeCancelled"`
 
 	CancelledDate string `json:"cancelledDate"`
 }

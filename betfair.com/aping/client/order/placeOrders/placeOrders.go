@@ -9,6 +9,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"errors"
+	"github.com/user/gobet/betfair.com/aping/client/request"
+	"github.com/user/gobet/betfair.com/aping/client/order"
 )
 
 // Request заказ ставки
@@ -17,8 +19,8 @@ type Request struct {
 	MarketID    string
 	SelectionID int
 	Side        string
-	Price       float32
-	Size        float32
+	Price       float64
+	Size        float64
 }
 
 // placeOrderAPI - сделать ставки
@@ -27,7 +29,7 @@ type placeOrderAPI struct {
 	Instructions []placeInstructionAPI `json:"instructions"`
 }
 
-// placeInstructionAPI - instruction to place a new order
+// placeInstructionAPI - instruction to place request new order
 type placeInstructionAPI struct {
 	OrderType   string        `json:"orderType"`
 	SelectionID int           `json:"selectionId"`
@@ -35,10 +37,10 @@ type placeInstructionAPI struct {
 	LimitOrder  limitOrderAPI `json:"limitOrder"`
 }
 
-// limitOrderAPI - Place a new LIMIT order (simple exchange bet for immediate execution)
+// limitOrderAPI - Place request new LIMIT order (simple exchange bet for immediate execution)
 type limitOrderAPI struct {
-	Size            float32 `json:"size"`
-	Price           float32 `json:"price"`
+	Size            float64 `json:"size"`
+	Price           float64 `json:"price"`
 	PersistenceType string  `json:"persistenceType"`
 }
 
@@ -71,25 +73,25 @@ type PlaceInstructionReport struct {
 }
 
 
-func GetAPIResponse(a *Request) (placeBetReports []PlaceInstructionReport, err error) {
+func (request *Request) GetAPIResponse() (placeBetReports []PlaceInstructionReport, err error) {
 
 	userSessionChanel := make(chan login.Result)
-	userSessions.GetUserSession(a.User, userSessionChanel)
+	userSessions.GetUserSession(request.User, userSessionChanel)
 	loginResult := <-userSessionChanel
 	if loginResult.Error != nil {
 		err = fmt.Errorf( "login error : %s", loginResult.Error.Error())
 		return
 	}
 	placeOrderRequest := placeOrderAPI{
-		MarketID: a.MarketID,
+		MarketID: request.MarketID,
 		Instructions: []placeInstructionAPI{
 			{
 				OrderType:   "LIMIT",
-				SelectionID: a.SelectionID,
-				Side:        a.Side,
+				SelectionID: request.SelectionID,
+				Side:        request.Side,
 				LimitOrder: limitOrderAPI{
-					Size:            a.Size,
-					Price:           a.Price,
+					Size:            request.Size,
+					Price:           request.Price,
 					PersistenceType: "LAPSE",
 				},
 			},
@@ -117,10 +119,45 @@ func GetAPIResponse(a *Request) (placeBetReports []PlaceInstructionReport, err e
 		return
 	}
 
-	if  len(r.PlaceBetReports) == 0 {
-		err =  errors.New ( "placeOrders : no instruction report")
+	if r.Status != "SUCCESS"{
+		err = fmt.Errorf( "placeOrders error : status is not SUCCESS : %s", r.Status)
 		return
 	}
+
+
 	return
+}
+
+func (request *Request) PlaceSingleOrder() (report *order.PlaceOrderReport, err error) {
+	var placeBetReports []PlaceInstructionReport
+	placeBetReports,err = request.GetAPIResponse()
+	if err != nil {
+		return
+	}
+
+	if  len(placeBetReports) == 0 {
+		err =  errors.New ( "PlaceSingleOrder : no instruction report")
+		return
+	}
+
+	p := placeBetReports[0]
+
+	if  p.ErrorCode != nil {
+		err = fmt.Errorf( "PlaceSingleOrder error : %s", p.ErrorCode)
+		return
+	}
+
+	if p.Status != "SUCCESS"{
+		err = fmt.Errorf( "PlaceSingleOrder error : status is not SUCCESS : %s", p.Status)
+		return
+	}
+
+	report = &order.PlaceOrderReport{
+		BetID : *p.BetID,
+		AveragePriceMatched : p.AveragePriceMatched,
+		SizeMatched : p.SizeMatched,
+	}
+	return
+
 }
 
