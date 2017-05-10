@@ -23,19 +23,25 @@ func PlaceBet(request *placeOrders.Request)( *order.PlaceOrderReport, error){
 	if err != nil{
 		return nil, err
 	}
-	_, err = cancelOrders.Request{
+
+	cancelOrderRequest := cancelOrders.Request{
 		BetID : order1.BetID,
 		MarketID : request.MarketID,
 		User : request.User,
 		SizeReduction: utils.Float64ToFixed(4 - request.Size,2),
-	}.CancelSingleOrder()
+	}
+
+	_, err = cancelOrderRequest.CancelSingleOrder()
 	if err != nil{
 		return nil, err
 	}
-	return replaceOrder.Request{
+
+	replaceOrderRequest := replaceOrder.Request{
 		BetID : order1.BetID,
 		NewPrice : request.Price,
 		User: request.User,
 		MarketID:request.MarketID,
-	}.ReplaceSingleOrder()
+	}
+
+	return replaceOrderRequest.ReplaceSingleOrder()
 }
