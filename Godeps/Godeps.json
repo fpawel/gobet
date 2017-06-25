@@ -1,0 +1,41 @@
+{
+	"ImportPath": "github.com/user/gobet",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/PuerkitoBio/goquery",
+			"Comment": "v1.0.2",
+			"Rev": "3cb3b8656883c2cc3deb9c643d93ea6e5157e425"
+		},
+		{
+			"ImportPath": "github.com/andybalholm/cascadia",
+			"Rev": "349dd0209470eabd9514242c688c403c0926d266"
+		},
+		{
+			"ImportPath": "github.com/go-chi/chi",
+			"Comment": "v3.0.0-1-g18d990c",
+			"Rev": "18d990c0d1c023b05a3652d322ae36d8bdb62e07"
+		},
+		{
+			"ImportPath": "github.com/gorilla/websocket",
+			"Comment": "v1.1.0-13-g2257eda",
+			"Rev": "2257eda00b2084c1351cd672aa5476daa9f5e463"
+		},
+		{
+			"ImportPath": "github.com/nu7hatch/gouuid",
+			"Rev": "179d4d0c4d8d407a32af483c2354df1d2c91e6c3"
+		},
+		{
+			"ImportPath": "golang.org/x/net/html",
+			"Rev": "f2499483f923065a842d38eb4c7f1927e6fc6e6d"
+		},
+		{
+			"ImportPath": "golang.org/x/net/html/atom",
+			"Rev": "f2499483f923065a842d38eb4c7f1927e6fc6e6d"
+		}
+	]
+}
