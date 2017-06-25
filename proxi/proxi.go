@@ -2,12 +2,10 @@ package proxi
 
 import (
 	"fmt"
+	"github.com/go-chi/chi"
 	"io/ioutil"
 	"net/http"
 	"strings"
-
-	"github.com/gin-gonic/gin"
-
 	"github.com/user/gobet/utils"
 )
 
@@ -15,7 +13,7 @@ func createProxiRequest(urlStr string, r *http.Request) (*http.Request, error) {
 	req, err := http.NewRequest(r.Method, urlStr, r.Body)
 
 	if err != nil {
-		return nil, fmt.Errorf("can not create http request - %s", err.Error())
+		return nil, fmt.Errorf("can`t create http request - %s", err.Error())
 	}
 
 	for key, value := range r.Header {
@@ -27,42 +25,41 @@ func createProxiRequest(urlStr string, r *http.Request) (*http.Request, error) {
 
 // Proxi отправляет исходный http запрос /get/:password/*url на целевой адрес из поля url
 // и записывает полученный http ответ в веб-контекст
-func Proxi(c *gin.Context) {
+func Proxi(w http.ResponseWriter, r *http.Request) {
 
-	internalServerError := func(e error) {
-		c.String(http.StatusInternalServerError, e.Error())
-	}
-	url, urlParsed := utils.QueryUnescape(c.Param("url"))
-	if !urlParsed {
-		c.String(http.StatusBadRequest, "can't parse target url")
-		return
+	decodedURL := chi.URLParam(r, "*")
+	if decodedURL == "" {
+		http.Error(w, "target url is empty", http.StatusBadRequest)
 	}
 
-	rreq, err := createProxiRequest(url, c.Request)
+	encodedURL, err := utils.QueryUnescape(decodedURL)
+
+	rreq, err := createProxiRequest(  encodedURL, r)
 	if err != nil {
-		internalServerError(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	client := &http.Client{}
 	response, err := client.Do(rreq)
 	if err != nil {
-		internalServerError(fmt.Errorf("can't send request an get response in http.Client.Do - %s", err.Error()))
+		http.Error(w, fmt.Sprintf("can't send request an get response in http.Client.Do - %s", err.Error()),
+			http.StatusInternalServerError)
 		return
 	}
 	defer response.Body.Close()
 
 	for key, value := range response.Header {
-		c.Header(key, strings.Join(value, "; "))
+		w.Header().Set(key, strings.Join(value, "; "))
 	}
 
-	c.Writer.WriteHeader(response.StatusCode)
+	w.WriteHeader(response.StatusCode)
 	body, err := ioutil.ReadAll(response.Body)
 	if err == nil {
-		_, err := c.Writer.Write(body[:])
+		_, err := w.Write(body[:])
 		if err != nil {
-			internalServerError(fmt.Errorf("can't write data to response body - %s", err.Error()))
+			http.Error(w, fmt.Sprintf("can't write data to response body - %s", err.Error()),
+				http.StatusInternalServerError)
 		}
 	}
-
 }

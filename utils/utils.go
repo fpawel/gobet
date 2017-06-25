@@ -18,7 +18,7 @@ import (
 )
 
 // QueryUnescape извлекает URL адрес из строки, переданной в поле http запроса
-func QueryUnescape(s string) (string, bool) {
+func QueryUnescape(s string) (string, error ) {
 
 	if strings.HasPrefix(s, "/") {
 		s = s[1:]
@@ -28,11 +28,7 @@ func QueryUnescape(s string) (string, bool) {
 	// заменить вхождения "_2" на "_"
 	s = regexp.MustCompile("_1").ReplaceAllString(s, "_")
 	// разэкранировать url
-	var s1, err = url.QueryUnescape(s)
-	if err != nil {
-		return "", false
-	}
-	return s1, true
+	return url.QueryUnescape(s)
 }
 
 // QueryEscape экранирует строку адреса http запроса

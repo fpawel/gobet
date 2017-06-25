@@ -10,7 +10,7 @@ import (
 
 	"github.com/user/gobet/betfair.com/aping/client/endpoint"
 	"github.com/user/gobet/betfair.com/login"
-	"github.com/user/gobet/mobileinet"
+	"github.com/user/gobet/traficControl"
 )
 
 func GetResponse(xAuthentication string, appKey *string,
@@ -51,7 +51,7 @@ func GetResponse(xAuthentication string, appKey *string,
 
 	responseBody, err = ioutil.ReadAll(resp.Body)
 
-	mobileinet.LogAddTotalBytesReaded(len(responseBody), "API-NG")
+	traficControl.AddTotalBytesReaded(len(responseBody), "API-NG")
 
 	return
 }
