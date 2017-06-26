@@ -12,15 +12,16 @@ import (
 	"github.com/user/gobet/betfair.com/aping/client/eventTypes"
 	"github.com/user/gobet/betfair.com/aping/client/events"
 
+	"github.com/user/gobet/config"
+	"github.com/user/gobet/data/footballMatches"
+	"github.com/user/gobet/hub"
 	"github.com/user/gobet/proxi"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
-	"github.com/user/gobet/config"
-	"github.com/user/gobet/data/footballMatches"
-	"github.com/user/gobet/hub"
 
+	"github.com/user/gobet/betfair.com/aping/client"
 	"github.com/user/gobet/gate"
 )
 
@@ -36,13 +37,11 @@ func Run() {
 	var footballMatches = footballMatches.New(hub)
 	footballMatches.Run()
 
-
-
 	router.Get("/d", func(w http.ResponseWriter, r *http.Request) {
-		client := gate.NewClient(w,r)
-		hub.SubscribeFootball(client,true);
-		client.Run(hub.UnregisterClient, func (recivedBytes []byte) {
-			processDataFromPeer(hub, client, recivedBytes )
+		client := gate.NewClient(w, r)
+		//hub.SubscribeFootball(client)
+		client.Run(hub.UnregisterClient, func(recivedBytes []byte) {
+			processDataFromPeer(hub, client, recivedBytes)
 		})
 	})
 	router.Get("/football/games", func(w http.ResponseWriter, r *http.Request) {
@@ -67,26 +66,79 @@ func Run() {
 	setupRouteMarkets(router)
 	setupRoutePrices(router)
 	setupRouteWebsocketPrices(&websocketUpgrader, router)
-	http.ListenAndServe(":"+ config.Get().Port, router)
+	http.ListenAndServe(":"+config.Get().Port, router)
 
 }
 
 type Request struct {
 
-	Football *struct{
+	Football *struct {
 		ConfirmHashCode string
 	} `json:",omitempty"`
 
+	ListEventTypes *struct{} `json:",omitempty"`
+
+	ListEventType *int `json:",omitempty"`
+
+	SubscribeFootball *bool `json:",omitempty"`
+
+
 }
 
-func  processDataFromPeer(hub *hub.Hub, c *gate.Client, bytes []byte) {
+func processDataFromPeer(hub *hub.Hub, c *gate.Client, bytes []byte) {
 	var request Request
 	if err := json.Unmarshal(bytes, &request); err != nil {
-		c.SendJsonError("error demarshaling json request: " + err.Error())
+		c.SendJsonError("error unmarshal json request: " + err.Error())
 		return
 	}
+
+
 	if request.Football != nil {
 		hub.ConfirmFootball(c, request.Football.ConfirmHashCode)
+		return
+	}
+
+	if request.SubscribeFootball != nil {
+		hub.SubscribeFootball(c, *request.SubscribeFootball)
+		return
+	}
+
+	if request.ListEventTypes != nil {
+
+		ch := make(chan eventTypes.Result)
+		eventTypes.Get(ch)
+		x := <-ch
+		close(ch)
+
+		if x.Error == nil {
+			c.SendJson(struct{ EventTypes []client.EventType }{x.EventTypes})
+		} else {
+			c.SendJsonError(x.Error.Error())
+		}
+		return
+	}
+
+	if request.ListEventType != nil {
+
+		ch := make(chan events.Result)
+		events.Get(*request.ListEventType, ch)
+		x := <-ch
+		close(ch)
+
+		if x.Error == nil {
+			var r struct {
+				EventType struct{
+					 ID int
+					Events []client.Event
+				}
+			}
+			r.EventType.ID = *request.ListEventType
+			r.EventType.Events = x.Events
+			c.SendJson(&r)
+		} else {
+			c.SendJsonError(x.Error.Error())
+		}
+		return
 	}
 }
 
@@ -212,7 +264,6 @@ func setCompressedJSON(w http.ResponseWriter, data interface{}) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
 }
 
 // FileServer conveniently sets up a http.FileServer handler to serve

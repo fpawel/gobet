@@ -159,7 +159,7 @@ func getResponse(eventTypeID int) (events Events, err error) {
 		y.MarketCount = x.MarketCount
 		events = append(events, y)
 	}
-	log.Printf("readede events %d", eventTypeID)
+	log.Printf("readed events %d", eventTypeID)
 
 
 

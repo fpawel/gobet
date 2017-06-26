@@ -17,10 +17,10 @@ type Hub struct {
 }
 
 type clientFootball struct {
-	matches   []football.Match // Football matches sent to the client
-	hashCode  string
-	on        bool
-	confirmed bool
+	matches                    []football.Match // Football matches sent to the client
+	hashCode                   string
+	on                         bool
+	waitConfirmationFromClient bool
 }
 
 type clientState struct {
@@ -51,18 +51,17 @@ func New() (h *Hub) {
 func (h *Hub) SubscribeFootball(c *gate.Client, on bool) {
 	h.update <- clientStatePair{c, func(s *clientState) {
 		s.football.on = on
-		if !on {
-			s.football.matches = nil
-			s.football.hashCode = ""
-			s.football.confirmed = true
-		}
+		s.football.matches = nil
+		s.football.hashCode = ""
+		s.football.waitConfirmationFromClient = false
 	}}
 }
+
 
 func (h *Hub) ConfirmFootball(c *gate.Client, confirmHashCode string) {
 	h.update <- clientStatePair{c, func(s *clientState) {
 		if s.football.on && s.football.hashCode == confirmHashCode {
-			s.football.confirmed = true
+			s.football.waitConfirmationFromClient = false
 			s.football.hashCode = ""
 		}
 	}}
@@ -84,7 +83,7 @@ func (h *Hub) work() {
 	case newMatches := <-h.FootballMatches:
 		var eventsResult events.Result
 		for c, s := range h.clients {
-			if !s.football.on || !s.football.confirmed {
+			if s.football.on && !s.football.waitConfirmationFromClient {
 				h.proccessFootball(c, s, newMatches, &eventsResult)
 			}
 		}
@@ -139,7 +138,7 @@ func (h *Hub) proccessFootball(c *gate.Client, s *clientState,
 	c.SendJson(response)
 	s.football.matches = newMatches
 	s.football.hashCode = response.Football.HashCode
-	s.football.confirmed = false
+	s.football.waitConfirmationFromClient = true
 }
 
 func (h *Hub) UnregisterClient(c *gate.Client){
