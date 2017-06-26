@@ -11,6 +11,9 @@ import (
 	"github.com/user/gobet/betfair.com/football/parse"
 	"github.com/user/gobet/utils"
 	"github.com/user/gobet/config"
+	"io/ioutil"
+	"github.com/user/gobet/traficControl"
+	"encoding/json"
 )
 
 const (
@@ -37,7 +40,7 @@ func downloadURL(srcURL string, header http.Header) (*goquery.Document, error) {
 		return nil, fmt.Errorf("betfairPage, DownloadURL, %q, %s, %s", srcURL, fileLine, e.Error())
 	}
 	URL := srcURL
-	if config.UseBetfairProxi {
+	if config.Get().UseBetfairProxi {
 		// https://betproxi.herokuapp.com/test/proxi/https%3A%2F%2Fwww.betfair.com%2Fexchange%2Ffootball
 		//URL = fmt.Sprintf("http://betproxi.herokuapp.com/test/proxi/%s",
 		URL = fmt.Sprintf("http://gobet.herokuapp.com/proxi/%s",
@@ -61,7 +64,7 @@ func downloadURL(srcURL string, header http.Header) (*goquery.Document, error) {
 		return fail(utils.FuncFileLine(), err)
 	}
 
-	if config.ControlTraffic {
+	if config.Get().ControlTraffic {
 		log.Printf("Control traffic: %v", srcURL)
 	}
 
@@ -102,7 +105,7 @@ func ReadFirstPageURL() (string, error) {
 	return parse.FirstPageURL(doc)
 }
 
-func ReadPage(URL string) (games []football.Game, nextPage *string, err error) {
+func ReadPage(URL string) (games []football.Match, nextPage *string, err error) {
 
 	doc, errDoc := downloadURL(URL, http.Header{})
 	if errDoc != nil {
@@ -110,4 +113,55 @@ func ReadPage(URL string) (games []football.Game, nextPage *string, err error) {
 		return
 	}
 	return parse.Page(doc)
+}
+
+
+func ReadMatches() (readedGames []football.Match, err error) {
+	var firstPageURL string
+	firstPageURL, err = ReadFirstPageURL()
+	if err != nil {
+		return
+	}
+
+	ptrNextPage := &firstPageURL
+	for page := 0; ptrNextPage != nil && err == nil; page++ {
+		var gamesPage []football.Match
+		gamesPage, ptrNextPage, err = ReadPage(BetfairURL + *ptrNextPage)
+		if err != nil {
+			return
+		}
+		for _, game := range gamesPage {
+			game.Page = page
+			readedGames = append(readedGames, game)
+		}
+	}
+
+	return
+}
+
+func ReadMatchesFromHerokuApp() (readedGames []football.Match, err error) {
+
+	var resp *http.Response
+	url := "http://gobet.herokuapp.com/football/footballMatches"
+	resp, err = http.Get(url)
+	if err != nil {
+		err = fmt.Errorf("http error of %v: %v", url, err)
+		return
+	}
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	traficControl.AddTotalBytesReaded(len(body), "HEROKU APP")
+
+	var data struct {
+		Ok  []football.Match `json:"ok,omitempty"`
+		Err error            `json:"error,omitempty"`
+	}
+
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		err = fmt.Errorf("data error of %v: %v", url, err)
+		return
+	}
+	readedGames = data.Ok
+	return
 }

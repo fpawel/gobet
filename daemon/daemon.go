@@ -11,13 +11,17 @@ import (
 	"github.com/user/gobet/betfair.com/aping/client/eventPrices/eventPricesWS"
 	"github.com/user/gobet/betfair.com/aping/client/eventTypes"
 	"github.com/user/gobet/betfair.com/aping/client/events"
-	"github.com/user/gobet/betfair.com/football/footballGames"
+
 	"github.com/user/gobet/proxi"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
 	"github.com/user/gobet/config"
+	"github.com/user/gobet/data/footballMatches"
+	"github.com/user/gobet/hub"
+
+	"github.com/user/gobet/gate"
 )
 
 func Run() {
@@ -27,20 +31,22 @@ func Run() {
 	router.Get("/proxi/*", proxi.Proxi)
 
 	var websocketUpgrader = websocket.Upgrader{} // use default options
-	var footbalGames = footballGames.New()
 
-	router.Get("/football", func(w http.ResponseWriter, r *http.Request) {
-		conn, err := websocketUpgrader.Upgrade(w, r, nil)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		conn.EnableWriteCompression(true)
-		footbalGames.OpenWebSocketSession(conn)
+	var hub = hub.New()
+	var footballMatches = footballMatches.New(hub)
+	footballMatches.Run()
 
+
+
+	router.Get("/d", func(w http.ResponseWriter, r *http.Request) {
+		client := gate.NewClient(w,r)
+		hub.SubscribeFootball(client,true);
+		client.Run(hub.UnregisterClient, func (recivedBytes []byte) {
+			processDataFromPeer(hub, client, recivedBytes )
+		})
 	})
-	router.Get("/football/footballGames", func(w http.ResponseWriter, r *http.Request) {
-		games, err := footbalGames.Get()
+	router.Get("/football/games", func(w http.ResponseWriter, r *http.Request) {
+		games, err := footballMatches.Get()
 		jsonResult(w, games, err)
 	})
 
@@ -61,8 +67,27 @@ func Run() {
 	setupRouteMarkets(router)
 	setupRoutePrices(router)
 	setupRouteWebsocketPrices(&websocketUpgrader, router)
-	http.ListenAndServe(":"+ config.Port, router)
+	http.ListenAndServe(":"+ config.Get().Port, router)
 
+}
+
+type Request struct {
+
+	Football *struct{
+		ConfirmHashCode string
+	} `json:",omitempty"`
+
+}
+
+func  processDataFromPeer(hub *hub.Hub, c *gate.Client, bytes []byte) {
+	var request Request
+	if err := json.Unmarshal(bytes, &request); err != nil {
+		c.SendJsonError("error demarshaling json request: " + err.Error())
+		return
+	}
+	if request.Football != nil {
+		hub.ConfirmFootball(c, request.Football.ConfirmHashCode)
+	}
 }
 
 func setupRouteWebsocketPrices(websocketUpgrader *websocket.Upgrader, router chi.Router) {

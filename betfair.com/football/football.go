@@ -1,7 +1,7 @@
 package football
 
-// Game - данные футбольной игры
-type Game struct {
+// Match - данные футбольной игры
+type Match struct {
 	Live
 	EventID  int    `json:"event_id"`
 	MarketID int    `json:"market_id"`

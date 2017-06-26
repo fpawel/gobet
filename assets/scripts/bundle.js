@@ -73,11 +73,11 @@ var AppComponent = (function (_super) {
             React.createElement(sports_menu_1.SportsMenu, null),
             this.content());
     };
-    AppComponent = __decorate([
-        mobx_react_1.observer
-    ], AppComponent);
     return AppComponent;
 }(react_1.Component));
+AppComponent = __decorate([
+    mobx_react_1.observer
+], AppComponent);
 exports.App = React.createElement(AppComponent, null);
 
 },{"../data/route":10,"../store/store":12,"./football/football":2,"./sport":6,"./sports-menu":7,"./update-event-types":8,"mobx-react":41,"react":200}],2:[function(require,module,exports){
@@ -141,11 +141,11 @@ var FootballTable = (function (_super) {
     FootballTable.prototype.render = function () {
         return this.simpleTable();
     };
-    FootballTable = __decorate([
-        mobx_react_1.observer
-    ], FootballTable);
     return FootballTable;
 }(React.Component));
+FootballTable = __decorate([
+    mobx_react_1.observer
+], FootballTable);
 
 },{"../../store/store":12,"./game":3,"./update":4,"mobx-react":41,"react":200}],3:[function(require,module,exports){
 "use strict";
@@ -215,7 +215,7 @@ var FootballUpdater = (function (_super) {
     function FootballUpdater() {
         var _this = _super.call(this) || this;
         _this.ws = (function () {
-            var url = document.location.protocol.replace("http", "ws") + "//" + document.location.host + "/football";
+            var url = document.location.protocol.replace("http", "ws") + "//" + document.location.host + "/d";
             var ws = new reconnecting_websocket_1.ReconnectingWebSocket(url);
             ws.onconnecting = function () { return console.log("connectiong websocket..."); };
             ws.onopen = function (event) {
@@ -226,15 +226,21 @@ var FootballUpdater = (function (_super) {
             };
             ws.onmessage = function (event) {
                 var x = JSON.parse(event.data);
-                if (x.hash_code) {
-                    ws.send(x.hash_code);
+                if (x.Error) {
+                    console.error('Error from server:', x.Error);
+                    return;
                 }
-                if (x.error) {
-                    console.error("websocket error:", x.error);
-                }
-                if (x.changes) {
+                if (x.hash_code && x.changes) {
                     store_1.store.footballGames = football_1.FootballData.updateGames(store_1.store.footballGames, x.changes);
+                    ws.send({
+                        Football: {
+                            ConfirmHashCode: x.hash_code,
+                        },
+                    });
+                    return;
                 }
+                console.error(x.Error);
+                console.error('Unknown data from derver:', x);
             };
             return ws;
         })();
@@ -530,11 +536,11 @@ var LinkSport = (function (_super) {
         return React.createElement("li", { className: this.isActive() ? 'active' : undefined },
             React.createElement("a", { href: '#/' + to }, this.props.sport.name));
     };
-    LinkSport = __decorate([
-        mobx_react_1.observer
-    ], LinkSport);
     return LinkSport;
 }(React.Component));
+LinkSport = __decorate([
+    mobx_react_1.observer
+], LinkSport);
 
 },{"../data/route":10,"../store/store":12,"../utils/utils":16,"./spinner-loading":5,"mobx-react":41,"react":200}],8:[function(require,module,exports){
 "use strict";
@@ -736,6 +742,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 /// <reference types="mobx" />
 var mobx_1 = require("mobx");
+var football_1 = require("../data/football");
+var reconnecting_websocket_1 = require("../utils/reconnecting-websocket");
 var Store = (function () {
     function Store() {
         var _this = this;
@@ -746,20 +754,48 @@ var Store = (function () {
             _this.locationHash = window.location.hash;
         });
     }
-    __decorate([
-        mobx_1.observable
-    ], Store.prototype, "sports", void 0);
-    __decorate([
-        mobx_1.observable
-    ], Store.prototype, "footballGames", void 0);
-    __decorate([
-        mobx_1.observable
-    ], Store.prototype, "locationHash", void 0);
     return Store;
 }());
+__decorate([
+    mobx_1.observable
+], Store.prototype, "sports", void 0);
+__decorate([
+    mobx_1.observable
+], Store.prototype, "footballGames", void 0);
+__decorate([
+    mobx_1.observable
+], Store.prototype, "locationHash", void 0);
 exports.store = new Store();
+var url = document.location.protocol.replace("http", "ws") + "//" + document.location.host + "/d";
+var ws = new reconnecting_websocket_1.ReconnectingWebSocket(url);
+ws.onconnecting = function () { return console.log("connectiong websocket..."); };
+ws.onopen = function (event) {
+    console.log("websocket opened");
+};
+ws.onerror = function (event) {
+    console.log("websocket error:", event);
+};
+ws.onmessage = function (event) {
+    var x = JSON.parse(event.data);
+    if (x.Error) {
+        console.error('Error from server:', x.Error);
+        return;
+    }
+    if (x.Football) {
+        var football = x.Football;
+        exports.store.footballGames = football_1.FootballData.updateGames(exports.store.footballGames, football.Changes);
+        ws.send({
+            Football: {
+                ConfirmHashCode: football.HashCode,
+            },
+        });
+        return;
+    }
+    console.error(x.Error);
+    console.error('Unknown data from derver:', x);
+};
 
-},{"mobx":42}],13:[function(require,module,exports){
+},{"../data/football":9,"../utils/reconnecting-websocket":15,"mobx":42}],13:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.code_to_country = {
@@ -1150,12 +1186,12 @@ var ReconnectingWebSocket = (function () {
             console.debug.apply(console, args);
         }
     };
-    /**
-     * Setting this to true is the equivalent of setting all instances of ReconnectingWebSocket.debug to true.
-     */
-    ReconnectingWebSocket.debugAll = false;
     return ReconnectingWebSocket;
 }());
+/**
+ * Setting this to true is the equivalent of setting all instances of ReconnectingWebSocket.debug to true.
+ */
+ReconnectingWebSocket.debugAll = false;
 exports.ReconnectingWebSocket = ReconnectingWebSocket;
 
 },{}],16:[function(require,module,exports){
@@ -26700,6 +26736,10 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');

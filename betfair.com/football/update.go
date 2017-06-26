@@ -1,4 +1,4 @@
-package update
+package football
 
 import (
 	"encoding/json"
@@ -6,12 +6,12 @@ import (
 	"log"
 
 	"github.com/user/gobet/betfair.com/aping/client"
-	"github.com/user/gobet/betfair.com/football"
+	"strconv"
 )
 
-// Game содержит изменения в данных футбольной игры на стороне сервера,
+// MatchChanges содержит изменения в данных футбольной игры на стороне сервера,
 // расчитанных по данным футбольной игры на стороне клиента
-type Game struct {
+type MatchChanges struct {
 	EventID int     `json:"event_id"`
 	Page    *int    `json:"page,omitempty"`
 	Order   *int    `json:"order,omitempty"`
@@ -26,16 +26,16 @@ type Game struct {
 	Lose2 **float64 `json:"lose2,omitempty"`
 }
 
-// GameListUpgrade содержит данные об изменения в списке игр на стороне сервера,
+// MatchesListChanges содержит данные об изменения в списке игр на стороне сервера,
 // расчитанных по списку игр на стороне клиента
-type Games struct {
-	Inplay  []football.Game `json:"inplay,omitempty"`
-	Outplay []int           `json:"outplay,omitempty"`
-	Changes []Game          `json:"game_changes,omitempty"`
-	Events  []client.Event  `json:"events,omitempty"`
+type MatchesListChanges struct {
+	Inplay  []Match        `json:"inplay,omitempty"`
+	Outplay []int          `json:"outplay,omitempty"`
+	Changes []MatchChanges `json:"game_changes,omitempty"`
+	Events  []client.Event `json:"events,omitempty"`
 }
 
-func (x *Games) isEmpty() bool {
+func (x *MatchesListChanges) isEmpty() bool {
 	return len(x.Inplay) == 0 && len(x.Outplay) == 0 && len(x.Changes) == 0
 }
 
@@ -46,20 +46,33 @@ func setp1(x *float64, y *float64, z ***float64) {
 	}
 }
 
-func (x *Games) getHash() uint32 {
-	fnv32a := fnv.New32a()
+func (x *MatchesListChanges) GetHashCode() string {
+	fnv32a := fnv.New64a()
 	bytes, err := json.Marshal(x)
 	if err != nil {
-		log.Fatal("json.Marshal GameListUpgrade")
+		log.Fatal("json.Marshal MatchesListChanges")
 	}
 	fnv32a.Write(bytes)
-	return fnv32a.Sum32()
+
+	return strconv.FormatUint( fnv32a.Sum64(), 16)
 }
 
-func New(prev []football.Game, next []football.Game) *Games {
-	x := Games{}
-	mprev := make(map[int]football.Game)
-	mnext := make(map[int]football.Game)
+func (x *MatchesListChanges) SetInplayEvents(events []client.Event){
+	inplays := make(map[int]struct{})
+	for _,y := range x.Inplay {
+		inplays[y.EventID] = struct{}{}
+	}
+	for _,y := range events{
+		if _,ok := inplays[y.ID]; ok{
+			x.Events = append(x.Events, y)
+		}
+	}
+}
+
+func NewMatchesListChanges(prev []Match, next []Match) *MatchesListChanges {
+	x := MatchesListChanges{}
+	mprev := make(map[int]Match)
+	mnext := make(map[int]Match)
 
 	for _, game := range prev {
 		mprev[game.EventID] = game
@@ -96,9 +109,9 @@ func New(prev []football.Game, next []football.Game) *Games {
 	return &x
 }
 
-func difference(x *football.Live, y *football.Live) *Game {
+func difference(x *Live, y *Live) *MatchChanges {
 
-	r := Game{}
+	r := MatchChanges{}
 	if x.Time != y.Time {
 		r.Time = &y.Time
 	}

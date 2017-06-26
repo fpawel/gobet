@@ -10,7 +10,7 @@ import (
 
 // AddTotalBytesReaded логгирует текущее значение количества считанных мегабайт
 func AddTotalBytesReaded(value int, who string) {
-	if !config.ControlTraffic {
+	if !config.Get().ControlTraffic {
 		return
 	}
 	mu.Lock()

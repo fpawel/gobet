@@ -58,7 +58,7 @@ func odds(node *goquery.Selection) (odds football.Odds) {
 	return
 }
 
-func game(node *goquery.Selection) (game football.Game, err error) {
+func game(node *goquery.Selection) (game football.Match, err error) {
 
 	if game.EventID, err = eventID(node); err != nil {
 		return
@@ -93,7 +93,7 @@ func FirstPageURL(doc *goquery.Document) (string, error) {
 	return "", utils.ErrorWithInfo(fmt.Errorf("pattern %v not found", pattern))
 }
 
-func Page(doc *goquery.Document) (games []football.Game, nextPage *string, err error) {
+func Page(doc *goquery.Document) (games []football.Match, nextPage *string, err error) {
 
 	doc.Find("tbody[data-marketid][data-eventid]").Each(func(i int, x *goquery.Selection) {
 		game, errGame := game(x)
