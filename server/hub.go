@@ -1,4 +1,4 @@
-package hub
+package server
 
 import (
 	"github.com/user/gobet/betfair.com/aping/client/events"
@@ -32,7 +32,7 @@ type clientStatePair struct {
 	stateHandler func(*clientState)
 }
 
-func New() (h *Hub) {
+func NewHub() (h *Hub) {
 	h = &Hub{
 		update:          make(chan clientStatePair),
 		unregister:      make(chan *gate.Client),
@@ -57,7 +57,6 @@ func (h *Hub) SubscribeFootball(c *gate.Client, on bool) {
 	}}
 }
 
-
 func (h *Hub) ConfirmFootball(c *gate.Client, confirmHashCode string) {
 	h.update <- clientStatePair{c, func(s *clientState) {
 		if s.football.on && s.football.hashCode == confirmHashCode {
@@ -67,14 +66,13 @@ func (h *Hub) ConfirmFootball(c *gate.Client, confirmHashCode string) {
 	}}
 }
 
-
 func (h *Hub) work() {
 	select {
 
 	case err := <-h.FootballError:
 		for c, s := range h.clients {
-			if s.football.on  {
-				c.SendJsonError( &footballError{
+			if s.football.on {
+				c.SendJsonError(&footballError{
 					err,
 				})
 			}
@@ -119,7 +117,7 @@ func (h *Hub) proccessFootball(c *gate.Client, s *clientState,
 		}
 
 		if eventsResult.Error != nil {
-			c.SendJsonError( &footballError{
+			c.SendJsonError(&footballError{
 				"events: " + eventsResult.Error.Error(),
 			})
 			return
@@ -141,11 +139,10 @@ func (h *Hub) proccessFootball(c *gate.Client, s *clientState,
 	s.football.waitConfirmationFromClient = true
 }
 
-func (h *Hub) UnregisterClient(c *gate.Client){
+func (h *Hub) UnregisterClient(c *gate.Client) {
 	h.unregister <- c
 }
 
 type footballError struct {
 	FootballError string
 }
-

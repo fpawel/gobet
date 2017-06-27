@@ -4,6 +4,7 @@ import (
 	"compress/gzip"
 	"encoding/json"
 	"fmt"
+
 	"github.com/go-chi/chi"
 	"github.com/gorilla/websocket"
 	"github.com/user/gobet/betfair.com/aping/client/event"
@@ -12,16 +13,15 @@ import (
 	"github.com/user/gobet/betfair.com/aping/client/eventTypes"
 	"github.com/user/gobet/betfair.com/aping/client/events"
 
-	"github.com/user/gobet/config"
-	"github.com/user/gobet/data/footballMatches"
-	"github.com/user/gobet/hub"
-	"github.com/user/gobet/proxi"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
 
-	"github.com/user/gobet/betfair.com/aping/client"
+	"github.com/user/gobet/config"
+	"github.com/user/gobet/server"
+	"github.com/user/gobet/proxi"
+
 	"github.com/user/gobet/gate"
 )
 
@@ -31,21 +31,17 @@ func Run() {
 
 	router.Get("/proxi/*", proxi.Proxi)
 
-	var websocketUpgrader = websocket.Upgrader{} // use default options
-
-	var hub = hub.New()
-	var footballMatches = footballMatches.New(hub)
-	footballMatches.Run()
+	var server = server.NewServer()
 
 	router.Get("/d", func(w http.ResponseWriter, r *http.Request) {
 		client := gate.NewClient(w, r)
-		//hub.SubscribeFootball(client)
-		client.Run(hub.UnregisterClient, func(recivedBytes []byte) {
-			processDataFromPeer(hub, client, recivedBytes)
+		//server.SubscribeFootball(client)
+		client.Run(server.Hub.UnregisterClient, func(recivedBytes []byte) {
+			server.ProcessDataFromPeer(client, recivedBytes)
 		})
 	})
 	router.Get("/football/games", func(w http.ResponseWriter, r *http.Request) {
-		games, err := footballMatches.Get()
+		games, err := server.Football.Get()
 		jsonResult(w, games, err)
 	})
 
@@ -65,84 +61,14 @@ func Run() {
 	setupRouterSports(router)
 	setupRouteMarkets(router)
 	setupRoutePrices(router)
-	setupRouteWebsocketPrices(&websocketUpgrader, router)
+
+	setupRouteWebsocketPrices(router)
 	http.ListenAndServe(":"+config.Get().Port, router)
 
 }
 
-type Request struct {
-
-	Football *struct {
-		ConfirmHashCode string
-	} `json:",omitempty"`
-
-	ListEventTypes *struct{} `json:",omitempty"`
-
-	ListEventType *int `json:",omitempty"`
-
-	SubscribeFootball *bool `json:",omitempty"`
-
-
-}
-
-func processDataFromPeer(hub *hub.Hub, c *gate.Client, bytes []byte) {
-	var request Request
-	if err := json.Unmarshal(bytes, &request); err != nil {
-		c.SendJsonError("error unmarshal json request: " + err.Error())
-		return
-	}
-
-
-	if request.Football != nil {
-		hub.ConfirmFootball(c, request.Football.ConfirmHashCode)
-		return
-	}
-
-	if request.SubscribeFootball != nil {
-		hub.SubscribeFootball(c, *request.SubscribeFootball)
-		return
-	}
-
-	if request.ListEventTypes != nil {
-
-		ch := make(chan eventTypes.Result)
-		eventTypes.Get(ch)
-		x := <-ch
-		close(ch)
-
-		if x.Error == nil {
-			c.SendJson(struct{ EventTypes []client.EventType }{x.EventTypes})
-		} else {
-			c.SendJsonError(x.Error.Error())
-		}
-		return
-	}
-
-	if request.ListEventType != nil {
-
-		ch := make(chan events.Result)
-		events.Get(*request.ListEventType, ch)
-		x := <-ch
-		close(ch)
-
-		if x.Error == nil {
-			var r struct {
-				EventType struct{
-					 ID int
-					Events []client.Event
-				}
-			}
-			r.EventType.ID = *request.ListEventType
-			r.EventType.Events = x.Events
-			c.SendJson(&r)
-		} else {
-			c.SendJsonError(x.Error.Error())
-		}
-		return
-	}
-}
-
-func setupRouteWebsocketPrices(websocketUpgrader *websocket.Upgrader, router chi.Router) {
+func setupRouteWebsocketPrices(router chi.Router) {
+	var websocketUpgrader = websocket.Upgrader{} // use default options
 	router.Get("/wsprices/{id}", func(w http.ResponseWriter, r *http.Request) {
 
 		eventID, err := strconv.Atoi(chi.URLParam(r, "id"))

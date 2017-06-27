@@ -53,7 +53,7 @@ func (c *Client) readPump(handler Handler) (err error) {
 		messageType, message, err := c.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
-				err = fmt.Errorf("hub-client-%p readPump, UnexpectedCloseError: %v", c, err)
+				err = fmt.Errorf("server-client-%p readPump, UnexpectedCloseError: %v", c, err)
 			}
 			break
 		}
@@ -89,26 +89,26 @@ func (c *Client) writePump(unregister func(*Client), done chan<- struct{}, inter
 		case message, ok := <-c.send:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
-				// The hub closed the channel.
+				// The server closed the channel.
 				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
 				return
 			}
 
 			w, err := c.conn.NextWriter(websocket.TextMessage)
 			if err != nil {
-				fmt.Printf("hub-client-%p writePump, error getting conn.NextWriter: %v\n", c, err)
+				fmt.Printf("server-client-%p writePump, error getting conn.NextWriter: %v\n", c, err)
 				return
 			}
 			w.Write(message)
 
 			if err := w.Close(); err != nil {
-				fmt.Printf("hub-client-%p writePump, error closing writer: %v\n", c, err)
+				fmt.Printf("server-client-%p writePump, error closing writer: %v\n", c, err)
 				return
 			}
 		case <-ticker.C:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if err := c.conn.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
-				fmt.Printf("hub-client-%p writePump, error closing writer: %v\n", c, err)
+				fmt.Printf("server-client-%p writePump, error closing writer: %v\n", c, err)
 				return
 			}
 		}
@@ -117,7 +117,7 @@ func (c *Client) writePump(unregister func(*Client), done chan<- struct{}, inter
 
 //Run handles websocket requests from the peer.
 func (c *Client) Run(unregister func(*Client), handler Handler) (err error) {
-	fmt.Printf("hub-client-%p: start\n", c)
+	fmt.Printf("server-client-%p: start\n", c)
 	done := make(chan struct{})
 	interrupt := make(chan struct{}, 2)
 	go c.writePump(unregister, done, interrupt)
@@ -127,7 +127,7 @@ func (c *Client) Run(unregister func(*Client), handler Handler) (err error) {
 	close(interrupt)
 	close(done)
 	c.conn.Close()
-	fmt.Printf("hub-client-%p: end\n", c)
+	fmt.Printf("server-client-%p: end\n", c)
 	return
 }
 
@@ -147,10 +147,10 @@ func NewClient(w http.ResponseWriter, r *http.Request) (client *Client) {
 		return nil
 	})
 	conn.SetCloseHandler(func(code int, text string) error {
-		fmt.Printf("hub%p: closed, %d, %s\n", conn, code, text)
+		fmt.Printf("server%p: closed, %d, %s\n", conn, code, text)
 		return nil
 	})
-	fmt.Printf("hub%p: opened\n", conn)
+	fmt.Printf("server%p: opened\n", conn)
 
 	client = &Client{
 		conn: conn,

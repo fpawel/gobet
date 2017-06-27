@@ -1,4 +1,4 @@
-package footballMatches
+package server
 
 import (
 	"sync"
@@ -7,25 +7,24 @@ import (
 	"github.com/user/gobet/betfair.com/football/webclient"
 
 	"github.com/user/gobet/config"
-	"github.com/user/gobet/hub"
 	"time"
 )
 
-type L struct {
+type Foootball struct {
 	mu      sync.RWMutex
 	matches []football.Match
 	err     error
-	hub     *hub.Hub
+	hub     *Hub
 }
 
-func New(hub *hub.Hub) (x *L) {
-	x = &L{
+func NewFoootball(hub *Hub) (x *Foootball) {
+	x = &Foootball{
 		hub : hub,
 	}
 	return
 }
 
-func (x *L) Run()  {
+func (x *Foootball) Run()  {
 	go func() {
 		for {
 			x.updateGames()
@@ -36,7 +35,7 @@ func (x *L) Run()  {
 
 
 
-func (x *L) Get() (r []football.Match, err error) {
+func (x *Foootball) Get() (r []football.Match, err error) {
 	x.mu.RLock()
 	defer x.mu.RUnlock()
 
@@ -49,7 +48,7 @@ func (x *L) Get() (r []football.Match, err error) {
 	return
 }
 
-func (x *L) updateGames() {
+func (x *Foootball) updateGames() {
 
 	if !config.Get().ConstantlyUpdate {
 		x.mu.RLock()
