@@ -54,11 +54,11 @@ var Alert = (function (_super) {
             React.createElement("strong", { style: { marginRight: '10px' } }, store_1.store.Message.title),
             store_1.store.Message.text);
     };
-    Alert = __decorate([
-        mobx_react_1.observer
-    ], Alert);
     return Alert;
 }(react_1.Component));
+Alert = __decorate([
+    mobx_react_1.observer
+], Alert);
 exports.Alert = Alert;
 
 },{"../store/store":12,"mobx-react":40,"react":199}],2:[function(require,module,exports){
@@ -110,7 +110,7 @@ var AppComponent = (function (_super) {
                         return React.createElement(sport_1.Sport, { id: store_1.store.route.sportID });
                     }
                 }
-                return spinner_loading_1.SpinnerLoading("\u0414\u0430\u043D\u043D\u044B\u0435 \u0441\u0447\u0438\u0442\u044B\u0432\u0430\u044E\u0442\u0441\u044F...");
+                return spinner_loading_1.spinnerLoading("\u0414\u0430\u043D\u043D\u044B\u0435 \u0441\u0447\u0438\u0442\u044B\u0432\u0430\u044E\u0442\u0441\u044F...");
             default:
                 return React.createElement("div", null,
                     "\u0421\u0442\u0440\u0430\u043D\u0438\u0446\u0430 \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u0430. \u0412\u0435\u0440\u043D\u0443\u0442\u044C\u0441\u044F \u043D\u0430 ",
@@ -121,17 +121,16 @@ var AppComponent = (function (_super) {
     AppComponent.prototype.render = function () {
         return React.createElement("div", null,
             React.createElement(navbar_1.Navbar, null),
-            ",",
             React.createElement("div", { className: 'container' },
                 React.createElement(sports_menu_1.SportsMenu, null),
                 this.content(),
                 React.createElement(alert_1.Alert, null)));
     };
-    AppComponent = __decorate([
-        mobx_react_1.observer
-    ], AppComponent);
     return AppComponent;
 }(react_1.Component));
+AppComponent = __decorate([
+    mobx_react_1.observer
+], AppComponent);
 exports.App = React.createElement(AppComponent, null);
 
 },{"../store/store":12,"./alert":1,"./football/football":3,"./navbar":5,"./spinner-loading":6,"./sport":7,"./sports-menu":8,"mobx-react":40,"react":199}],3:[function(require,module,exports){
@@ -158,34 +157,40 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
 var mobx_react_1 = require("mobx-react");
 var game_1 = require("./game");
+var spinner_loading_1 = require("../spinner-loading");
 var store_1 = require("../../store/store");
+var footbalTable = function () {
+    return React.createElement("table", { className: 'table table-condensed table-football' },
+        React.createElement("thead", null,
+            React.createElement("tr", null, ["п/п", "Страна", "Дома", "Счёт",
+                "В гостях", "Время",
+                "П1+", "П1-", "Н+", "Н-", "П2+", "П2-"]
+                .map(function (s) { return React.createElement("th", { key: s },
+                " ",
+                s,
+                " "); }))),
+        React.createElement("tbody", null, store_1.store.footballGames.map(function (game, n) {
+            return React.createElement(game_1.FootballGame, { game: game, key: game.event_id });
+        })));
+};
 var Football = (function (_super) {
     __extends(Football, _super);
     function Football() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     Football.prototype.render = function () {
-        return React.createElement("table", { className: 'table table-condensed table-football' },
-            React.createElement("thead", null,
-                React.createElement("tr", null, ["п/п", "Страна", "Дома", "Счёт",
-                    "В гостях", "Время",
-                    "П1+", "П1-", "Н+", "Н-", "П2+", "П2-"]
-                    .map(function (s) { return React.createElement("th", { key: s },
-                    " ",
-                    s,
-                    " "); }))),
-            React.createElement("tbody", null, store_1.store.footballGames.map(function (game, n) {
-                return React.createElement(game_1.FootballGame, { game: game, key: game.event_id });
-            })));
+        return store_1.store.footballGames.length === 0 ?
+            spinner_loading_1.spinnerLoading('Считываются футбольные матчи') :
+            footbalTable();
     };
-    Football = __decorate([
-        mobx_react_1.observer
-    ], Football);
     return Football;
 }(React.Component));
+Football = __decorate([
+    mobx_react_1.observer
+], Football);
 exports.Football = Football;
 
-},{"../../store/store":12,"./game":4,"mobx-react":40,"react":199}],4:[function(require,module,exports){
+},{"../../store/store":12,"../spinner-loading":6,"./game":4,"mobx-react":40,"react":199}],4:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -236,11 +241,11 @@ var FootballGame = (function (_super) {
             React.createElement("td", { className: maybeChanged(function (a) { return a.time; }) }, game.time),
             oddsF.map(function (s) { return odd(s); }));
     };
-    FootballGame = __decorate([
-        mobx_react_1.observer
-    ], FootballGame);
     return FootballGame;
 }(React.Component));
+FootballGame = __decorate([
+    mobx_react_1.observer
+], FootballGame);
 exports.FootballGame = FootballGame;
 
 },{"../../store/store":12,"../../utils/country-code":13,"mobx-react":40,"react":199}],5:[function(require,module,exports){
@@ -270,43 +275,35 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
 var mobx_react_1 = require("mobx-react");
 var store_1 = require("../store/store");
+var footballMenu = function () {
+    var f = store_1.store.route.type === 'Football';
+    return React.createElement("ul", { className: "nav navbar-nav" },
+        React.createElement("li", { className: "active" },
+            React.createElement("a", null, "\u0424\u0443\u0442\u0431\u043E\u043B")),
+        React.createElement("li", { className: f ? "active" : "" },
+            React.createElement("a", { href: f ? undefined : "#/football" }, "\u0421\u0435\u0433\u043E\u0434\u043D\u044F")),
+        React.createElement("li", { className: f ? undefined : "active" },
+            React.createElement("a", { href: f ? "#/sport/1" : "" }, "\u0412\u0441\u0435 \u0444\u0443\u0442\u0431\u043E\u043B\u044C\u043D\u044B\u0435 \u0440\u044B\u043D\u043A\u0438")));
+};
+var sportName = function () {
+    var sport = store_1.store.Sport;
+    if (!sport)
+        return null;
+    if (sport.id === 1)
+        return footballMenu();
+    return React.createElement("ul", { className: "nav navbar-nav" },
+        React.createElement("li", { className: "active" },
+            React.createElement("a", null,
+                " ",
+                sport.name)));
+};
 var Navbar = (function (_super) {
     __extends(Navbar, _super);
     function Navbar() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     Navbar.prototype.render = function () {
-        var pageMenu;
-        if (store_1.store.route.type === 'Football') {
-            pageMenu =
-                [React.createElement("li", { key: '1', className: "active" },
-                        React.createElement("a", null, "\u0424\u0443\u0442\u0431\u043E\u043B")),
-                    React.createElement("li", { key: '2', className: "active" },
-                        React.createElement("a", null, "\u0421\u0435\u0433\u043E\u0434\u043D\u044F")),
-                    React.createElement("li", { key: '3' },
-                        React.createElement("a", { href: "#/sport/1" }, "\u0412\u0441\u0435 \u0444\u0443\u0442\u0431\u043E\u043B\u044C\u043D\u044B\u0435 \u0440\u044B\u043D\u043A\u0438"))];
-        }
-        else if (store_1.store.route.type === 'Sport') {
-            var sportID_1 = store_1.store.route.sportID;
-            if (sportID_1 === 1) {
-                pageMenu =
-                    [React.createElement("li", { key: '1', className: "active" },
-                            React.createElement("a", null, "\u0424\u0443\u0442\u0431\u043E\u043B")),
-                        React.createElement("li", { key: '2' },
-                            React.createElement("a", { href: "#/football" }, "\u0421\u0435\u0433\u043E\u0434\u043D\u044F")),
-                        React.createElement("li", { key: '3', className: "active" },
-                            React.createElement("a", null, "\u0412\u0441\u0435 \u0444\u0443\u0442\u0431\u043E\u043B\u044C\u043D\u044B\u0435 \u0440\u044B\u043D\u043A\u0438"))];
-            }
-            else {
-                var sport = store_1.store.sports.find(function (x) { return x.id === sportID_1; });
-                if (sport) {
-                    pageMenu =
-                        [React.createElement("li", { key: '1', className: "active" },
-                                React.createElement("a", null, sport.name))];
-                }
-            }
-        }
-        return React.createElement("nav", { className: "navbar navbar-inverse navbar", style: {
+        return React.createElement("nav", { className: "navbar navbar-inverse", style: {
                 backgroundColor: '#5f5f5f',
                 borderColor: '#5f5f5f',
                 fontFamily: '"Segoe UI",Arial,sans-serif',
@@ -315,20 +312,20 @@ var Navbar = (function (_super) {
             React.createElement("div", { className: "container-fluid" },
                 React.createElement("div", { className: "navbar-header" },
                     React.createElement("a", { className: "navbar-brand" }, "Gobet")),
-                React.createElement("ul", { className: "nav navbar-nav" }, pageMenu)));
+                sportName()));
     };
-    Navbar = __decorate([
-        mobx_react_1.observer
-    ], Navbar);
     return Navbar;
 }(React.Component));
+Navbar = __decorate([
+    mobx_react_1.observer
+], Navbar);
 exports.Navbar = Navbar;
 
 },{"../store/store":12,"mobx-react":40,"react":199}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
-exports.SpinnerLoading = function (s) {
+exports.spinnerLoading = function (s) {
     return React.createElement("div", { style: { height: '200px' } },
         React.createElement("i", { className: 'fa fa-spinner fa-spin', style: { fontSize: '50px', margin: '5px' } }, " "),
         " ",
@@ -469,28 +466,22 @@ var Sport = (function (_super) {
             React.createElement("tbody", null, eventsTRs(events)));
     };
     Sport.prototype.render = function () {
-        var _this = this;
         try {
-            var eventType = store_1.store.sports.find(function (y) { return y.id === _this.props.id; });
             var events = store_1.store.eventTypeEvents
                 .get(this.props.id)
                 .map(function (id) { return store_1.store.events.get(id); });
             sortEvents(events, this.state);
-            return React.createElement("div", null,
-                React.createElement("h1", null,
-                    " ",
-                    eventType.name),
-                this.renderTableHelper(events));
+            return React.createElement("div", null, this.renderTableHelper(events));
         }
         catch (e) {
-            return spinner_loading_1.SpinnerLoading("\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E\u0442\u0441\u044F \u0434\u0430\u043D\u043D\u044B\u0435 \u043F\u043E \u0432\u0438\u0434\u0443 \u0441\u043F\u043E\u0440\u0442\u0430 " + this.props.id + "...");
+            return spinner_loading_1.spinnerLoading("\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E\u0442\u0441\u044F \u0434\u0430\u043D\u043D\u044B\u0435 \u043F\u043E \u0432\u0438\u0434\u0443 \u0441\u043F\u043E\u0440\u0442\u0430 " + (store_1.store.Sport ? store_1.store.Sport.name : this.props.id) + "...");
         }
     };
-    Sport = __decorate([
-        mobx_react_1.observer
-    ], Sport);
     return Sport;
 }(React.Component));
+Sport = __decorate([
+    mobx_react_1.observer
+], Sport);
 exports.Sport = Sport;
 
 },{"../store/store":12,"../utils/country-code":13,"./spinner-loading":6,"mobx-react":40,"react":199}],8:[function(require,module,exports){
@@ -533,24 +524,31 @@ var SportsMenu = (function (_super) {
     }
     SportsMenu.prototype.render = function () {
         if (!store_1.store.sports) {
-            return spinner_loading_1.SpinnerLoading('Загрузка меню...');
+            return spinner_loading_1.spinnerLoading('Загрузка меню...');
         }
         var sports = store_1.store.sports.sort(function (x, y) {
             return utils_1.numberToCompare(y.market_count - x.market_count);
         });
         var xs1 = sports.filter(function (_, n) { return n < 6; });
         var xs2 = sports.filter(function (_, n) { return n > 5; });
+        if (store_1.store.Sport) {
+            for (var n = 0; n < xs2.length; n++) {
+                if (xs2[n].id === store_1.store.Sport.id) {
+                    xs2 = [xs2[n]].concat(xs2.slice(0, n)).concat(xs2.slice(n + 1));
+                }
+            }
+        }
         return React.createElement("ul", { className: 'nav nav-tabs' },
             xs1.map(function (sport) {
                 return React.createElement(LinkSport, { sport: sport, key: sport.id });
             }),
             React.createElement(SportsDropdownMenu, { sports: xs2 }));
     };
-    SportsMenu = __decorate([
-        mobx_react_1.observer
-    ], SportsMenu);
     return SportsMenu;
 }(React.Component));
+SportsMenu = __decorate([
+    mobx_react_1.observer
+], SportsMenu);
 exports.SportsMenu = SportsMenu;
 var SportsDropdownMenu = (function (_super) {
     __extends(SportsDropdownMenu, _super);
@@ -558,9 +556,13 @@ var SportsDropdownMenu = (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     SportsDropdownMenu.prototype.render = function () {
-        return React.createElement("li", { className: 'dropdown' },
-            React.createElement("a", __assign({ className: 'dropdown-toggle' }, { 'data-toggle': 'dropdown' }, { href: '#' }),
-                "\u0414\u0440\u0443\u0433\u0438\u0435 \u0440\u044B\u043D\u043A\u0438...   ",
+        var class_ = 'dropdown';
+        if (store_1.store.Sport && this.props.sports.find(function (x) { return x.id === store_1.store.Sport.id; })) {
+            class_ += ' active';
+        }
+        return this.props.sports.length === 0 ? null : React.createElement("li", { className: class_ },
+            React.createElement("a", __assign({ className: 'dropdown-toggle' }, { 'data-toggle': 'dropdown' }, { style: { color: '#337ab7' } }),
+                this.props.sports[0].name,
                 React.createElement("span", { className: 'caret' })),
             React.createElement("ul", { className: 'dropdown-menu' }, this.props.sports.map(function (sport) {
                 return React.createElement(LinkSport, { sport: sport, key: sport.id });
@@ -568,6 +570,9 @@ var SportsDropdownMenu = (function (_super) {
     };
     return SportsDropdownMenu;
 }(React.Component));
+SportsDropdownMenu = __decorate([
+    mobx_react_1.observer
+], SportsDropdownMenu);
 var LinkSport = (function (_super) {
     __extends(LinkSport, _super);
     function LinkSport() {
@@ -589,11 +594,11 @@ var LinkSport = (function (_super) {
         return React.createElement("li", { className: this.isActive() ? 'active' : undefined },
             React.createElement("a", { href: '#/' + to }, this.props.sport.name));
     };
-    LinkSport = __decorate([
-        mobx_react_1.observer
-    ], LinkSport);
     return LinkSport;
 }(React.Component));
+LinkSport = __decorate([
+    mobx_react_1.observer
+], LinkSport);
 
 },{"../store/store":12,"../utils/utils":15,"./spinner-loading":6,"mobx-react":40,"react":199}],9:[function(require,module,exports){
 "use strict";
@@ -689,6 +694,26 @@ var FootballData;
 },{"../utils/utils":15}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getSportID = function (route) {
+    switch (route.type) {
+        case 'Sport':
+            return route.sportID;
+        case 'Football':
+            return 1;
+        default:
+            return 0;
+    }
+};
+exports.isFootball = function (route) {
+    switch (route.type) {
+        case 'Sport':
+            return route.sportID === 1;
+        case 'Football':
+            return true;
+        default:
+            return false;
+    }
+};
 function parseLocationHash(lcoationHash) {
     if (lcoationHash === '#/' ||
         lcoationHash === '/' ||
@@ -884,29 +909,40 @@ var Store = (function () {
         enumerable: true,
         configurable: true
     });
-    __decorate([
-        mobx_1.observable
-    ], Store.prototype, "sports", void 0);
-    __decorate([
-        mobx_1.observable
-    ], Store.prototype, "footballGames", void 0);
-    __decorate([
-        mobx_1.observable
-    ], Store.prototype, "route", void 0);
-    __decorate([
-        mobx_1.observable
-    ], Store.prototype, "events", void 0);
-    __decorate([
-        mobx_1.observable
-    ], Store.prototype, "eventTypeEvents", void 0);
-    __decorate([
-        mobx_1.observable
-    ], Store.prototype, "message", void 0);
-    __decorate([
-        mobx_1.computed
-    ], Store.prototype, "Message", null);
+    Object.defineProperty(Store.prototype, "Sport", {
+        get: function () {
+            var sportID = route_1.getSportID(this.route);
+            return this.sports.find(function (x) { return x.id === sportID; });
+        },
+        enumerable: true,
+        configurable: true
+    });
     return Store;
 }());
+__decorate([
+    mobx_1.observable
+], Store.prototype, "sports", void 0);
+__decorate([
+    mobx_1.observable
+], Store.prototype, "footballGames", void 0);
+__decorate([
+    mobx_1.observable
+], Store.prototype, "route", void 0);
+__decorate([
+    mobx_1.observable
+], Store.prototype, "events", void 0);
+__decorate([
+    mobx_1.observable
+], Store.prototype, "eventTypeEvents", void 0);
+__decorate([
+    mobx_1.observable
+], Store.prototype, "message", void 0);
+__decorate([
+    mobx_1.computed
+], Store.prototype, "Message", null);
+__decorate([
+    mobx_1.computed
+], Store.prototype, "Sport", null);
 exports.store = new Store();
 
 },{"../data/football":9,"../data/route":10,"../utils/reconnecting-websocket":14,"../utils/utils":15,"mobx":41}],13:[function(require,module,exports){
@@ -1271,12 +1307,12 @@ var ReconnectingWebSocket = (function () {
             console.debug.apply(console, args);
         }
     };
-    /**
-     * Setting this to true is the equivalent of setting all instances of ReconnectingWebSocket.debug to true.
-     */
-    ReconnectingWebSocket.debugAll = false;
     return ReconnectingWebSocket;
 }());
+/**
+ * Setting this to true is the equivalent of setting all instances of ReconnectingWebSocket.debug to true.
+ */
+ReconnectingWebSocket.debugAll = false;
 exports.ReconnectingWebSocket = ReconnectingWebSocket;
 
 },{}],15:[function(require,module,exports){
@@ -26840,6 +26876,10 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
