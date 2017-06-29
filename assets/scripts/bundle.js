@@ -102,15 +102,9 @@ var AppComponent = (function (_super) {
             case 'Football':
                 return React.createElement(football_1.Football, null);
             case 'Sport':
-                var sportName = '';
-                for (var _i = 0, _a = store_1.store.sports; _i < _a.length; _i++) {
-                    var x = _a[_i];
-                    if (x.id === store_1.store.route.sportID) {
-                        sportName = x.name;
-                        return React.createElement(sport_1.Sport, { id: store_1.store.route.sportID });
-                    }
-                }
-                return spinner_loading_1.spinnerLoading("\u0414\u0430\u043D\u043D\u044B\u0435 \u0441\u0447\u0438\u0442\u044B\u0432\u0430\u044E\u0442\u0441\u044F...");
+                return store_1.store.sports.has(store_1.store.route.sportID) ?
+                    React.createElement(sport_1.Sport, { id: store_1.store.route.sportID }) :
+                    spinner_loading_1.spinnerLoading("\u0414\u0430\u043D\u043D\u044B\u0435 \u0441\u0447\u0438\u0442\u044B\u0432\u0430\u044E\u0442\u0441\u044F...");
             default:
                 return React.createElement("div", null,
                     "\u0421\u0442\u0440\u0430\u043D\u0438\u0446\u0430 \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u0430. \u0412\u0435\u0440\u043D\u0443\u0442\u044C\u0441\u044F \u043D\u0430 ",
@@ -169,7 +163,7 @@ var footbalTable = function () {
                 " ",
                 s,
                 " "); }))),
-        React.createElement("tbody", null, store_1.store.footballGames.map(function (game, n) {
+        React.createElement("tbody", null, store_1.store.football.map(function (game, n) {
             return React.createElement(game_1.FootballGame, { game: game, key: game.event_id });
         })));
 };
@@ -179,7 +173,7 @@ var Football = (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     Football.prototype.render = function () {
-        return store_1.store.footballGames.length === 0 ?
+        return store_1.store.football.length === 0 ?
             spinner_loading_1.spinnerLoading('Считываются футбольные матчи') :
             footbalTable();
     };
@@ -483,9 +477,7 @@ var Sport = (function (_super) {
     };
     Sport.prototype.render = function () {
         try {
-            var sportEvents = Array
-                .from(store_1.store.eventTypeEvents.get(this.props.id))
-                .map(function (id) { return store_1.store.events.get(id); });
+            var sportEvents = store_1.store.getEventsBySportID(this.props.id);
             sortEvents(sportEvents, this.state);
             var viewData_1 = sportEvents.map(function (x) { return eventToViewData(x); });
             /*
@@ -493,7 +485,7 @@ var Sport = (function (_super) {
                 { this.renderTableHelper(sportEvents)  }
             </div>;
             */
-            return React.createElement(react_virtualized_1.Table, { width: 800, height: 900, headerHeight: 20, rowHeight: 30, rowCount: sportEvents.length, rowGetter: function (_a) {
+            return React.createElement(react_virtualized_1.Table, { width: 800, height: 900, headerHeight: 20, rowHeight: 30, rowCount: viewData_1.length, rowGetter: function (_a) {
                     var index = _a.index;
                     return viewData_1[index];
                 } },
@@ -555,7 +547,7 @@ var SportsMenu = (function (_super) {
         if (!store_1.store.sports) {
             return spinner_loading_1.spinnerLoading('Загрузка меню...');
         }
-        var sports = store_1.store.sports.sort(function (x, y) {
+        var sports = Array.from(store_1.store.sports.values()).sort(function (x, y) {
             return utils_1.numberToCompare(y.market_count - x.market_count);
         });
         var xs1 = sports.filter(function (_, n) { return n < 6; });
@@ -804,11 +796,12 @@ var webSocketURL = function () {
 var Store = (function () {
     function Store() {
         var _this = this;
-        this.sports = [];
-        this.footballGames = [];
-        this.route = route_1.parseLocationHash(window.location.hash);
+        this.sports = new Map();
+        this.sportEvents = new Map();
+        this.hasSportEvents = new Set();
         this.events = new Map();
-        this.eventTypeEvents = new Map();
+        this.football = [];
+        this.route = route_1.parseLocationHash(window.location.hash);
         this.message = null;
         this.messageTimeoutHandle = NaN;
         this.ws = new reconnecting_websocket_1.ReconnectingWebSocket(webSocketURL());
@@ -842,7 +835,7 @@ var Store = (function () {
             _this.ws.sendJSON({ ListEventTypes: {} });
             _this.ws.sendJSON({ SubscribeFootball: _this.route.type === 'Football' });
             if (_this.route.type === 'Sport') {
-                _this.ensureEventType(_this.route.sportID);
+                _this.ensureEventTypeEvents(_this.route.sportID);
             }
         };
         this.handleWebData = function (x) {
@@ -863,35 +856,35 @@ var Store = (function () {
                 return;
             }
             if (x.EventTypes) {
-                _this.sports = x.EventTypes;
+                for (var n = 0; n < x.EventTypes.length; n++) {
+                    var sport = x.EventTypes[n];
+                    _this.sports.set(sport.id, sport);
+                }
                 return;
             }
             if (x.EventType) {
-                _this.addNewEventTypeEvents(x.EventType.ID, x.EventType.Events);
+                _this.sportEvents.set(x.EventType.ID, x.EventType.Events.map(function (x) { return x.id; }));
+                _this.hasSportEvents.add(x.EventType.ID);
+                x.EventType.Events.forEach(function (x) { return _this.events.set(x.id, x); });
                 return;
             }
             if (x.Event) {
                 _this.addNewEvent(x.Event);
                 return;
             }
-            throw "Unknown data from server: " + x;
+            console.error('Unknown data from server:', x);
+            throw "Unknown data from server";
         };
-        this.ensureEventType = function (id) {
-            if (_this.eventTypeEvents.has(id)) {
+        /*
+        private ensureEvent(id: number) {
+            if (this.events.has(id)) {
                 return;
             }
-            _this.ws.sendJSON({
-                ListEventType: id,
-            });
-        };
-        this.ensureEvent = function (id) {
-            if (_this.events.has(id)) {
-                return;
-            }
-            _this.ws.sendJSON({
+            this.ws.sendJSON({
                 ListEvent: id,
             });
-        };
+        }
+        */
         this.handleLocationChanged = function () {
             var prevRoute = _this.route;
             var prevRouteFootball = _this.route.type === 'Football';
@@ -905,19 +898,21 @@ var Store = (function () {
             if (_this.route === prevRoute) {
                 return;
             }
-            switch (_this.route.type) {
-                case 'Sport':
-                    _this.ensureEventType(_this.route.sportID);
-                    break;
-                case 'Event':
-                    _this.ensureEventType(_this.route.sportID);
-                    break;
+            if (_this.route.type === 'Sport' ||
+                _this.route.type === 'Event') {
+                _this.ensureEventTypeEvents(_this.route.sportID);
             }
         };
         this.route = route_1.parseLocationHash(window.location.hash);
         window.addEventListener('hashchange', this.handleLocationChanged);
         this.setupWebsocket();
     }
+    Store.prototype.getEventsBySportID = function (sportID) {
+        var _this = this;
+        var xs = this.sportEvents.get(sportID);
+        xs = xs ? xs : [];
+        return xs.map(function (x) { return _this.events.get(x); });
+    };
     Object.defineProperty(Store.prototype, "Message", {
         get: function () {
             return this.message;
@@ -936,50 +931,42 @@ var Store = (function () {
         enumerable: true,
         configurable: true
     });
-    Store.prototype.addNewEventTypeEvents = function (eventTypeID, newEvents) {
-        var _this = this;
-        newEvents.forEach(function (newEvent) {
-            newEvent.event_type = _this.sports.find(function (x) { return x.id === eventTypeID; });
-            _this.events.set(newEvent.id, newEvent);
-            _this.addNewEvent(newEvent);
-        });
-    };
     Store.prototype.addNewEvent = function (newEvent) {
-        if (!newEvent.event_type) {
-            console.warn('event without eventType:', newEvent);
-        }
         this.events.set(newEvent.id, newEvent);
-        var sportEvents = this.eventTypeEvents.get(newEvent.event_type.id);
-        if (!sportEvents) {
-            sportEvents = new Set();
-        }
-        if (!sportEvents.has(newEvent.id)) {
-            sportEvents.add(newEvent.id);
-            sportEvents = new Set(sportEvents);
-            this.eventTypeEvents.set(newEvent.event_type.id, sportEvents);
-        }
+        var sportEvents = this.sportEvents.get(newEvent.event_type.id);
+        sportEvents = sportEvents ? Array.from(sportEvents) : [];
+        sportEvents.push(newEvent.id);
+        this.sportEvents.set(newEvent.event_type.id, sportEvents);
     };
     Store.prototype.updateFootball = function (upd) {
+        var _this = this;
         this.ws.send(JSON.stringify({
             Football: {
                 ConfirmHashCode: upd.HashCode,
             },
         }));
-        this.footballGames = football_1.FootballData.updateGames(this.footballGames, upd.Changes);
+        this.football = football_1.FootballData.updateGames(this.football, upd.Changes);
         if (upd.Changes.events) {
-            for (var _i = 0, _a = upd.Changes.events; _i < _a.length; _i++) {
-                var event_1 = _a[_i];
-                if (!event_1.event_type) {
-                    event_1.event_type = this.sports.find(function (x) { return x.id === 1; });
-                }
-                this.addNewEvent(event_1);
-            }
+            upd.Changes.events.forEach(function (event) {
+                event.event_type = {
+                    id: 1,
+                    name: 'Футбол',
+                };
+                _this.addNewEvent(event);
+            });
+        }
+    };
+    Store.prototype.ensureEventTypeEvents = function (id) {
+        if (!this.hasSportEvents.has(id)) {
+            this.ws.sendJSON({
+                ListEventType: id,
+            });
         }
     };
     Object.defineProperty(Store.prototype, "Sport", {
         get: function () {
             var sportID = route_1.getSportID(this.route);
-            return this.sports.find(function (x) { return x.id === sportID; });
+            return this.sports.get(sportID);
         },
         enumerable: true,
         configurable: true
@@ -989,22 +976,28 @@ var Store = (function () {
     ], Store.prototype, "sports", void 0);
     __decorate([
         mobx_1.observable
-    ], Store.prototype, "footballGames", void 0);
+    ], Store.prototype, "sportEvents", void 0);
     __decorate([
         mobx_1.observable
-    ], Store.prototype, "route", void 0);
+    ], Store.prototype, "hasSportEvents", void 0);
     __decorate([
         mobx_1.observable
     ], Store.prototype, "events", void 0);
     __decorate([
         mobx_1.observable
-    ], Store.prototype, "eventTypeEvents", void 0);
+    ], Store.prototype, "football", void 0);
+    __decorate([
+        mobx_1.observable
+    ], Store.prototype, "route", void 0);
     __decorate([
         mobx_1.observable
     ], Store.prototype, "message", void 0);
     __decorate([
         mobx_1.computed
     ], Store.prototype, "Message", null);
+    __decorate([
+        mobx_1.action
+    ], Store.prototype, "addNewEvent", null);
     __decorate([
         mobx_1.computed
     ], Store.prototype, "Sport", null);
@@ -36616,10 +36609,6 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
