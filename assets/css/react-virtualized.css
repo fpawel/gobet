@@ -1,41 +1,4 @@
-* {
-        margin: 0;
-        padding: 0;
-    }
-    html,
-    body {
-        height: 100%;
-        margin: 0;
-        font-size: 15px;
-        font-family: sans-serif;
-    }
-
-    .none {
-        display: none !important;
-    }
-
-    p {
-        margin: 0 0 5px;
-    }
-    .changed {
-        color:teal;
-        /*background-color: #ececec;*/
-    }
-
-    .changed {
-        -webkit-animation-duration:0.2s;
-    }
-
-    .table td,
-    .table th {
-        padding: 1px;
-    }
-
-    .table th span {
-        font-size: 150%;
-    }
-
-    /* Collection default theme */
+/* Collection default theme */
 
 .ReactVirtualized__Collection {
 }

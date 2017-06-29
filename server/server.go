@@ -2,7 +2,9 @@ package server
 
 import (
 	"encoding/json"
+
 	"github.com/user/gobet/betfair.com/aping/client"
+	"github.com/user/gobet/betfair.com/aping/client/event"
 	"github.com/user/gobet/betfair.com/aping/client/eventTypes"
 	"github.com/user/gobet/betfair.com/aping/client/events"
 	"github.com/user/gobet/gate"
@@ -21,6 +23,8 @@ type Request struct {
 	ListEventTypes *struct{} `json:",omitempty"`
 
 	ListEventType *int `json:",omitempty"`
+
+	ListEvent *int `json:",omitempty"`
 
 	SubscribeFootball *bool `json:",omitempty"`
 }
@@ -91,6 +95,24 @@ func (x *Server) ProcessDataFromPeer(c *gate.Client, bytes []byte) {
 			}
 			r.EventType.ID = *request.ListEventType
 			r.EventType.Events = x.Events
+			c.SendJson(&r)
+		} else {
+			c.SendJsonError(x.Error.Error())
+		}
+		return
+	}
+
+	if request.ListEvent != nil {
+		ch := make(chan event.Result)
+		event.Get(*request.ListEvent, ch)
+		x := <-ch
+		close(ch)
+
+		if x.Error == nil {
+			var r struct {
+				Event *client.Event
+			}
+			r.Event = x.Event
 			c.SendJson(&r)
 		} else {
 			c.SendJsonError(x.Error.Error())

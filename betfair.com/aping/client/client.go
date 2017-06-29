@@ -151,13 +151,12 @@ type ExchangePrices struct {
 	TradedVolume    []Odd `json:"tradedVolume"`
 }
 
-
 type Odd struct {
 	Price float64 `json:"price"`
 	Size  float64 `json:"size"`
 }
 
-func (x *Runner) GetOdd( side string, index int) *Odd{
+func (x *Runner) GetOdd(side string, index int) *Odd {
 	if x.ExchangePrices == nil {
 		return nil
 	}
@@ -188,12 +187,12 @@ func (x *Event) Copy(theCopy *Event) {
 }
 
 func NewEvent(id int, name string) Event {
-	return  Event{
-		ID:id,
-		Name: name,
-		CountryCode:"",
-		OpenDate:  time.Now().String(),
-		Timezone:"",
-		Venue:"",
+	return Event{
+		ID:          id,
+		Name:        name,
+		CountryCode: "",
+		OpenDate:    time.Now().String(),
+		Timezone:    "",
+		Venue:       "",
 	}
 }
