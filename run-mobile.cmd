@@ -1,1 +1,1 @@
-go run main.go -port=8083 -proxi=true -hrkf=true -ctraf=true
+go run main.go -port=8083 -proxi=true -hrkf=true -ctraf=true -updf=false

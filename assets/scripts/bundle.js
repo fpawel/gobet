@@ -361,141 +361,98 @@ var store_1 = require("../store/store");
 var country_code_1 = require("../utils/country-code");
 var spinner_loading_1 = require("./spinner-loading");
 var react_virtualized_1 = require("react-virtualized");
-function compare(x, y, f) {
-    if (f) {
-        var a = f(x);
-        var b = f(y);
-        return a === b ? 0 : (a < b ? -1 : 1);
-    }
-    return x === y ? 0 : (x < y ? -1 : 1);
-}
-var splitAwayTeam = function (a) { return a.split(/ [v@\\-] /); };
-var dateToTimeString = function (x) {
-    var f = function (a) { return "" + (a < 10 ? '0' : '') + a; };
-    return f(x.getHours()) + ":" + f(x.getMinutes());
-};
-var sortEvents = function (events, state) {
-    return events.sort(function (x, y) {
-        var r = 0;
-        switch (state.sortColumn) {
-            case 'DATE':
-                r = compare(x, y, function (a) { return a.open_date; });
-                break;
-            case 'COUNTRY':
-                r = compare(x, y, function (a) { return country_code_1.getCountryNameByCode(a.country_code); });
-                break;
-            case 'EVENT':
-                r = compare(x, y, function (a) { return splitAwayTeam(a.name)[0]; });
-                break;
-            case 'AWAY_TEAM':
-                r = compare(x, y, function (a) {
-                    var x = splitAwayTeam(a.name)[1];
-                    return x ? x : "";
-                });
-                break;
-        }
-        return r * state.sortDirection;
-    });
-};
-var eventsTRs = function (events) {
-    return events.map(function (event) {
-        var d = new Date(Date.parse(event.open_date));
-        var _a = splitAwayTeam(event.name), eventName = _a[0], awayTeam = _a[1];
-        return React.createElement("tr", { key: event.id },
-            React.createElement("td", null,
-                React.createElement("span", __assign({}, {
-                    'data-toggle': 'tooltip',
-                    'data-placement': 'auto',
-                    'title': dateToTimeString(d) + ", " + event.time_zone
-                }), d.toLocaleDateString())),
-            React.createElement("td", null,
-                " ",
-                country_code_1.getCountryNameByCode(event.country_code),
-                " "),
-            React.createElement("td", null,
-                " ",
-                eventName,
-                " "),
-            React.createElement("td", null,
-                " ",
-                awayTeam));
-    });
-};
+var sortColumnValues = ['date', 'country', 'name'];
 var eventToViewData = function (x) {
     var d = new Date(Date.parse(x.open_date));
-    var _a = splitAwayTeam(x.name), eventName = _a[0], awayTeam = _a[1];
+    var sx = x.name.split(/ [v@\\-] /);
     return {
         id: x.id,
         date: d.toLocaleDateString(),
         country: country_code_1.getCountryNameByCode(x.country_code),
-        name: eventName,
-        away: awayTeam,
+        name: sx.length > 1 ? sx[0] : x.name,
+        away: sx.length > 1 ? sx[1] : '',
     };
+};
+var linkEvent = function (id, text) {
+    return React.createElement("a", { href: "#/event/" + id },
+        " ",
+        text,
+        " ");
 };
 var Sport = (function (_super) {
     __extends(Sport, _super);
     function Sport() {
         var _this = _super.call(this) || this;
-        _this.state = { sortColumn: 'DATE', sortDirection: 1 };
+        _this.state = { sortColumn: 'date', sortDirection: 'ASC' };
         return _this;
     }
-    Sport.prototype.onClickSort = function (sortCol) {
-        var isSortCol = this.state.sortColumn === sortCol;
-        var nextState = {
-            sortColumn: sortCol,
-            sortDirection: isSortCol ? (this.state.sortDirection === 1 ? -1 : 1) : 1
-        };
-        this.setState(nextState);
-    };
-    Sport.prototype.sortColHelper = function (header, sortCol) {
-        var _this = this;
-        var color = 'lightgrey';
-        var ch = '↕';
-        if (this.state.sortColumn === sortCol) {
-            color = 'black';
-            ch = this.state.sortDirection === 1 ? '↓' : '↑';
-        }
-        return React.createElement("th", { onClick: function () { return _this.onClickSort(sortCol); } },
-            header,
-            React.createElement("span", { style: { color: color } },
-                " ",
-                ch,
-                " "));
-    };
-    Sport.prototype.renderTableHeadHelper = function () {
-        return React.createElement("thead", null,
-            React.createElement("tr", null,
-                this.sortColHelper('Дата открытия', 'DATE'),
-                this.sortColHelper('Страна', 'COUNTRY'),
-                this.sortColHelper('Событие', 'EVENT'),
-                this.sortColHelper('В гостях', 'AWAY_TEAM')));
-    };
-    Sport.prototype.renderTableHelper = function (events) {
-        return React.createElement("table", { className: 'table table-condensed' },
-            this.renderTableHeadHelper(),
-            React.createElement("tbody", null, eventsTRs(events)));
-    };
     Sport.prototype.render = function () {
-        try {
-            var sportEvents = store_1.store.getEventsBySportID(this.props.id);
-            sortEvents(sportEvents, this.state);
-            var viewData_1 = sportEvents.map(function (x) { return eventToViewData(x); });
-            /*
-            return <div>
-                { this.renderTableHelper(sportEvents)  }
-            </div>;
-            */
-            return React.createElement(react_virtualized_1.Table, { width: 800, height: 900, headerHeight: 20, rowHeight: 30, rowCount: viewData_1.length, rowGetter: function (_a) {
-                    var index = _a.index;
-                    return viewData_1[index];
-                } },
-                React.createElement(react_virtualized_1.Column, { label: 'Дата', dataKey: 'date', width: 200 }),
-                React.createElement(react_virtualized_1.Column, { label: 'Страна', dataKey: 'country', width: 200 }),
-                React.createElement(react_virtualized_1.Column, { label: 'Событие', dataKey: 'name', width: 200 }),
-                React.createElement(react_virtualized_1.Column, { label: 'В гостях', dataKey: 'away', width: 200 }));
+        var _this = this;
+        var viewData = this.getViewData();
+        if (!viewData || viewData.length === 0) {
+            var str = store_1.store.Sport ? store_1.store.Sport.name : this.props.id;
+            return spinner_loading_1.spinnerLoading("\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E\u0442\u0441\u044F \u0434\u0430\u043D\u043D\u044B\u0435 \u043F\u043E \u0432\u0438\u0434\u0443 \u0441\u043F\u043E\u0440\u0442\u0430: '" + str + "'...");
         }
-        catch (e) {
-            return spinner_loading_1.spinnerLoading("\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E\u0442\u0441\u044F \u0434\u0430\u043D\u043D\u044B\u0435 \u043F\u043E \u0432\u0438\u0434\u0443 \u0441\u043F\u043E\u0440\u0442\u0430 " + (store_1.store.Sport ? store_1.store.Sport.name : this.props.id) + "...");
+        var hasAway = viewData.find(function (x) { return x.away !== ''; });
+        var hasCountry = viewData.find(function (x) { return x.country !== ''; });
+        var _a = this.state, sortCol = _a.sortColumn, sortDir = _a.sortDirection;
+        return React.createElement(react_virtualized_1.Table, { width: hasAway ? 700 : 500, height: screen.availHeight - 300, rowHeight: 25, rowCount: viewData.length, headerHeight: 30, rowGetter: function (_a) {
+                var index = _a.index;
+                return viewData[index];
+            }, sortDirection: this.state.sortDirection, sortBy: this.state.sortColumn, sort: function (x) {
+                var col = sortColumnValues.find(function (y) { return "" + y === x.sortBy; });
+                if (col) {
+                    _this.setState({
+                        sortColumn: col,
+                        sortDirection: col !== sortCol ? sortDir :
+                            (sortDir === 'ASC' ? 'DESC' : 'ASC')
+                    });
+                }
+            }, onHeaderClick: function (x) {
+                var col = sortColumnValues.find(function (y) { return "" + y === x.dataKey; });
+                if (col) {
+                    _this.setState({
+                        sortColumn: col,
+                        sortDirection: col !== sortCol ? sortDir :
+                            (sortDir === 'ASC' ? 'DESC' : 'ASC')
+                    });
+                }
+            } },
+            React.createElement(react_virtualized_1.Column, { label: 'Дата', dataKey: 'date', width: 100 }),
+            hasCountry ? React.createElement(react_virtualized_1.Column, { label: 'Страна', dataKey: 'country', width: 200 }) : null,
+            React.createElement(react_virtualized_1.Column, { label: hasAway ? 'Дома' : 'Событие', dataKey: 'name', width: 200, cellRenderer: function (x) {
+                    return linkEvent(viewData[x.rowIndex].id, x.cellData);
+                } }),
+            !hasAway ? null :
+                React.createElement(react_virtualized_1.Column, { label: 'В гостях', dataKey: 'away', width: 200, cellRenderer: function (x) {
+                        return linkEvent(viewData[x.rowIndex].id, x.cellData);
+                    } }));
+    };
+    Sport.prototype.getViewData = function () {
+        var _this = this;
+        return store_1.store
+            .getEventsBySportID(this.props.id)
+            .map(function (x) { return eventToViewData(x); })
+            .sort(function (ax, ay) {
+            var x = ax[_this.state.sortColumn];
+            var y = ay[_this.state.sortColumn];
+            var r = x === y ? 0 : (x < y ? -1 : 1);
+            return r * (_this.state.sortDirection === 'ASC' ? -1 : 1);
+        })
+            .map(function (x) {
+            return {
+                id: x.id,
+                date: x.date,
+                country: x.country,
+                name: x.name,
+                away: x.away,
+            };
+        });
+    };
+    Sport.prototype.setSortCol = function (dataKey) {
+        var col = sortColumnValues.find(function (y) { return "" + y === dataKey; });
+        if (col) {
+            this.setState(__assign({}, this.state, { sortColumn: col }));
         }
     };
     Sport = __decorate([
@@ -504,6 +461,10 @@ var Sport = (function (_super) {
     return Sport;
 }(React.Component));
 exports.Sport = Sport;
+/*
+
+
+* */ 
 
 },{"../store/store":12,"../utils/country-code":13,"./spinner-loading":6,"mobx-react":43,"react":261,"react-virtualized":230}],8:[function(require,module,exports){
 "use strict";
@@ -910,8 +871,10 @@ var Store = (function () {
     Store.prototype.getEventsBySportID = function (sportID) {
         var _this = this;
         var xs = this.sportEvents.get(sportID);
-        xs = xs ? xs : [];
-        return xs.map(function (x) { return _this.events.get(x); });
+        if (!xs) {
+            xs = [];
+        }
+        return xs.map(function (x) { return _this.events.get(x); }).filter(function (x) { return x; });
     };
     Object.defineProperty(Store.prototype, "Message", {
         get: function () {
@@ -36609,6 +36572,10 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
