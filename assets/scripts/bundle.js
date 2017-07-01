@@ -399,7 +399,14 @@ var Sport = (function (_super) {
         return React.createElement(react_virtualized_1.Table, { width: hasAway ? 700 : 500, height: screen.availHeight - 300, rowHeight: 25, rowCount: viewData.length, headerHeight: 30, rowGetter: function (_a) {
                 var index = _a.index;
                 return viewData[index];
-            }, sortDirection: this.state.sortDirection, sortBy: this.state.sortColumn, sort: function (x) {
+            }, sortDirection: this.state.sortDirection, sortBy: this.state.sortColumn, rowClassName: function (x) {
+                if (x.index < 0) {
+                    return "headerRow";
+                }
+                else {
+                    return x.index % 2 === 0 ? "evenRow" : "oddRow";
+                }
+            }, sort: function (x) {
                 var col = sortColumnValues.find(function (y) { return "" + y === x.sortBy; });
                 if (col) {
                     _this.setState({
@@ -36572,10 +36579,6 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
