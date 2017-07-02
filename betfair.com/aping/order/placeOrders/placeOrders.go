@@ -1,15 +1,16 @@
 package placeOrders
 
 import (
-	"github.com/user/gobet/betfair.com/aping/aping/appkey"
-	"github.com/user/gobet/betfair.com/aping/aping/endpoint"
+	"github.com/user/gobet/betfair.com/aping/appkey"
 	"github.com/user/gobet/betfair.com/login"
 	"github.com/user/gobet/betfair.com/userSessions"
 
 	"encoding/json"
-	"fmt"
 	"errors"
-	"github.com/user/gobet/betfair.com/aping/aping/order"
+	"fmt"
+
+	"github.com/user/gobet/betfair.com/aping/order"
+	"github.com/user/gobet/betfair.com/aping"
 )
 
 // Request заказ ставки
@@ -44,9 +45,9 @@ type limitOrderAPI struct {
 }
 
 type placeOrderReportAPI struct {
-	ErrorCode       *string                      `json:"errorCode,omitempty"`
-	Status          string                      `json:"status"`
-	MarketID        string                      `json:"marketId"`
+	ErrorCode       *string                  `json:"errorCode,omitempty"`
+	Status          string                   `json:"status"`
+	MarketID        string                   `json:"marketId"`
 	PlaceBetReports []PlaceInstructionReport `json:"instructionReports"`
 }
 
@@ -71,14 +72,13 @@ type PlaceInstructionReport struct {
 	SizeMatched float32 `json:"sizeMatched,omitempty"`
 }
 
-
 func (request *Request) GetAPIResponse() (placeBetReports []PlaceInstructionReport, err error) {
 
 	userSessionChanel := make(chan login.Result)
 	userSessions.GetUserSession(request.User, userSessionChanel)
 	loginResult := <-userSessionChanel
 	if loginResult.Error != nil {
-		err = fmt.Errorf( "login error : %s", loginResult.Error.Error())
+		err = fmt.Errorf("login error : %s", loginResult.Error.Error())
 		return
 	}
 	placeOrderRequest := placeOrderAPI{
@@ -97,66 +97,64 @@ func (request *Request) GetAPIResponse() (placeBetReports []PlaceInstructionRepo
 		},
 	}
 	var responseBody []byte
-	endpoint := endpoint.BettingAPI("placeOrders")
+	endpoint := aping.BettingAPI("placeOrders")
 	responseBody, err = appkey.GetResponse(loginResult.Token, endpoint, &placeOrderRequest)
 	if err != nil {
-		err = fmt.Errorf( "placeOrders error : %s", err.Error())
+		err = fmt.Errorf("placeOrders error : %s", err.Error())
 		return
 	}
 
 	var r placeOrderReportAPI
 	err = json.Unmarshal(responseBody, &r)
 	if err != nil {
-		err = fmt.Errorf( "placeOrders unmarshaling response error : %s", err.Error())
+		err = fmt.Errorf("placeOrders unmarshaling response error : %s", err.Error())
 		return
 	}
 
 	placeBetReports = r.PlaceBetReports
 
-	if  r.ErrorCode != nil {
-		err = fmt.Errorf( "placeOrders error : %s", r.ErrorCode)
+	if r.ErrorCode != nil {
+		err = fmt.Errorf("placeOrders error : %s", r.ErrorCode)
 		return
 	}
 
-	if r.Status != "SUCCESS"{
-		err = fmt.Errorf( "placeOrders error : status is not SUCCESS : %s", r.Status)
+	if r.Status != "SUCCESS" {
+		err = fmt.Errorf("placeOrders error : status is not SUCCESS : %s", r.Status)
 		return
 	}
-
 
 	return
 }
 
 func (request *Request) PlaceSingleOrder() (report *order.PlaceOrderReport, err error) {
 	var placeBetReports []PlaceInstructionReport
-	placeBetReports,err = request.GetAPIResponse()
+	placeBetReports, err = request.GetAPIResponse()
 	if err != nil {
 		return
 	}
 
-	if  len(placeBetReports) == 0 {
-		err =  errors.New ( "PlaceSingleOrder : no instruction report")
+	if len(placeBetReports) == 0 {
+		err = errors.New("PlaceSingleOrder : no instruction report")
 		return
 	}
 
 	p := placeBetReports[0]
 
-	if  p.ErrorCode != nil {
-		err = fmt.Errorf( "PlaceSingleOrder error : %s", p.ErrorCode)
+	if p.ErrorCode != nil {
+		err = fmt.Errorf("PlaceSingleOrder error : %s", p.ErrorCode)
 		return
 	}
 
-	if p.Status != "SUCCESS"{
-		err = fmt.Errorf( "PlaceSingleOrder error : status is not SUCCESS : %s", p.Status)
+	if p.Status != "SUCCESS" {
+		err = fmt.Errorf("PlaceSingleOrder error : status is not SUCCESS : %s", p.Status)
 		return
 	}
 
 	report = &order.PlaceOrderReport{
-		BetID : *p.BetID,
-		AveragePriceMatched : p.AveragePriceMatched,
-		SizeMatched : p.SizeMatched,
+		BetID:               *p.BetID,
+		AveragePriceMatched: p.AveragePriceMatched,
+		SizeMatched:         p.SizeMatched,
 	}
 	return
 
 }
-

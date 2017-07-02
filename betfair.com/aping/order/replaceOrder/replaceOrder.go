@@ -6,7 +6,7 @@ import (
 	"github.com/user/gobet/betfair.com/login"
 	"github.com/user/gobet/betfair.com/userSessions"
 	"fmt"
-	"github.com/user/gobet/betfair.com/aping/endpoint"
+	"github.com/user/gobet/betfair.com/aping"
 	"github.com/user/gobet/betfair.com/aping/appkey"
 	"encoding/json"
 	"errors"
@@ -71,7 +71,7 @@ func (request *Request) GetAPIResponse()(instructionReports []ReplaceInstruction
 	}
 
 	var responseBody []byte
-	endpoint := endpoint.BettingAPI("replaceOrders")
+	endpoint := aping.BettingAPI("replaceOrders")
 
 	responseBody, err = appkey.GetResponse(loginResult.Token, endpoint, &apiRequest)
 	if err != nil {

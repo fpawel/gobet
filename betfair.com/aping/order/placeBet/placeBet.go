@@ -1,11 +1,11 @@
 package placeBet
 
 import (
-	"github.com/user/gobet/betfair.com/aping/aping/order/placeOrders"
-	"github.com/user/gobet/betfair.com/aping/aping/order"
+	"github.com/user/gobet/betfair.com/aping/order/placeOrders"
+	"github.com/user/gobet/betfair.com/aping/order"
 	"github.com/user/gobet/utils"
-	"github.com/user/gobet/betfair.com/aping/aping/order/cancelOrders"
-	"github.com/user/gobet/betfair.com/aping/aping/order/replaceOrder"
+	"github.com/user/gobet/betfair.com/aping/order/cancelOrders"
+	"github.com/user/gobet/betfair.com/aping/order/replaceOrder"
 )
 
 func PlaceBet(request *placeOrders.Request)( *order.PlaceOrderReport, error){

@@ -85,7 +85,7 @@ type Dialer struct {
 	Jar http.CookieJar
 }
 
-var errMalformedURL = errors.New("malformed server or wss URL")
+var errMalformedURL = errors.New("malformed ws or wss URL")
 
 // parseURL parses the URL.
 //
@@ -94,13 +94,13 @@ var errMalformedURL = errors.New("malformed server or wss URL")
 func parseURL(s string) (*url.URL, error) {
 	// From the RFC:
 	//
-	// server-URI = "server:" "//" host [ ":" port ] path [ "?" query ]
+	// ws-URI = "ws:" "//" host [ ":" port ] path [ "?" query ]
 	// wss-URI = "wss:" "//" host [ ":" port ] path [ "?" query ]
 	var u url.URL
 	switch {
-	case strings.HasPrefix(s, "server://"):
-		u.Scheme = "server"
-		s = s[len("server://"):]
+	case strings.HasPrefix(s, "ws://"):
+		u.Scheme = "ws"
+		s = s[len("ws://"):]
 	case strings.HasPrefix(s, "wss://"):
 		u.Scheme = "wss"
 		s = s[len("wss://"):]
@@ -182,7 +182,7 @@ func (d *Dialer) Dial(urlStr string, requestHeader http.Header) (*Conn, *http.Re
 	}
 
 	switch u.Scheme {
-	case "server":
+	case "ws":
 		u.Scheme = "http"
 	case "wss":
 		u.Scheme = "https"
