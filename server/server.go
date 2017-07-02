@@ -3,10 +3,10 @@ package server
 import (
 	"encoding/json"
 
-	"github.com/user/gobet/betfair.com/aping/client"
-	"github.com/user/gobet/betfair.com/aping/client/event"
-	"github.com/user/gobet/betfair.com/aping/client/eventTypes"
-	"github.com/user/gobet/betfair.com/aping/client/events"
+	"github.com/user/gobet/betfair.com/aping"
+	"github.com/user/gobet/betfair.com/aping/event"
+	"github.com/user/gobet/betfair.com/aping/eventTypes"
+	"github.com/user/gobet/betfair.com/aping/events"
 	"github.com/user/gobet/gate"
 )
 
@@ -72,7 +72,7 @@ func (x *Server) ProcessDataFromPeer(c *gate.Client, bytes []byte) {
 		close(ch)
 
 		if x.Error == nil {
-			c.SendJson(struct{ EventTypes []client.EventType }{x.EventTypes})
+			c.SendJson(struct{ EventTypes []aping.EventType }{x.EventTypes})
 		} else {
 			c.SendJsonError(x.Error.Error())
 		}
@@ -90,7 +90,7 @@ func (x *Server) ProcessDataFromPeer(c *gate.Client, bytes []byte) {
 			var r struct {
 				EventType struct {
 					ID     int
-					Events []client.Event
+					Events []aping.Event
 				}
 			}
 			r.EventType.ID = *request.ListEventType
@@ -110,7 +110,7 @@ func (x *Server) ProcessDataFromPeer(c *gate.Client, bytes []byte) {
 
 		if x.Error == nil {
 			var r struct {
-				Event *client.Event
+				Event *aping.Event
 			}
 			r.Event = x.Event
 			c.SendJson(&r)

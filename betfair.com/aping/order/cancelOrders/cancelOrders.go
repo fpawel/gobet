@@ -2,8 +2,8 @@ package cancelOrders
 
 import (
 	"github.com/user/gobet/betfair.com/login"
-	"github.com/user/gobet/betfair.com/aping/client/endpoint"
-	"github.com/user/gobet/betfair.com/aping/client/appkey"
+	"github.com/user/gobet/betfair.com/aping/aping/endpoint"
+	"github.com/user/gobet/betfair.com/aping/aping/appkey"
 	"fmt"
 	"encoding/json"
 	"errors"

@@ -1,16 +1,16 @@
 package replaceOrder
 
 import (
-	"github.com/user/gobet/betfair.com/aping/client/order/cancelOrders"
-	"github.com/user/gobet/betfair.com/aping/client/order/placeOrders"
+	"github.com/user/gobet/betfair.com/aping/order/cancelOrders"
+	"github.com/user/gobet/betfair.com/aping/order/placeOrders"
 	"github.com/user/gobet/betfair.com/login"
 	"github.com/user/gobet/betfair.com/userSessions"
 	"fmt"
-	"github.com/user/gobet/betfair.com/aping/client/endpoint"
-	"github.com/user/gobet/betfair.com/aping/client/appkey"
+	"github.com/user/gobet/betfair.com/aping/endpoint"
+	"github.com/user/gobet/betfair.com/aping/appkey"
 	"encoding/json"
 	"errors"
-	"github.com/user/gobet/betfair.com/aping/client/order"
+	"github.com/user/gobet/betfair.com/aping/order"
 )
 
 type Request struct {

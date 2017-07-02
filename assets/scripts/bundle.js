@@ -280,7 +280,7 @@ var footballMenu = function () {
             React.createElement("a", { href: f ? "#/sport/1" : "" }, "\u0412\u0441\u0435 \u0444\u0443\u0442\u0431\u043E\u043B\u044C\u043D\u044B\u0435 \u0440\u044B\u043D\u043A\u0438")));
 };
 var sportName = function () {
-    var sport = store_1.store.Sport;
+    var sport = store_1.store.SportOfRoute;
     if (!sport)
         return null;
     if (sport.id === 1)
@@ -305,7 +305,7 @@ var Navbar = (function (_super) {
             } },
             React.createElement("div", { className: "container-fluid" },
                 React.createElement("div", { className: "navbar-header" },
-                    React.createElement("a", { className: "navbar-brand" }, "Gobet")),
+                    React.createElement("a", { className: "navbar-brand", style: { color: '#fff' } }, "Gobet")),
                 sportName()));
     };
     Navbar = __decorate([
@@ -390,7 +390,7 @@ var Sport = (function (_super) {
         var _this = this;
         var viewData = this.getViewData();
         if (!viewData || viewData.length === 0) {
-            var str = store_1.store.Sport ? store_1.store.Sport.name : this.props.id;
+            var str = store_1.store.SportOfRoute ? store_1.store.SportOfRoute.name : this.props.id;
             return spinner_loading_1.spinnerLoading("\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u044E\u0442\u0441\u044F \u0434\u0430\u043D\u043D\u044B\u0435 \u043F\u043E \u0432\u0438\u0434\u0443 \u0441\u043F\u043E\u0440\u0442\u0430: '" + str + "'...");
         }
         var hasAway = viewData.find(function (x) { return x.away !== ''; });
@@ -521,9 +521,10 @@ var SportsMenu = (function (_super) {
         var xs1 = sports.filter(function (_, n) { return n < 6; });
         var xs2 = sports.filter(function (_, n) { return n > 5; });
         var xs2Title = xs2.length > 0 ? xs2[0].name : '';
-        if (store_1.store.Sport) {
+        var sportOfRoute = store_1.store.SportOfRoute;
+        if (sportOfRoute) {
             for (var n = 0; n < xs2.length; n++) {
-                if (xs2[n].id === store_1.store.Sport.id) {
+                if (xs2[n].id === sportOfRoute.id) {
                     xs2Title = xs2[n].name;
                     break;
                 }
@@ -548,7 +549,7 @@ var SportsDropdownMenu = (function (_super) {
     }
     SportsDropdownMenu.prototype.render = function () {
         var class_ = 'dropdown';
-        if (store_1.store.Sport && this.props.sports.find(function (x) { return x.id === store_1.store.Sport.id; })) {
+        if (store_1.store.SportOfRoute && this.props.sports.find(function (x) { return x.id === store_1.store.SportOfRoute.id; })) {
             class_ += ' active';
         }
         return this.props.sports.length === 0 ? null : React.createElement("li", { className: class_ },
@@ -802,7 +803,7 @@ var Store = (function () {
         this.initializeStore = function () {
             _this.ws.sendJSON({ ListEventTypes: {} });
             _this.ws.sendJSON({ SubscribeFootball: _this.route.type === 'Football' });
-            if (_this.route.type === 'Sport') {
+            if (_this.route.type === 'Sport' || _this.route.type === 'Event') {
                 _this.ensureEventTypeEvents(_this.route.sportID);
             }
         };
@@ -843,16 +844,6 @@ var Store = (function () {
             console.error('Unknown data from server:', x);
             throw "Unknown data from server";
         };
-        /*
-        private ensureEvent(id: number) {
-            if (this.events.has(id)) {
-                return;
-            }
-            this.ws.sendJSON({
-                ListEvent: id,
-            });
-        }
-        */
         this.handleLocationChanged = function () {
             var prevRoute = _this.route;
             var prevRouteFootball = _this.route.type === 'Football';
@@ -933,7 +924,7 @@ var Store = (function () {
             });
         }
     };
-    Object.defineProperty(Store.prototype, "Sport", {
+    Object.defineProperty(Store.prototype, "SportOfRoute", {
         get: function () {
             var sportID = route_1.getSportID(this.route);
             return this.sports.get(sportID);
@@ -970,7 +961,7 @@ var Store = (function () {
     ], Store.prototype, "addNewEvent", null);
     __decorate([
         mobx_1.computed
-    ], Store.prototype, "Sport", null);
+    ], Store.prototype, "SportOfRoute", null);
     return Store;
 }());
 exports.store = new Store();

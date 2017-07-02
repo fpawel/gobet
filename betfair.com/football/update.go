@@ -5,7 +5,7 @@ import (
 	"hash/fnv"
 	"log"
 
-	"github.com/user/gobet/betfair.com/aping/client"
+	"github.com/user/gobet/betfair.com/aping"
 	"strconv"
 )
 
@@ -32,7 +32,7 @@ type MatchesListChanges struct {
 	Inplay  []Match        `json:"inplay,omitempty"`
 	Outplay []int          `json:"outplay,omitempty"`
 	Changes []MatchChanges `json:"game_changes,omitempty"`
-	Events  []client.Event `json:"events,omitempty"`
+	Events  []aping.Event `json:"events,omitempty"`
 }
 
 func (x *MatchesListChanges) isEmpty() bool {
@@ -57,7 +57,7 @@ func (x *MatchesListChanges) GetHashCode() string {
 	return strconv.FormatUint( fnv32a.Sum64(), 16)
 }
 
-func (x *MatchesListChanges) SetInplayEvents(events []client.Event){
+func (x *MatchesListChanges) SetInplayEvents(events []aping.Event){
 	inplays := make(map[int]struct{})
 	for _,y := range x.Inplay {
 		inplays[y.EventID] = struct{}{}

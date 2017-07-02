@@ -3,9 +3,9 @@ package eventPrices
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/user/gobet/betfair.com/aping/client"
-	"github.com/user/gobet/betfair.com/aping/client/appkey"
-	"github.com/user/gobet/betfair.com/aping/client/endpoint"
+	"github.com/user/gobet/betfair.com/aping"
+	"github.com/user/gobet/betfair.com/aping/appkey"
+
 	"log"
 	"sync"
 	"time"
@@ -19,12 +19,12 @@ type reader struct {
 }
 
 type Result struct {
-	Markets []client.Market
+	Markets []aping.Market
 	Error   error
 }
 
 type cacheItemType struct {
-	markets []client.Market
+	markets []aping.Market
 	time    time.Time
 }
 
@@ -43,7 +43,7 @@ func newReader() (x *reader) {
 	return
 }
 
-func (reader *reader) getFromCache(eventID int) (result []client.Market) {
+func (reader *reader) getFromCache(eventID int) (result []aping.Market) {
 	reader.muCache.RLock()
 	defer reader.muCache.RUnlock()
 	if incache, ok := reader.cache[eventID]; ok && time.Since(incache.time) < 2*time.Second {
@@ -111,7 +111,7 @@ func (reader *reader) get(eventID int, marketIDs []string, ch chan<- Result) {
 	return
 }
 
-func readMarkets(eventID int, marketIDs []string) (markets []client.Market, err error) {
+func readMarkets(eventID int, marketIDs []string) (markets []aping.Market, err error) {
 
 	var reqParams struct {
 		Locale          string   `json:"locale"`
@@ -127,14 +127,14 @@ func readMarkets(eventID int, marketIDs []string) (markets []client.Market, err 
 	reqParams.PriceProjection.PriceData = []string{"EX_BEST_OFFERS"}
 	reqParams.PriceProjection.Virtualise = true
 
-	ep := endpoint.BettingAPI("listMarketBook")
+	ep := aping.BettingAPI("listMarketBook")
 
 	responseBody, err := appkey.GetResponseWithAdminLogin(ep, &reqParams)
 	if err != nil {
 		return
 	}
 	var responseData struct {
-		Result []client.Market `json:"result"`
+		Result []aping.Market `json:"result"`
 	}
 	err = json.Unmarshal(responseBody, &responseData)
 	if err != nil {

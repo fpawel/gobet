@@ -3,9 +3,8 @@ package events
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/user/gobet/betfair.com/aping/client"
-	"github.com/user/gobet/betfair.com/aping/client/appkey"
-	"github.com/user/gobet/betfair.com/aping/client/endpoint"
+	"github.com/user/gobet/betfair.com/aping"
+	"github.com/user/gobet/betfair.com/aping/appkey"
 	"log"
 	"strconv"
 	"sync"
@@ -13,7 +12,7 @@ import (
 	"time"
 )
 
-type Events []client.Event
+type Events []aping.Event
 
 var muAwaiters sync.RWMutex
 var awaiters map[int][]chan<- Result = make(map[int][]chan<- Result)
@@ -122,7 +121,7 @@ func getResponse(eventTypeID int) (events Events, err error) {
 	}
 	reqParams.Locale = "ru"
 	reqParams.Filter.EventTypeIDs = []int{eventTypeID}
-	ep := endpoint.BettingAPI("listEvents")
+	ep := aping.BettingAPI("listEvents")
 	responseBody, err := appkey.GetResponseWithAdminLogin(ep, &reqParams)
 	if err != nil {
 		return
@@ -145,7 +144,7 @@ func getResponse(eventTypeID int) (events Events, err error) {
 		return
 	}
 	for _, x := range xs.R {
-		var y client.Event
+		var y aping.Event
 		y.ID, err = strconv.Atoi(x.X.ID)
 		if err != nil {
 			err = fmt.Errorf("wrong event id %v: %v", x, err)

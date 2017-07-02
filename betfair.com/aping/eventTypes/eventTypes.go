@@ -7,13 +7,12 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/user/gobet/betfair.com/aping/client"
-	"github.com/user/gobet/betfair.com/aping/client/appkey"
-	"github.com/user/gobet/betfair.com/aping/client/endpoint"
+	"github.com/user/gobet/betfair.com/aping"
+	"github.com/user/gobet/betfair.com/aping/appkey"
 )
 
 type Result struct {
-	EventTypes []client.EventType
+	EventTypes []aping.EventType
 	Error      error
 }
 
@@ -27,7 +26,7 @@ type reader struct {
 	muAwaiters *sync.RWMutex
 	awaiters   []chan<- Result
 	muCache    *sync.RWMutex
-	data       []client.EventType
+	data       []aping.EventType
 }
 
 func newReader() (x *reader) {
@@ -78,14 +77,14 @@ func (reader *reader) performRead() {
 	}
 }
 
-func getAPIResponse() (eventTypes []client.EventType, err error) {
+func getAPIResponse() (eventTypes []aping.EventType, err error) {
 
 	var reqParams struct {
 		Locale string   `json:"locale"`
 		Filter struct{} `json:"filter"`
 	}
 	reqParams.Locale = "ru"
-	ep := endpoint.BettingAPI("listEventTypes")
+	ep := aping.BettingAPI("listEventTypes")
 	var responseBody []byte
 	responseBody, err = appkey.GetResponseWithAdminLogin(ep, &reqParams)
 	if err != nil {
@@ -113,7 +112,7 @@ func getAPIResponse() (eventTypes []client.EventType, err error) {
 			err = fmt.Errorf("wrong event type id %v: %v", x, err)
 			return
 		}
-		y := client.EventType{ID: id, Name: x.X.Name, MarketCount: x.MarketCount}
+		y := aping.EventType{ID: id, Name: x.X.Name, MarketCount: x.MarketCount}
 		eventTypes = append(eventTypes, y)
 	}
 	return

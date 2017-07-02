@@ -7,8 +7,8 @@ import (
 
 	"github.com/nu7hatch/gouuid"
 
-	"github.com/user/gobet/betfair.com/aping/client/endpoint"
-	"github.com/user/gobet/betfair.com/aping/client/request"
+	"github.com/user/gobet/betfair.com/aping"
+	"github.com/user/gobet/betfair.com/aping/request"
 )
 
 type developerApp struct {
@@ -30,11 +30,11 @@ type developerAppVersion struct {
 	VendorSecret         string `json:"vendorSecret,omitempty"`
 }
 
-func GetResponse( xAuthentication string, endpoint endpoint.Endpoint, params interface{}) (responseBody []byte, err error) {
+func GetResponse( xAuthentication string, endpoint aping.Endpoint, params interface{}) (responseBody []byte, err error) {
 	return request.GetResponse(xAuthentication, &appKeyValue, endpoint, params)
 }
 
-func GetResponseWithAdminLogin(endpoint endpoint.Endpoint, params interface{}) (responseBody []byte, err error) {
+func GetResponseWithAdminLogin(endpoint aping.Endpoint, params interface{}) (responseBody []byte, err error) {
 	return request.GetResponseWithAdminLogin(&appKeyValue, endpoint, params)
 }
 
@@ -65,7 +65,7 @@ func extractApplicationKey2(bytes []byte, out *string) (result bool) {
 func getAppKey() (appKey string, err error) {
 	var responseBody []byte
 
-	responseBody, err = request.GetResponseWithAdminLogin(nil, endpoint.AccauntAPI("getDeveloperAppKeys"), nil)
+	responseBody, err = request.GetResponseWithAdminLogin(nil, aping.AccauntAPI("getDeveloperAppKeys"), nil)
 	if err != nil {
 		return
 	}
@@ -84,7 +84,7 @@ func getAppKey() (appKey string, err error) {
 		AppName string `json:"appName"`
 	}{u4.String()}
 
-	responseBody, err = request.GetResponseWithAdminLogin(nil, endpoint.AccauntAPI("createDeveloperAppKeys"), params)
+	responseBody, err = request.GetResponseWithAdminLogin(nil, aping.AccauntAPI("createDeveloperAppKeys"), params)
 	if err != nil {
 		return
 	}

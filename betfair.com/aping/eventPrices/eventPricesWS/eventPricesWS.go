@@ -11,9 +11,9 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/user/gobet/betfair.com/aping/client"
-	"github.com/user/gobet/betfair.com/aping/client/event"
-	"github.com/user/gobet/betfair.com/aping/client/eventPrices"
+	"github.com/user/gobet/betfair.com/aping"
+	"github.com/user/gobet/betfair.com/aping/event"
+	"github.com/user/gobet/betfair.com/aping/eventPrices"
 	"github.com/user/gobet/utils"
 )
 
@@ -37,10 +37,10 @@ type Runner struct {
 type Odd struct {
 	Index int         `json:"index"`
 	Side  string      `json:"side"`
-	Odd   *client.Odd `json:"odd"`
+	Odd   *aping.Odd `json:"odd"`
 }
 
-func oddDiff(n int, side string, x *client.Runner, y *client.Runner) (r *Odd) {
+func oddDiff(n int, side string, x *aping.Runner, y *aping.Runner) (r *Odd) {
 	x_ := x.GetOdd(side, n)
 	y_ := y.GetOdd(side, n)
 	if !reflect.DeepEqual(x_, y_) {
@@ -53,7 +53,7 @@ func oddDiff(n int, side string, x *client.Runner, y *client.Runner) (r *Odd) {
 	return
 }
 
-func (r *Market) diff(x *client.Market, y *client.Market) (yes bool) {
+func (r *Market) diff(x *aping.Market, y *aping.Market) (yes bool) {
 	r.ID = y.ID
 	if x.TotalMatched != y.TotalMatched {
 		yes = true
@@ -98,7 +98,7 @@ type Writer struct {
 	conn        *websocket.Conn
 	eventID     int
 	id          string
-	event       *client.Event
+	event       *aping.Event
 	marketIDs   map[string]interface{}
 	muMarketIDs sync.RWMutex
 }
@@ -172,7 +172,7 @@ func (session *Writer) sendInitEvent() (isClosed bool) {
 
 	// отправить потребителю объект result.Event
 	isClosed = session.send(struct {
-		Event *client.Event `json:"event"`
+		Event *aping.Event `json:"event"`
 	}{Event: result.Event})
 
 	return
@@ -195,7 +195,7 @@ func (session *Writer) processPrices(marketIDs []string) (isClosed bool) {
 	return
 }
 
-func (session *Writer) setMarkets(markets []client.Market) (isClosed bool) {
+func (session *Writer) setMarkets(markets []aping.Market) (isClosed bool) {
 	nmarkets := make(map[string]int)
 	for n, m := range session.event.Markets {
 		nmarkets[m.ID] = n

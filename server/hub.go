@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/user/gobet/betfair.com/aping/client/events"
+	"github.com/user/gobet/betfair.com/aping/events"
 	"github.com/user/gobet/betfair.com/football"
 	"github.com/user/gobet/gate"
 )

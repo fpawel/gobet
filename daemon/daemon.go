@@ -7,11 +7,11 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/gorilla/websocket"
-	"github.com/user/gobet/betfair.com/aping/client/event"
-	"github.com/user/gobet/betfair.com/aping/client/eventPrices"
-	"github.com/user/gobet/betfair.com/aping/client/eventPrices/eventPricesWS"
-	"github.com/user/gobet/betfair.com/aping/client/eventTypes"
-	"github.com/user/gobet/betfair.com/aping/client/events"
+	"github.com/user/gobet/betfair.com/aping/event"
+	"github.com/user/gobet/betfair.com/aping/eventPrices"
+	"github.com/user/gobet/betfair.com/aping/eventPrices/eventPricesWS"
+	"github.com/user/gobet/betfair.com/aping/eventTypes"
+	"github.com/user/gobet/betfair.com/aping/events"
 
 	"io/ioutil"
 	"net/http"

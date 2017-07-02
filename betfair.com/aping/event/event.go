@@ -10,9 +10,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/user/gobet/betfair.com/aping/client"
-	"github.com/user/gobet/betfair.com/aping/client/appkey"
-	"github.com/user/gobet/betfair.com/aping/client/endpoint"
+	"github.com/user/gobet/betfair.com/aping"
+	"github.com/user/gobet/betfair.com/aping/appkey"
 )
 
 func Get(eventID int, ch chan<- Result) {
@@ -38,21 +37,21 @@ func newReader() (x *reader) {
 }
 
 type cacheItemType struct {
-	event *client.Event
+	event *aping.Event
 	time  time.Time
 }
 
 type Result struct {
-	Event *client.Event
+	Event *aping.Event
 	Error error
 }
 
 // получить список рынков из cache
-func (reader *reader) getFromCache(eventID int) (result *client.Event) {
+func (reader *reader) getFromCache(eventID int) (result *aping.Event) {
 	reader.muCache.RLock()
 	defer reader.muCache.RUnlock()
 	if incache, f := reader.cache[eventID]; f && time.Since(incache.time) < time.Minute {
-		result = &client.Event{}
+		result = &aping.Event{}
 		incache.event.Copy(result)
 	}
 	return
@@ -123,7 +122,7 @@ func (reader *reader) get(eventID int, ch chan<- Result) {
 	return
 }
 
-func getAPIResponse(eventID int) (markets []client.Market, err error) {
+func getAPIResponse(eventID int) (markets []aping.Market, err error) {
 	var reqParams struct {
 		Locale           string   `json:"locale"`
 		MarketProjection []string `json:"marketProjection"`
@@ -138,14 +137,14 @@ func getAPIResponse(eventID int) (markets []client.Market, err error) {
 	reqParams.MarketProjection = []string{"RUNNER_DESCRIPTION"}
 	reqParams.MaxResults = 1000
 
-	ep := endpoint.BettingAPI("listMarketCatalogue")
+	ep := aping.BettingAPI("listMarketCatalogue")
 
 	responseBody, err := appkey.GetResponseWithAdminLogin(ep, &reqParams)
 	if err != nil {
 		return
 	}
 	var responseData struct {
-		Result []client.Market `json:"result"`
+		Result []aping.Market `json:"result"`
 	}
 	err = json.Unmarshal(responseBody, &responseData)
 	if err != nil {
@@ -165,7 +164,7 @@ func getAPIResponse(eventID int) (markets []client.Market, err error) {
 	return
 }
 
-func readMarketEvent(event *client.Event) error {
+func readMarketEvent(event *aping.Event) error {
 	var reqParams struct {
 		Locale           string   `json:"locale"`
 		MarketProjection []string `json:"marketProjection"`
@@ -181,7 +180,7 @@ func readMarketEvent(event *client.Event) error {
 	reqParams.MarketProjection = []string{"EVENT", "EVENT_TYPE"}
 	reqParams.MaxResults = 1
 
-	ep := endpoint.BettingAPI("listMarketCatalogue")
+	ep := aping.BettingAPI("listMarketCatalogue")
 
 	responseBody, err := appkey.GetResponseWithAdminLogin(ep, &reqParams)
 	if err != nil {
@@ -218,7 +217,7 @@ func readMarketEvent(event *client.Event) error {
 		return fmt.Errorf("cant convert `eventTypeID`=%v to int: %v, %v", x.EventType.ID, err, string(responseBody))
 	}
 
-	event.EventType = &client.EventType{
+	event.EventType = &aping.EventType{
 		ID:   eventTypeID,
 		Name: strings.Trim(x.EventType.Name, " ")}
 
@@ -233,8 +232,8 @@ func readMarketEvent(event *client.Event) error {
 	return nil
 }
 
-func readEvent(eventID int) (event *client.Event, err error) {
-	var markets []client.Market
+func readEvent(eventID int) (event *aping.Event, err error) {
+	var markets []aping.Market
 
 	markets, err = getAPIResponse(eventID)
 	if err != nil {
@@ -242,7 +241,7 @@ func readEvent(eventID int) (event *client.Event, err error) {
 	}
 
 
-	event = &client.Event{ID: eventID}
+	event = &aping.Event{ID: eventID}
 	err = readMarketEvent(event)
 	if err != nil {
 		event = nil

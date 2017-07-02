@@ -8,13 +8,13 @@ import (
 
 	"fmt"
 
-	"github.com/user/gobet/betfair.com/aping/client/endpoint"
+	"github.com/user/gobet/betfair.com/aping"
 	"github.com/user/gobet/betfair.com/login"
 	"github.com/user/gobet/traficControl"
 )
 
 func GetResponse(xAuthentication string, appKey *string,
-		endpoint endpoint.Endpoint, params interface{}) (responseBody []byte, err error) {
+		endpoint aping.Endpoint, params interface{}) (responseBody []byte, err error) {
 
 	jsonReq := struct {
 		Jsonrpc string      `json:"jsonrpc"`
@@ -56,7 +56,7 @@ func GetResponse(xAuthentication string, appKey *string,
 	return
 }
 
-func GetResponseWithAdminLogin(appKey *string, endpoint endpoint.Endpoint, params interface{}) (responseBody []byte, err error) {
+func GetResponseWithAdminLogin(appKey *string, endpoint aping.Endpoint, params interface{}) (responseBody []byte, err error) {
 
 	chLogin := make(chan login.Result)
 	login.GetAdminAuth(chLogin)
