@@ -690,12 +690,18 @@ exports.getSportID = function (route) {
     switch (route.type) {
         case 'Sport':
             return route.sportID;
-        case 'Event':
-            return route.sportID;
         case 'Football':
             return 1;
         default:
-            return 0;
+            return null;
+    }
+};
+exports.getEventID = function (route) {
+    switch (route.type) {
+        case 'Event':
+            return route.eventID;
+        default:
+            return null;
     }
 };
 function parseLocationHash(lcoationHash) {
@@ -718,14 +724,12 @@ function parseLocationHash(lcoationHash) {
         }
     }
     {
-        var a = (/^#\/sport\/(\d+)\/event\/(\d+)\/?$/g).exec(lcoationHash);
-        if (a !== undefined && a !== null && a.length === 3) {
-            var sport_id = parseInt(a[1]);
-            var event_id = parseInt(a[2]);
-            if (sport_id !== NaN && event_id !== NaN) {
+        var a = (/^#\/event\/(\d+)\/?$/g).exec(lcoationHash);
+        if (a !== undefined && a !== null && a.length === 2) {
+            var event_id = parseInt(a[1]);
+            if (event_id !== NaN) {
                 return {
                     type: 'Event',
-                    sportID: sport_id,
                     eventID: event_id,
                 };
             }
@@ -758,7 +762,6 @@ var mobx_1 = require("mobx");
 var football_1 = require("../data/football");
 var reconnecting_websocket_1 = require("../utils/reconnecting-websocket");
 var route_1 = require("../data/route");
-var utils_1 = require("../utils/utils");
 var webSocketURL = function () {
     return document.location.protocol.replace("http", "ws") + "//" + document.location.host + "/d";
 };
@@ -769,22 +772,17 @@ var Store = (function () {
         this.sportEvents = new Map();
         this.hasSportEvents = new Set();
         this.events = new Map();
+        this.markets = new Map();
         this.football = [];
         this.route = route_1.parseLocationHash(window.location.hash);
         this.message = null;
         this.messageTimeoutHandle = NaN;
         this.ws = new reconnecting_websocket_1.ReconnectingWebSocket(webSocketURL());
         this.setupWebsocket = function () {
-            _this.ws.onconnecting = function () { return console.log("connecting websocket..."); };
-            _this.ws.onerror = function (event) {
-                console.error("websocket error ocured");
-            };
             _this.ws.onmessage = function (event) {
                 _this.handleWebData(JSON.parse(event.data));
             };
             _this.ws.onclose = function (event) {
-                var s = utils_1.webSocketCloseCodeToString(event.code);
-                console.error("websocket closed: ", s);
                 _this.Message = {
                     title: 'Нет связи',
                     type: 'ConnectionError',
@@ -792,7 +790,6 @@ var Store = (function () {
                 };
             };
             _this.ws.onopen = function (event) {
-                console.log("websocket opened");
                 if (_this.Message && _this.Message.type === 'ConnectionError') {
                     _this.Message = null;
                 }
@@ -803,8 +800,11 @@ var Store = (function () {
         this.initializeStore = function () {
             _this.ws.sendJSON({ ListEventTypes: {} });
             _this.ws.sendJSON({ SubscribeFootball: _this.route.type === 'Football' });
-            if (_this.route.type === 'Sport' || _this.route.type === 'Event') {
+            if (_this.route.type === 'Sport') {
                 _this.ensureEventTypeEvents(_this.route.sportID);
+            }
+            if (_this.route.type === 'Event') {
+                _this.ensureEventMarkets(_this.route.eventID);
             }
         };
         this.handleWebData = function (x) {
@@ -842,7 +842,6 @@ var Store = (function () {
                 return;
             }
             console.error('Unknown data from server:', x);
-            throw "Unknown data from server";
         };
         this.handleLocationChanged = function () {
             var prevRoute = _this.route;
@@ -857,9 +856,11 @@ var Store = (function () {
             if (_this.route === prevRoute) {
                 return;
             }
-            if (_this.route.type === 'Sport' ||
-                _this.route.type === 'Event') {
+            if (_this.route.type === 'Sport') {
                 _this.ensureEventTypeEvents(_this.route.sportID);
+            }
+            if (_this.route.type === 'Event') {
+                _this.ensureEventMarkets(_this.route.eventID);
             }
         };
         this.route = route_1.parseLocationHash(window.location.hash);
@@ -924,10 +925,25 @@ var Store = (function () {
             });
         }
     };
+    Store.prototype.ensureEventMarkets = function (eventID) {
+        if (!this.markets.has(eventID)) {
+            this.ws.sendJSON({
+                ListEvent: eventID,
+            });
+        }
+    };
     Object.defineProperty(Store.prototype, "SportOfRoute", {
         get: function () {
             var sportID = route_1.getSportID(this.route);
-            return this.sports.get(sportID);
+            return sportID ? this.sports.get(sportID) : null;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Store.prototype, "EventOfRoute", {
+        get: function () {
+            var eventID = route_1.getEventID(this.route);
+            return eventID ? this.events.get(eventID) : null;
         },
         enumerable: true,
         configurable: true
@@ -946,6 +962,9 @@ var Store = (function () {
     ], Store.prototype, "events", void 0);
     __decorate([
         mobx_1.observable
+    ], Store.prototype, "markets", void 0);
+    __decorate([
+        mobx_1.observable
     ], Store.prototype, "football", void 0);
     __decorate([
         mobx_1.observable
@@ -962,11 +981,14 @@ var Store = (function () {
     __decorate([
         mobx_1.computed
     ], Store.prototype, "SportOfRoute", null);
+    __decorate([
+        mobx_1.computed
+    ], Store.prototype, "EventOfRoute", null);
     return Store;
 }());
 exports.store = new Store();
 
-},{"../data/football":9,"../data/route":10,"../utils/reconnecting-websocket":14,"../utils/utils":15,"mobx":44}],13:[function(require,module,exports){
+},{"../data/football":9,"../data/route":10,"../utils/reconnecting-websocket":14,"mobx":44}],13:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.code_to_country = new Map([
@@ -1120,28 +1142,6 @@ exports.getCountryNameByCode = function (code) {
 
 },{}],14:[function(require,module,exports){
 "use strict";
-// MIT License:
-//
-// Copyright (c) 2010-2012, Joe Walnes
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * This behaves like a WebSocket in every way, except if it fails to connect,
  * or it gets disconnected, it will repeatedly poll until it succesfully connects
@@ -1166,11 +1166,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
  *
  * It is API compatible with the standard WebSocket API.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
+var webSocketCloseCodeStr = new Map([
+    [1000, "Normal closure, meaning that the purpose for which the connection was established has been fulfilled"],
+    [1001, "An endpoint is \"going away\", such as a server going down or a browser having navigated away from a page."],
+    [1002, "An endpoint is terminating the connection due to a protocol error"],
+    [1003, "An endpoint is terminating the connection because it has received a type of data it cannot accept (e.g., an endpoint that understands only text data MAY send this if it receives a binary message)."],
+    [1004, "Reserved. The specific meaning might be defined in the future."],
+    [1005, "No status code was actually present."],
+    [1006, "The connection was closed abnormally, e.g., without sending or receiving a Close control frame"],
+    [1007, "An endpoint is terminating the connection because it has received data within a message that was not consistent with the type of the message (e.g., non-UTF-8 [http://tools.ietf.org/html/rfc3629] data within a text message)."],
+    [1008, "An endpoint is terminating the connection because it has received a message that \"violates its policy\". This reason is given either if there is no other sutible reason, or if there is a need to hide specific details about the policy."],
+    [1009, "An endpoint is terminating the connection because it has received a message that is too big for it to process."],
+    [1010, "An endpoint (client) is terminating the connection because it has expected the server to negotiate one or more extension, but the server didn't return them in the response message of the WebSocket handshake. <br /> Specifically, the extensions that are needed are: "],
+    [1011, "A server is terminating the connection because it encountered an unexpected condition that prevented it from fulfilling the request."],
+    [1015, "The connection was closed due to a failure to perform a TLS handshake (e.g., the server certificate can't be verified)."],
+]);
+var webSocketCloseCodeToString = function (code) {
+    var r = webSocketCloseCodeStr.get(code);
+    return r ? r : "unknown close code '" + code + "'";
+};
 var ReconnectingWebSocket = (function () {
     function ReconnectingWebSocket(url, protocols) {
         if (protocols === void 0) { protocols = []; }
-        //These can be altered by calling code
-        this.debug = false;
         //Time to wait before attempting reconnect (after close)
         this.reconnectInterval = 1000;
         // The maximum number of milliseconds to delay a reconnection attempt. 
@@ -1222,17 +1240,17 @@ var ReconnectingWebSocket = (function () {
             this.onconnecting();
             this.reconnectAttempts = 0;
         }
-        this.log('ReconnectingWebSocket', 'attempt-connect', this.url);
+        console.log('WebSocket connecting...', this.url);
         var localWs = this.ws;
         var timeout = setTimeout(function () {
-            _this.log('ReconnectingWebSocket', 'connection-timeout', _this.url);
+            console.error('WebSocket connection timeout', _this.timeoutInterval);
             _this.timedOut = true;
             localWs.close();
             _this.timedOut = false;
         }, this.timeoutInterval);
         this.ws.onopen = function (event) {
             clearTimeout(timeout);
-            _this.log('ReconnectingWebSocket', 'onopen', _this.url);
+            console.log('WebSocket opened', _this.url);
             _this.readyState = WebSocket.OPEN;
             reconnectAttempt = false;
             _this.reconnectAttempts = 0;
@@ -1256,17 +1274,16 @@ var ReconnectingWebSocket = (function () {
             }
             else {
                 if (!reconnectAttempt && !_this.timedOut) {
-                    _this.log('ReconnectingWebSocket', 'onclose', _this.url);
+                    console.error('websocket closed: ', webSocketCloseCodeToString(event.code));
                 }
                 tryReconnect();
             }
         };
         this.ws.onmessage = function (event) {
-            _this.log('ReconnectingWebSocket', 'onmessage', _this.url, event.data);
             _this.onmessage(event);
         };
         this.ws.onerror = function (event) {
-            _this.log('ReconnectingWebSocket', 'onerror', _this.url, event);
+            console.error('WebSocket error ocured:', _this.url);
             _this.onerror(event);
             _this.close();
             tryReconnect();
@@ -1278,7 +1295,6 @@ var ReconnectingWebSocket = (function () {
     ReconnectingWebSocket.prototype.send = function (data) {
         var _this = this;
         if (this.ws) {
-            this.log('ReconnectingWebSocket', 'send', this.url, data);
             if (this.ws.readyState === WebSocket.OPEN) {
                 this.ws.send(data);
             }
@@ -1319,15 +1335,6 @@ var ReconnectingWebSocket = (function () {
         }
         return false;
     };
-    ReconnectingWebSocket.prototype.log = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        if (this.debug || ReconnectingWebSocket.debugAll) {
-            console.debug.apply(console, args);
-        }
-    };
     /**
      * Setting this to true is the equivalent of setting all instances of ReconnectingWebSocket.debug to true.
      */
@@ -1340,25 +1347,6 @@ exports.ReconnectingWebSocket = ReconnectingWebSocket;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.numberToCompare = function (x) { return x === 0 ? 0 : (x < 0 ? -1 : 1); };
-var webSocketCloseCodeStr = new Map([
-    [1000, "Normal closure, meaning that the purpose for which the connection was established has been fulfilled"],
-    [1001, "An endpoint is \"going away\", such as a server going down or a browser having navigated away from a page."],
-    [1002, "An endpoint is terminating the connection due to a protocol error"],
-    [1003, "An endpoint is terminating the connection because it has received a type of data it cannot accept (e.g., an endpoint that understands only text data MAY send this if it receives a binary message)."],
-    [1004, "Reserved. The specific meaning might be defined in the future."],
-    [1005, "No status code was actually present."],
-    [1006, "The connection was closed abnormally, e.g., without sending or receiving a Close control frame"],
-    [1007, "An endpoint is terminating the connection because it has received data within a message that was not consistent with the type of the message (e.g., non-UTF-8 [http://tools.ietf.org/html/rfc3629] data within a text message)."],
-    [1008, "An endpoint is terminating the connection because it has received a message that \"violates its policy\". This reason is given either if there is no other sutible reason, or if there is a need to hide specific details about the policy."],
-    [1009, "An endpoint is terminating the connection because it has received a message that is too big for it to process."],
-    [1010, "An endpoint (client) is terminating the connection because it has expected the server to negotiate one or more extension, but the server didn't return them in the response message of the WebSocket handshake. <br /> Specifically, the extensions that are needed are: "],
-    [1011, "A server is terminating the connection because it encountered an unexpected condition that prevented it from fulfilling the request."],
-    [1015, "The connection was closed due to a failure to perform a TLS handshake (e.g., the server certificate can't be verified)."],
-]);
-exports.webSocketCloseCodeToString = function (code) {
-    var r = webSocketCloseCodeStr.get(code);
-    return r ? r : "unknown close code '" + code + "'";
-};
 
 },{}],16:[function(require,module,exports){
 /*!
@@ -36570,6 +36558,10 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
