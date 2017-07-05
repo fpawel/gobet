@@ -1,7 +1,7 @@
 {
 	"ImportPath": "github.com/user/gobet",
 	"GoVersion": "go1.8",
-	"GodepVersion": "v79",
+	"GodepVersion": "v74",
 	"Packages": [
 		"./..."
 	],
