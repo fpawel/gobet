@@ -8,17 +8,17 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/PuerkitoBio/goquery",
-			"Comment": "v1.0.2",
-			"Rev": "3cb3b8656883c2cc3deb9c643d93ea6e5157e425"
+			"Comment": "v1.0.0",
+			"Rev": "7f4291566cf7cac3be222a933e01a2bed97532b1"
 		},
 		{
 			"ImportPath": "github.com/andybalholm/cascadia",
-			"Rev": "349dd0209470eabd9514242c688c403c0926d266"
+			"Rev": "3ad29d1ad1c4f2023e355603324348cf1f4b2d48"
 		},
 		{
 			"ImportPath": "github.com/go-chi/chi",
-			"Comment": "v3.0.0-1-g18d990c",
-			"Rev": "18d990c0d1c023b05a3652d322ae36d8bdb62e07"
+			"Comment": "v3.0.0-7-g9c239d5",
+			"Rev": "9c239d53d23d41de9180d567bed7114ae30e3ca6"
 		},
 		{
 			"ImportPath": "github.com/gorilla/websocket",
@@ -31,11 +31,11 @@
 		},
 		{
 			"ImportPath": "golang.org/x/net/html",
-			"Rev": "f2499483f923065a842d38eb4c7f1927e6fc6e6d"
+			"Rev": "7c62cfdcccc65f87b0120ec841012ba816fc1aec"
 		},
 		{
 			"ImportPath": "golang.org/x/net/html/atom",
-			"Rev": "f2499483f923065a842d38eb4c7f1927e6fc6e6d"
+			"Rev": "7c62cfdcccc65f87b0120ec841012ba816fc1aec"
 		}
 	]
 }
