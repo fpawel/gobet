@@ -90,8 +90,9 @@ func FirstPageURL(doc *goquery.Document) (string, error) {
 		return v, nil
 	}
 
+	s, _ := doc.Html()
 
-	return "", utils.ErrorWithInfo(fmt.Errorf("pattern %v not found, %s", pattern, doc.Text()))
+	return "", utils.ErrorWithInfo(fmt.Errorf("pattern %v not found, %s", pattern, s))
 }
 
 func Page(doc *goquery.Document) (games []football.Match, nextPage *string, err error) {
