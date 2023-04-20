@@ -11,10 +11,10 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/user/gobet/betfair.com/aping"
-	"github.com/user/gobet/betfair.com/aping/event"
-	"github.com/user/gobet/betfair.com/aping/eventPrices"
-	"github.com/user/gobet/utils"
+	"gobet/betfair.com/aping"
+	"gobet/betfair.com/aping/event"
+	"gobet/betfair.com/aping/eventPrices"
+	"gobet/utils"
 )
 
 const (
@@ -35,8 +35,8 @@ type Runner struct {
 }
 
 type Odd struct {
-	Index int         `json:"index"`
-	Side  string      `json:"side"`
+	Index int        `json:"index"`
+	Side  string     `json:"side"`
 	Odd   *aping.Odd `json:"odd"`
 }
 

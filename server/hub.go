@@ -1,12 +1,12 @@
 package server
 
 import (
-	"github.com/user/gobet/betfair.com/aping/events"
-	"github.com/user/gobet/betfair.com/football"
-	"github.com/user/gobet/gate"
+	"gobet/betfair.com/aping/events"
+	"gobet/betfair.com/football"
+	"gobet/gate"
 )
 
-//Hub  maintains the set of active clients and broadcasts messages to the clients.
+// Hub  maintains the set of active clients and broadcasts messages to the clients.
 type Hub struct {
 	unregister      chan *gate.Client // unregister requests from clients.
 	update          chan clientStatePair

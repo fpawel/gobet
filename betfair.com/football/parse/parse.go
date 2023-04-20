@@ -8,8 +8,8 @@ import (
 	"unicode"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/user/gobet/betfair.com/football"
-	"github.com/user/gobet/utils"
+	"gobet/betfair.com/football"
+	"gobet/utils"
 )
 
 func odd(node *goquery.Selection, nSelection int, side string) (pprise *float64) {

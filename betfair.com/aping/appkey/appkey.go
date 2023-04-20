@@ -5,10 +5,8 @@ import (
 	"errors"
 	"log"
 
-	"github.com/nu7hatch/gouuid"
-
-	"github.com/user/gobet/betfair.com/aping"
-	"github.com/user/gobet/betfair.com/aping/request"
+	"gobet/betfair.com/aping"
+	"gobet/betfair.com/aping/request"
 )
 
 type developerApp struct {
@@ -30,7 +28,7 @@ type developerAppVersion struct {
 	VendorSecret         string `json:"vendorSecret,omitempty"`
 }
 
-func GetResponse( xAuthentication string, endpoint aping.Endpoint, params interface{}) (responseBody []byte, err error) {
+func GetResponse(xAuthentication string, endpoint aping.Endpoint, params interface{}) (responseBody []byte, err error) {
 	return request.GetResponse(xAuthentication, &appKeyValue, endpoint, params)
 }
 

@@ -3,8 +3,8 @@ package events
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/user/gobet/betfair.com/aping"
-	"github.com/user/gobet/betfair.com/aping/appkey"
+	"gobet/betfair.com/aping"
+	"gobet/betfair.com/aping/appkey"
 	"log"
 	"strconv"
 	"sync"
@@ -159,9 +159,6 @@ func getResponse(eventTypeID int) (events Events, err error) {
 		events = append(events, y)
 	}
 	log.Printf("readed events %d", eventTypeID)
-
-
-
 
 	return
 }

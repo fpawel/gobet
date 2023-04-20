@@ -1,12 +1,9 @@
 package main
 
 import (
-	"github.com/user/gobet/daemon"
+	"gobet/daemon"
 )
-
 
 func main() {
 	daemon.Run()
 }
-
-

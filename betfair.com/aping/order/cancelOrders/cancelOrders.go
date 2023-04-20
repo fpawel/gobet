@@ -5,11 +5,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/user/gobet/betfair.com/aping/appkey"
+	"gobet/betfair.com/aping/appkey"
 
-	"github.com/user/gobet/betfair.com/login"
-	"github.com/user/gobet/betfair.com/userSessions"
-	"github.com/user/gobet/betfair.com/aping"
+	"gobet/betfair.com/aping"
+	"gobet/betfair.com/login"
+	"gobet/betfair.com/userSessions"
 )
 
 // Request заказ ставки

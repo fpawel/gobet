@@ -1,16 +1,16 @@
 package placeOrders
 
 import (
-	"github.com/user/gobet/betfair.com/aping/appkey"
-	"github.com/user/gobet/betfair.com/login"
-	"github.com/user/gobet/betfair.com/userSessions"
+	"gobet/betfair.com/aping/appkey"
+	"gobet/betfair.com/login"
+	"gobet/betfair.com/userSessions"
 
 	"encoding/json"
 	"errors"
 	"fmt"
 
-	"github.com/user/gobet/betfair.com/aping/order"
-	"github.com/user/gobet/betfair.com/aping"
+	"gobet/betfair.com/aping"
+	"gobet/betfair.com/aping/order"
 )
 
 // Request заказ ставки

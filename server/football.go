@@ -3,10 +3,10 @@ package server
 import (
 	"sync"
 
-	"github.com/user/gobet/betfair.com/football"
-	"github.com/user/gobet/betfair.com/football/webclient"
+	"gobet/betfair.com/football"
+	"gobet/betfair.com/football/webclient"
 
-	"github.com/user/gobet/config"
+	"gobet/config"
 	"time"
 )
 
@@ -19,21 +19,18 @@ type Foootball struct {
 
 func NewFoootball(hub *Hub) (x *Foootball) {
 	x = &Foootball{
-		hub : hub,
+		hub: hub,
 	}
 	return
 }
 
-func (x *Foootball) Run()  {
+func (x *Foootball) Run() {
 	go func() {
 		for {
 			x.updateGames()
 		}
 	}()
 }
-
-
-
 
 func (x *Foootball) Get() (r []football.Match, err error) {
 	x.mu.RLock()
@@ -81,5 +78,3 @@ func (x *Foootball) updateGames() {
 	x.mu.Unlock()
 
 }
-
-

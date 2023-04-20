@@ -1,20 +1,20 @@
 package userSessions
 
 import (
+	"gobet/betfair.com/login"
 	"sync"
-	"github.com/user/gobet/betfair.com/login"
 	"time"
 )
 
-type session struct{
+type session struct {
 	token string
-	time time.Time
+	time  time.Time
 }
 
-var sessions = make(map [login.User]session)
+var sessions = make(map[login.User]session)
 var mu = sync.RWMutex{}
 
-var awaiters = make (map [login.User] []chan<- login.Result )
+var awaiters = make(map[login.User][]chan<- login.Result)
 var muAwaiters = sync.RWMutex{}
 
 func GetUserSession(user login.User, ch chan<- login.Result) {
@@ -22,7 +22,7 @@ func GetUserSession(user login.User, ch chan<- login.Result) {
 	mu.RLock()
 	existedSession, hasExistedSession := sessions[user]
 	mu.RUnlock()
-	if hasExistedSession && time.Since(existedSession.time) < time.Hour{
+	if hasExistedSession && time.Since(existedSession.time) < time.Hour {
 		ch <- login.Result{existedSession.token, nil}
 		return
 	}
@@ -36,7 +36,7 @@ func GetUserSession(user login.User, ch chan<- login.Result) {
 		return
 	}
 
-	go loginUser (user)
+	go loginUser(user)
 }
 
 func loginUser(user login.User) {
@@ -57,6 +57,3 @@ func loginUser(user login.User) {
 	delete(awaiters, user)
 	muAwaiters.Unlock()
 }
-
-
-

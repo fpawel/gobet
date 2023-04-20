@@ -8,13 +8,13 @@ import (
 
 	"fmt"
 
-	"github.com/user/gobet/betfair.com/aping"
-	"github.com/user/gobet/betfair.com/login"
-	"github.com/user/gobet/traficControl"
+	"gobet/betfair.com/aping"
+	"gobet/betfair.com/login"
+	"gobet/traficControl"
 )
 
 func GetResponse(xAuthentication string, appKey *string,
-		endpoint aping.Endpoint, params interface{}) (responseBody []byte, err error) {
+	endpoint aping.Endpoint, params interface{}) (responseBody []byte, err error) {
 
 	jsonReq := struct {
 		Jsonrpc string      `json:"jsonrpc"`
@@ -51,7 +51,7 @@ func GetResponse(xAuthentication string, appKey *string,
 
 	responseBody, err = ioutil.ReadAll(resp.Body)
 
-	traficControl.AddTotalBytesReaded(len(responseBody), "API-NG")
+	traficControl.AddTotalBytesRead(len(responseBody), "API-NG")
 
 	return
 }
@@ -65,5 +65,5 @@ func GetResponseWithAdminLogin(appKey *string, endpoint aping.Endpoint, params i
 		err = fmt.Errorf("login error: %v", rLogin.Error)
 		return
 	}
-	return GetResponse(rLogin.Token, appKey, endpoint, params )
+	return GetResponse(rLogin.Token, appKey, endpoint, params)
 }

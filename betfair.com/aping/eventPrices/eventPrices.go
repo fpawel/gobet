@@ -3,8 +3,8 @@ package eventPrices
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/user/gobet/betfair.com/aping"
-	"github.com/user/gobet/betfair.com/aping/appkey"
+	"gobet/betfair.com/aping"
+	"gobet/betfair.com/aping/appkey"
 
 	"log"
 	"sync"

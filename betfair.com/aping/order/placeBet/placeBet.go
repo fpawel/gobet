@@ -1,14 +1,14 @@
 package placeBet
 
 import (
-	"github.com/user/gobet/betfair.com/aping/order/placeOrders"
-	"github.com/user/gobet/betfair.com/aping/order"
-	"github.com/user/gobet/utils"
-	"github.com/user/gobet/betfair.com/aping/order/cancelOrders"
-	"github.com/user/gobet/betfair.com/aping/order/replaceOrder"
+	"gobet/betfair.com/aping/order"
+	"gobet/betfair.com/aping/order/cancelOrders"
+	"gobet/betfair.com/aping/order/placeOrders"
+	"gobet/betfair.com/aping/order/replaceOrder"
+	"gobet/utils"
 )
 
-func PlaceBet(request *placeOrders.Request)( *order.PlaceOrderReport, error){
+func PlaceBet(request *placeOrders.Request) (*order.PlaceOrderReport, error) {
 	if request.Size >= 4 {
 		return request.PlaceSingleOrder()
 	}
@@ -20,27 +20,27 @@ func PlaceBet(request *placeOrders.Request)( *order.PlaceOrderReport, error){
 		request1.Price = 1000.
 	}
 	order1, err := request1.PlaceSingleOrder()
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 
 	cancelOrderRequest := cancelOrders.Request{
-		BetID : order1.BetID,
-		MarketID : request.MarketID,
-		User : request.User,
-		SizeReduction: utils.Float64ToFixed(4 - request.Size,2),
+		BetID:         order1.BetID,
+		MarketID:      request.MarketID,
+		User:          request.User,
+		SizeReduction: utils.Float64ToFixed(4-request.Size, 2),
 	}
 
 	_, err = cancelOrderRequest.CancelSingleOrder()
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 
 	replaceOrderRequest := replaceOrder.Request{
-		BetID : order1.BetID,
-		NewPrice : request.Price,
-		User: request.User,
-		MarketID:request.MarketID,
+		BetID:    order1.BetID,
+		NewPrice: request.Price,
+		User:     request.User,
+		MarketID: request.MarketID,
 	}
 
 	return replaceOrderRequest.ReplaceSingleOrder()

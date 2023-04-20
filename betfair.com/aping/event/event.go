@@ -10,8 +10,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/user/gobet/betfair.com/aping"
-	"github.com/user/gobet/betfair.com/aping/appkey"
+	"gobet/betfair.com/aping"
+	"gobet/betfair.com/aping/appkey"
 )
 
 func Get(eventID int, ch chan<- Result) {
@@ -239,7 +239,6 @@ func readEvent(eventID int) (event *aping.Event, err error) {
 	if err != nil {
 		return
 	}
-
 
 	event = &aping.Event{ID: eventID}
 	err = readMarketEvent(event)

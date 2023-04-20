@@ -3,10 +3,10 @@ package proxi
 import (
 	"fmt"
 	"github.com/go-chi/chi"
+	"gobet/utils"
 	"io/ioutil"
 	"net/http"
 	"strings"
-	"github.com/user/gobet/utils"
 )
 
 func createProxiRequest(urlStr string, r *http.Request) (*http.Request, error) {
@@ -34,7 +34,7 @@ func Proxi(w http.ResponseWriter, r *http.Request) {
 
 	encodedURL, err := utils.QueryUnescape(decodedURL)
 
-	rreq, err := createProxiRequest(  encodedURL, r)
+	rreq, err := createProxiRequest(encodedURL, r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

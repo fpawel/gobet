@@ -3,11 +3,11 @@ package server
 import (
 	"encoding/json"
 
-	"github.com/user/gobet/betfair.com/aping"
-	"github.com/user/gobet/betfair.com/aping/event"
-	"github.com/user/gobet/betfair.com/aping/eventTypes"
-	"github.com/user/gobet/betfair.com/aping/events"
-	"github.com/user/gobet/gate"
+	"gobet/betfair.com/aping"
+	"gobet/betfair.com/aping/event"
+	"gobet/betfair.com/aping/eventTypes"
+	"gobet/betfair.com/aping/events"
+	"gobet/gate"
 )
 
 type Server struct {

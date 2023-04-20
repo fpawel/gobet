@@ -10,11 +10,11 @@ import (
 	"net/http"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/user/gobet/betfair.com/football"
-	"github.com/user/gobet/betfair.com/football/parse"
-	"github.com/user/gobet/config"
-	"github.com/user/gobet/traficControl"
-	"github.com/user/gobet/utils"
+	"gobet/betfair.com/football"
+	"gobet/betfair.com/football/parse"
+	"gobet/config"
+	"gobet/traficControl"
+	"gobet/utils"
 )
 
 const (
@@ -147,7 +147,7 @@ func ReadMatchesFromHerokuApp() (readedGames []football.Match, err error) {
 	}
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
-	traficControl.AddTotalBytesReaded(len(body), "HEROKU APP")
+	traficControl.AddTotalBytesRead(len(body), "HEROKU APP")
 
 	var data struct {
 		Ok  []football.Match `json:"ok,omitempty"`

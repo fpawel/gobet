@@ -5,8 +5,7 @@ import (
 	"encoding/gob"
 	"errors"
 	"fmt"
-	"hash/fnv"
-	"log"
+	"math"
 	"math/rand"
 	"net/url"
 	"path/filepath"
@@ -14,12 +13,10 @@ import (
 	"runtime"
 	"strings"
 	"time"
-	"math"
 )
 
 // QueryUnescape извлекает URL адрес из строки, переданной в поле http запроса
-func QueryUnescape(s string) (string, error ) {
-
+func QueryUnescape(s string) (string, error) {
 	if strings.HasPrefix(s, "/") {
 		s = s[1:]
 	}
@@ -94,42 +91,31 @@ func GetBytesOfObject(data interface{}) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func GetHashCodeOfObject(data interface{}) uint64 {
-	fnv32a := fnv.New64a()
-	bytes, err := GetBytesOfObject(data)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	fnv32a.Write(bytes)
-	return fnv32a.Sum64()
-}
-
 func RoundFloat64(num float64) int {
 	return int(num + math.Copysign(0.5, num))
 }
 
 func Float64ToFixed(num float64, precision int) float64 {
 	output := math.Pow(10, float64(precision))
-	return float64(RoundFloat64(num * output)) / output
+	return float64(RoundFloat64(num*output)) / output
 }
 
-
-// HumanateBytes produces a human readable representation of an SI size.
+// HumanizeBytes produces a human-readable representation of an SI size.
 // bytes(82854982) -> 83 MB
-func HumanateBytes(s uint64) string {
+func HumanizeBytes(s uint64) string {
 	sizes := []string{"B", "kB", "MB", "GB", "TB", "PB", "EB"}
-	return humanateBytes(s, 1000, sizes)
+	return humanizeBytes(s, 1000, sizes)
 }
 
-func logn(n, b float64) float64 {
+func logN(n, b float64) float64 {
 	return math.Log(n) / math.Log(b)
 }
 
-func humanateBytes(s uint64, base float64, sizes []string) string {
+func humanizeBytes(s uint64, base float64, sizes []string) string {
 	if s < 10 {
 		return fmt.Sprintf("%d B", s)
 	}
-	e := math.Floor(logn(float64(s), base))
+	e := math.Floor(logN(float64(s), base))
 	suffix := sizes[int(e)]
 	val := math.Floor(float64(s)/math.Pow(base, e)*10+0.5) / 10
 	f := "%.0f %s"

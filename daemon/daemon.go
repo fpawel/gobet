@@ -7,22 +7,22 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/gorilla/websocket"
-	"github.com/user/gobet/betfair.com/aping/event"
-	"github.com/user/gobet/betfair.com/aping/eventPrices"
-	"github.com/user/gobet/betfair.com/aping/eventPrices/eventPricesWS"
-	"github.com/user/gobet/betfair.com/aping/eventTypes"
-	"github.com/user/gobet/betfair.com/aping/events"
+	"gobet/betfair.com/aping/event"
+	"gobet/betfair.com/aping/eventPrices"
+	"gobet/betfair.com/aping/eventPrices/eventPricesWS"
+	"gobet/betfair.com/aping/eventTypes"
+	"gobet/betfair.com/aping/events"
 
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
 
-	"github.com/user/gobet/config"
-	"github.com/user/gobet/server"
-	"github.com/user/gobet/proxi"
+	"gobet/config"
+	"gobet/proxi"
+	"gobet/server"
 
-	"github.com/user/gobet/gate"
+	"gobet/gate"
 )
 
 func Run() {
